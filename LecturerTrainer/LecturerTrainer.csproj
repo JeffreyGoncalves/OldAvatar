@@ -1,0 +1,863 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{96F1869C-63AE-472F-A784-D73B344EE0AE}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LecturerTrainer</RootNamespace>
+    <AssemblyName>LecturerTrainer</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <ExpressionBlendVersion>12.0.50429.0</ExpressionBlendVersion>
+    <PublishUrl>publier\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup>
+    <Reference Include="Accord, Version=2.12.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.2.12.0.0\lib\Accord.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Accord.Math, Version=2.12.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Math.2.12.0.0\lib\Accord.Math.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Accord.Statistics, Version=2.12.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Statistics.2.12.0.0\lib\Accord.Statistics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5-(libs only)\Release\AForge.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Controls, Version=2.2.5.0, Culture=neutral, PublicKeyToken=a8ac264d1dc6b9d9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.DebuggerVisualizers %282010%29, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0646c9a9e79f6b03, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.DebuggerVisualizers (2010).dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Fuzzy, Version=2.2.4.0, Culture=neutral, PublicKeyToken=cb12670d0eae17c9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Fuzzy.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Genetic, Version=2.2.4.0, Culture=neutral, PublicKeyToken=4336634eeb41b69b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Genetic.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Imaging, Version=2.2.5.0, Culture=neutral, PublicKeyToken=ba8ddea9676ca48b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Imaging.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Imaging.Formats, Version=2.2.4.0, Culture=neutral, PublicKeyToken=8065ed5a639199a0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Imaging.Formats.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Imaging.IPPrototyper, Version=1.0.1.1, Culture=neutral, PublicKeyToken=c6e9a6d4c86d47e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Imaging.IPPrototyper.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.MachineLearning, Version=2.2.4.0, Culture=neutral, PublicKeyToken=b3f1bdd78212f4e4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.MachineLearning.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Math, Version=2.2.5.0, Culture=neutral, PublicKeyToken=abba2e25397ee8c9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5-(libs only)\Release\AForge.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Neuro, Version=2.2.5.0, Culture=neutral, PublicKeyToken=2094f4ea39731d4f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Neuro.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Robotics.Lego, Version=2.2.5.0, Culture=neutral, PublicKeyToken=5f361631ec856b74, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Robotics.Lego.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Robotics.Surveyor, Version=2.2.4.0, Culture=neutral, PublicKeyToken=7ed9f718a0f5b2f6, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Robotics.Surveyor.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Robotics.TeRK, Version=2.2.5.0, Culture=neutral, PublicKeyToken=5c0f140128226168, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Robotics.TeRK.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video, Version=2.2.5.0, Culture=neutral, PublicKeyToken=cbfb6e07d173c401, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Video.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.DirectShow, Version=2.2.5.0, Culture=neutral, PublicKeyToken=61ea4348d43881b7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Video.DirectShow.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.FFMPEG, Version=2.2.5.0, Culture=neutral, PublicKeyToken=03563089b1be05dd, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Video.FFMPEG.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.Kinect, Version=2.2.4.0, Culture=neutral, PublicKeyToken=96a9a097745e71d9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Video.Kinect.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.VFW, Version=2.2.4.0, Culture=neutral, PublicKeyToken=a82f807c999637c8, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Video.VFW.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.Ximea, Version=2.2.4.0, Culture=neutral, PublicKeyToken=5cdcd64958730f99, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Video.Ximea.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Vision, Version=2.2.5.0, Culture=neutral, PublicKeyToken=b612fa915eefaa06, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>AForge.NET Framework-2.2.5\Release\AForge.Vision.dll</HintPath>
+    </Reference>
+    <Reference Include="Apex">
+      <HintPath>..\packages\SharpGL\SharpGL.WPF\Apex.dll</HintPath>
+    </Reference>
+    <Reference Include="De.TorstenMandelkow.MetroChart, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d5b8d1bbc99c4a2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\De.TorstenMandelkow.MetroChart.dll</HintPath>
+    </Reference>
+    <Reference Include="GravityApps.Mandelkow.MetroCharts, Version=3.0.0.0, Culture=neutral, PublicKeyToken=d5b8d1bbc99c4a2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\GravityApps.Mandelkow.MetroCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts, Version=0.7.11.0, Culture=neutral, PublicKeyToken=c5935629d38af058, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.0.7.11\lib\portable-net40+sl5+win8+wp8+wpa81\LiveCharts.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.7.11.0, Culture=neutral, PublicKeyToken=3b585c2a5f1a92c1, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.Wpf.0.7.11\lib\net45\LiveCharts.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Drawing, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Expression.Drawing.3.0.0\lib\net45\Microsoft.Expression.Drawing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Kinect, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Speech, Version=11.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft SDKs\Kinect\Developer Toolkit v1.8.0\bin\Microsoft.Speech.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio, Version=1.7.1.17, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.7.1\lib\net35\NAudio.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenTK.GLControl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.GLControl.1.1.1589.5942\lib\NET40\OpenTK.GLControl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpGL">
+      <HintPath>..\packages\SharpGL\SharpGL\SharpGL.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.SceneGraph">
+      <HintPath>..\packages\SharpGL\SharpGL.SceneGraph\SharpGL.SceneGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.Serialization">
+      <HintPath>..\packages\SharpGL\SharpGL.Serialization\SharpGL.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.WinForms">
+      <HintPath>..\packages\SharpGL\SharpGL.WinForms\SharpGL.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL.WPF">
+      <HintPath>..\packages\SharpGL\SharpGL.WPF\SharpGL.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Speech" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit">
+      <HintPath>..\packages\WPFToolkit.DataVisualization.3.5.50211.1\lib\System.Windows.Controls.DataVisualization.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Input.Toolkit">
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Input.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Layout.Toolkit">
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\System.Windows.Controls.Layout.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Tao.FreeGlut, Version=2.4.0.2, Culture=neutral, PublicKeyToken=6e602a6ad6c0d06d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Tao.FreeGlut.dll</HintPath>
+    </Reference>
+    <Reference Include="Tao.OpenGl, Version=2.1.0.12, Culture=neutral, PublicKeyToken=1ca010269a4501ef, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Tao.OpenGl.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationClientsideProviders" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="WPFToolkit">
+      <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\WPFToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=2.9.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.2.9\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Model\BodyAnalysis\ArmsCrossed.cs" />
+    <Compile Include="Model\BodyAnalysis\ArmsWide.cs" />
+    <Compile Include="Model\AudioAnalysis\AudioRecorder.cs" />
+    <Compile Include="Model\BodyAnalysis\Agitation.cs" />
+    <Compile Include="Model\BodyAnalysis\WelcomeTraining.cs" />
+    <Compile Include="Model\BodyAnalysis\PowerTraining.cs" />
+    <Compile Include="Model\BodyAnalysis\HandTraining.cs" />
+    <Compile Include="Model\BodyAnalysis\Gesture.cs" />
+    <Compile Include="Model\BodyAnalysis\HandsJoined.cs" />
+    <Compile Include="Model\BodyAnalysis\HandsInPocket.cs" />
+    <Compile Include="Model\BodyAnalysis\HandsRaised.cs" />
+    <Compile Include="Model\BodyAnalysis\WaveGesture.cs" />
+    <Compile Include="Model\Charts\CustomersLegend.xaml.cs">
+      <DependentUpon>CustomersLegend.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Charts\GraphSaves.cs" />
+    <Compile Include="Model\Exceptions\XmlLoadingException.cs" />
+    <Compile Include="Model\ImageFeedbacksPerso.cs" />
+    <Compile Include="Model\PCQueue.cs" />
+    <Compile Include="ViewModel\TrainingWithAvatarViewModel.cs" />
+    <Compile Include="View\ChoiceDate.xaml.cs">
+      <DependentUpon>ChoiceDate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Charts\GraphEmpty.cs" />
+    <Compile Include="Model\Charts\NumberGraph.cs" />
+    <Compile Include="Model\Chronometre.cs" />
+    <Compile Include="Model\EmotionRecognizer\eigenFace.cs" />
+    <Compile Include="Model\EmotionRecognizer\eigenFace3D.cs" />
+    <Compile Include="Model\EmotionRecognizer\EigenMethod.cs" />
+    <Compile Include="Model\EmotionRecognizer\EmotionRecognition.cs" />
+    <Compile Include="Model\EmotionRecognizer\FaceRecognition.cs" />
+    <Compile Include="Model\EmotionRecognizer\LookingDirection.cs" />
+    <Compile Include="Model\EmotionRecognizer\MouthOpened.cs" />
+    <Compile Include="Model\EmotionRecognizer\MouthShut.cs" />
+    <Compile Include="Model\EmotionRecognizer\Parser.cs" />
+    <Compile Include="Model\EmotionRecognizer\PupilRight.cs" />
+    <Compile Include="Model\EmotionRecognizer\SkeletonFaceTracker.cs" />
+    <Compile Include="Model\EventsAnalysis\Enthusiasm.cs" />
+    <Compile Include="Model\EventsAnalysis\Epicness.cs" />
+    <Compile Include="Model\EventsLinker.cs" />
+    <Compile Include="Model\Exceptions\CantCreateFileException.cs" />
+    <Compile Include="Model\KeyValuePairPerso.cs" />
+    <Compile Include="Model\Main.cs" />
+    <Compile Include="Model\BodyAnalysis\Posture.cs" />
+    <Compile Include="Model\BodyAnalysis\Geometry.cs" />
+    <Compile Include="Model\BodyAnalysis\Tools.cs" />
+    <Compile Include="Model\KinectDevice.cs" />
+    <Compile Include="Model\AudioAnalysis\AudioProvider.cs" />
+    <Compile Include="Model\AudioAnalysis\AutoCorrelator.cs" />
+    <Compile Include="Model\AudioAnalysis\FFT.cs" />
+    <Compile Include="Model\AudioAnalysis\IPitchDetector.cs" />
+    <Compile Include="Model\AudioAnalysis\Pitch.cs" />
+    <Compile Include="Model\AudioAnalysis\PitchWaveProvider.cs" />
+    <Compile Include="Model\IRecordingState.cs" />
+    <Compile Include="Model\Charts\CartesianGraph.cs" />
+    <Compile Include="Model\ReplayAvatar.cs" />
+    <Compile Include="Model\SavingTools.cs" />
+    <Compile Include="Model\Session.cs" />
+    <Compile Include="Model\ThemeOpenGL.cs" />
+    <Compile Include="PlayButton.xaml.cs">
+      <DependentUpon>PlayButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\ChoiceResultViewModel.cs" />
+    <Compile Include="ViewModel\SessionRecordingViewModel.cs" />
+    <Compile Include="ViewModel\DrawingSheetAvatarViewModel.cs" />
+    <Compile Include="ViewModel\DrawingSheetStreamViewModel.cs" />
+    <Compile Include="ViewModel\DrawingSheetViewModel.cs" />
+    <Compile Include="Model\Charts\GraphTemplateSelector.cs" />
+    <Compile Include="ViewModel\Feedback.cs" />
+    <Compile Include="ViewModel\FeedbackPool.cs" />
+    <Compile Include="ViewModel\GeneralSideToolViewModel.cs" />
+    <Compile Include="ViewModel\HelpWindowViewModel.cs" />
+    <Compile Include="ViewModel\IconViewModel.cs" />
+    <Compile Include="Model\Charts\IGraph.cs" />
+    <Compile Include="ViewModel\KinectDeviceViewModel.cs" />
+    <Compile Include="Model\Charts\PieGraph.cs" />
+    <Compile Include="ViewModel\NewUserViewModel.cs" />
+    <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="Model\Charts\ResultParts.cs" />
+    <Compile Include="ViewModel\ReplayViewModel.cs" />
+    <Compile Include="ViewModel\ResultsViewModel.cs" />
+    <Compile Include="ViewModel\SideToolsViewModel.cs" />
+    <Compile Include="ViewModel\ToolBarViewModel.cs" />
+    <Compile Include="ViewModel\TrackingSideToolViewModel.cs" />
+    <Compile Include="ViewModel\TrainerStopwatchViewModel.cs" />
+    <Compile Include="ViewModel\TrainingSideToolViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelBase.cs" />
+    <Compile Include="View\ChoiceResultView.xaml.cs">
+      <DependentUpon>ChoiceResultView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ChoiceTheme.xaml.cs">
+      <DependentUpon>ChoiceTheme.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DrawingSheetView.xaml.cs">
+      <DependentUpon>DrawingSheetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ErrorMessageBox.xaml.cs">
+      <DependentUpon>ErrorMessageBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GeneralSideTool.xaml.cs">
+      <DependentUpon>GeneralSideTool.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\HelpWindowView.xaml.cs">
+      <DependentUpon>HelpWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\IconView.xaml.cs">
+      <DependentUpon>IconView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\InformationView.xaml.cs">
+      <DependentUpon>InformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\NewUserView.xaml.cs">
+      <DependentUpon>NewUserView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ReplayView.xaml.cs">
+      <DependentUpon>ReplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ResultsView.xaml.cs">
+      <DependentUpon>ResultsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SideToolsView.xaml.cs">
+      <DependentUpon>SideToolsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ToolBarView.xaml.cs">
+      <DependentUpon>ToolBarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TrackingSideTool.xaml.cs">
+      <DependentUpon>TrackingSideTool.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TrainerStopwatchView.xaml.cs">
+      <DependentUpon>TrainerStopwatchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TrainingSideTool.xaml.cs">
+      <DependentUpon>TrainingSideTool.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SessionRecording.xaml.cs">
+      <DependentUpon>SessionRecording.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TrainingWithAvatarView.xaml.cs">
+      <DependentUpon>TrainingWithAvatarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\VisibilityConverter.cs" />
+    <Page Include="Model\Charts\CustomersLegend.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="PlayButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ChoiceDate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ChoiceResultView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ChoiceTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DrawingSheetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ErrorMessageBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GeneralSideTool.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\HelpWindowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\IconView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\InformationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\NewUserView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ReplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ResultsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SideToolsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ToolBarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TrackingSideTool.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\TrainerStopwatchView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\TrainingSideTool.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\SessionRecording.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TrainingWithAvatarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="AForge.NET Framework-2.2.5\.DS_Store" />
+    <None Include="AForge.NET Framework-2.2.5\Docs\AForge.NET.chm" />
+    <None Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\lib\avcodec.lib" />
+    <None Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\lib\avdevice.lib" />
+    <None Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\lib\avfilter.lib" />
+    <None Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\lib\avformat.lib" />
+    <None Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\lib\avutil.lib" />
+    <None Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\lib\postproc.lib" />
+    <None Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\lib\swresample.lib" />
+    <None Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\lib\swscale.lib" />
+    <None Include="AForge.NET Framework-2.2.5\Externals\libfreenect\APACHE20" />
+    <None Include="AForge.NET Framework-2.2.5\Release\.DS_Store" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 et x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Icons\boring.png" />
+    <Resource Include="View\Icons\stress.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Kinect.Toolkit.FaceTracking\Microsoft.Kinect.Toolkit.FaceTracking.csproj">
+      <Project>{1bcf9cee-df01-430e-b49d-41a9a88963eb}</Project>
+      <Name>Microsoft.Kinect.Toolkit.FaceTracking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Kinect.Toolkit\Microsoft.Kinect.Toolkit.csproj">
+      <Project>{c6f9c31b-6130-4443-a5cc-ef0664552ecd}</Project>
+      <Name>Microsoft.Kinect.Toolkit</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Model\EmotionRecognizer\allFrames.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Icons\angry.png" />
+    <Resource Include="View\Icons\disgusted.png" />
+    <Resource Include="View\Icons\happy.png" />
+    <Resource Include="View\Icons\neutral.png" />
+    <Resource Include="View\Icons\sad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="View\Icons\speed0.png" />
+    <Resource Include="View\Icons\speed1.png" />
+    <Resource Include="View\Icons\speed2.png" />
+    <Resource Include="View\Icons\speed3.png" />
+    <Resource Include="View\Icons\speed4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="help\about0.jpg" />
+    <Resource Include="help\customize0.jpg" />
+    <Resource Include="help\general0.jpg" />
+    <Resource Include="help\general2.jpg" />
+    <Resource Include="help\general3.jpg" />
+    <Resource Include="help\general4.jpg" />
+    <Resource Include="help\helpData.txt" />
+    <Resource Include="help\icons0.jpg" />
+    <Resource Include="help\icons1.jpg" />
+    <Resource Include="help\icons2.jpg" />
+    <Resource Include="help\icons3.jpg" />
+    <Resource Include="help\toolbar0.jpg" />
+    <Resource Include="help\tracking0.jpg" />
+    <Resource Include="help\tracking1.jpg" />
+    <Resource Include="help\tracking2.jpg" />
+    <Resource Include="help\tracking3.jpg" />
+    <Resource Include="help\training0.jpg" />
+    <Resource Include="help\training1.jpg" />
+    <Resource Include="help\training2.jpg" />
+    <Resource Include="help\training3.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="avcodec-53.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avdevice-53.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avfilter-2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avformat-53.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avutil-51.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="freeglut.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="freenect.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="View\Icons\speed_empty.png" />
+    <Resource Include="View\Icons\error_icon.png" />
+    <Resource Include="grammar.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="help\customize1.jpg" />
+    <Resource Include="help\feedbacksOpenGL0.jpg" />
+    <Resource Include="help\feedbacksOpenGL1.jpg" />
+    <Resource Include="help\sessionRecord0.jpg" />
+    <Resource Include="help\createSession0.jpg" />
+    <Resource Include="help\chart0.jpg" />
+    <Resource Include="help\chart1.jpg" />
+    <Resource Include="help\chart2.jpg" />
+    <Resource Include="help\chart3.jpg" />
+    <Resource Include="help\replay0.jpg" />
+    <Resource Include="help\replay1.jpg" />
+    <Resource Include="help\replay2.jpg" />
+    <Resource Include="help\replay3.jpg" />
+    <Resource Include="help\trainingAvatar0.jpg" />
+    <Resource Include="help\trainingAvatar1.jpg" />
+    <Resource Include="help\trainingAvatar2.jpg" />
+    <Resource Include="help\speech0.jpg" />
+    <Resource Include="help\general_tools.jpg" />
+    <Resource Include="help\feedback_icon.jpg" />
+    <Content Include="postproc-52.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="swresample-0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="swscale-2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tao.FreeGlut.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tao.OpenGl.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="View\Icons\frightened.png" />
+    <Resource Include="AForge.NET Framework-2.2.5\Copyright.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\AForge ReadMe.txt" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavcodec\avcodec.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavcodec\avfft.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavcodec\dxva2.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavcodec\opt.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavcodec\vaapi.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavcodec\vda.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavcodec\vdpau.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavcodec\version.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavcodec\xvmc.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavdevice\avdevice.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavfilter\avcodec.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavfilter\avfilter.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavfilter\avfiltergraph.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavfilter\buffersink.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavfilter\version.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavfilter\vsrc_buffer.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavformat\avformat.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavformat\avio.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavformat\version.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\adler32.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\aes.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\attributes.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\audioconvert.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\avassert.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\avconfig.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\avstring.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\avutil.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\base64.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\bswap.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\common.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\cpu.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\crc.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\dict.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\error.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\eval.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\fifo.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\file.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\imgutils.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\intfloat_readwrite.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\intreadwrite.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\lfg.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\log.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\lzo.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\mathematics.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\md5.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\mem.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\opt.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\parseutils.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\pixdesc.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\pixfmt.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\random_seed.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\rational.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\samplefmt.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libavutil\sha.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libpostproc\postprocess.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libswresample\swresample.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\include\libswscale\swscale.h" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\bzip2.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\ffmpeg.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\freetype.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\frei0r.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\gsm.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\lame.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\libvpx.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\opencore-amr.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\openjpeg.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\rtmp.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\schroedinger.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\sdl.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\speex.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\theora.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\vo-aacenc.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\vo-amrwbenc.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\vorbis.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\x264.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\xavs.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\xvid.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\licenses\zlib.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\README.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\GhostAPI\AForge ReadMe.txt" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\GhostAPI\GhostAPI.dll" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\GhostAPI\PbkComm32.dll" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\GhostAPI\PbkUsbPort.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\GhostAPI\relnotes.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\libfreenect\AForge ReadMe.txt" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\libfreenect\freenect.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\msinttypes\AForge ReadMe.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\msinttypes\changelog.txt" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\msinttypes\inttypes.h" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\msinttypes\stdint.h" />
+    <Resource Include="AForge.NET Framework-2.2.5\Externals\TeRK\AForge ReadMe.txt" />
+    <Content Include="AForge.NET Framework-2.2.5\Externals\TeRK\TeRK.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\gpl-3.0.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\lgpl-3.0.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\License.txt" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release notes.txt" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Controls.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Controls.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.DebuggerVisualizers %282010%29.dll" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.dll" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Fuzzy.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Fuzzy.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Genetic.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Genetic.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Imaging.dll" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Imaging.Formats.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Imaging.Formats.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Imaging.IPPrototyper.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Imaging.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.MachineLearning.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.MachineLearning.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Math.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Math.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Neuro.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Neuro.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Robotics.Lego.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Robotics.Lego.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Robotics.Surveyor.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Robotics.Surveyor.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Robotics.TeRK.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Robotics.TeRK.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Video.DirectShow.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Video.DirectShow.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Video.dll" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Video.FFMPEG.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Video.FFMPEG.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Video.Kinect.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Video.Kinect.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Video.VFW.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Video.VFW.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Video.Ximea.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Video.Ximea.xml" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Video.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\AForge.Vision.dll" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.Vision.xml" />
+    <Resource Include="AForge.NET Framework-2.2.5\Release\AForge.xml" />
+    <Content Include="AForge.NET Framework-2.2.5\Release\IPPrototyper.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AForge.NET Framework-2.2.5\Externals\ffmpeg\bin\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
