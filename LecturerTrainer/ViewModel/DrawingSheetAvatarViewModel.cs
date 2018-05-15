@@ -112,13 +112,13 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// Radius of the 3D elements composing the avatar
         /// </summary>
-        private readonly float jointsRadius = 0.03f;
-        private readonly float bonesRadius = 0.03f;
+        private readonly float jointsRadius = 0.04f;
+        private readonly float bonesRadius = 0.05f;
         private readonly float headRadius = 0.15f;
-        private readonly float shoulderRadius = 0.05f;
-        private readonly float upperTorsoRadius = 0.09f;
-        private readonly float lowerTorsoRadius = 0.05f;
-        private readonly float hipRadius = 0.04f;
+        private readonly float shoulderRadius = 0.06f;
+        private readonly float upperTorsoRadius = 0.19f;
+        private readonly float lowerTorsoRadius = 0.16f;
+        private readonly float hipRadius = 0.08f;
 
         /// <summary>
         /// Avatar initial position.
@@ -1602,8 +1602,8 @@ namespace LecturerTrainer.Model
         /// <param name="color"></param>
         private void DrawForeArm(Vector3 elbow, Vector3 wrist, OpenTK.Vector4 color)
         {
-            DrawCone2P(elbow.X, elbow.Y, elbow.Z,
-                           wrist.X, wrist.Y, wrist.Z, bonesRadius, color);
+            DrawCylinder2P(elbow.X, elbow.Y, elbow.Z,
+                           wrist.X, wrist.Y, wrist.Z, bonesRadius-0.01f, color);
         }
 
         /// <summary>
@@ -1697,9 +1697,9 @@ namespace LecturerTrainer.Model
                                          hipEnd.Z + (knee.Z - hipEnd.Z) * 0.5f);
             // Drawing of the two cones
             DrawCylinder2P(center.X, center.Y, center.Z, hipEnd.X, hipEnd.Y,
-                       hipEnd.Z, hipRadius, color);
-            DrawCone2P(center.X, center.Y, center.Z, knee.X, knee.Y,
-                       knee.Z, hipRadius, color);
+                       hipEnd.Z, hipRadius - 0.02f, color);
+            DrawCylinder2P(center.X, center.Y, center.Z, knee.X, knee.Y,
+                       knee.Z, hipRadius-0.02f, color);
         }
 
         /// <summary>
@@ -1715,10 +1715,10 @@ namespace LecturerTrainer.Model
                                          knee.Y + (ankle.Y - knee.Y) * 0.5f,
                                          knee.Z + (ankle.Z - knee.Z) * 0.5f);
             // Drawing of the two cones
-            DrawCone2P(center.X, center.Y, center.Z, knee.X, knee.Y,
-                       knee.Z, bonesRadius + 0.02f, color);
-            DrawCone2P(center.X, center.Y, center.Z, ankle.X, ankle.Y,
-                       ankle.Z, bonesRadius + 0.02f, color);
+            DrawCylinder2P(center.X, center.Y, center.Z, knee.X, knee.Y,
+                       knee.Z, bonesRadius , color);
+            DrawCylinder2P(center.X, center.Y, center.Z, ankle.X, ankle.Y,
+                       ankle.Z, bonesRadius , color);
         }
 
         /// <summary>
