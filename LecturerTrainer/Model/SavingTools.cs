@@ -228,6 +228,7 @@ namespace LecturerTrainer.Model
         public static void StartSavingXMLSkeleton()
         {
             int nbSkFrame = 0;
+            int count = 0;
             try
             {
                 XmlWriterSettings settings = new XmlWriterSettings()
@@ -240,19 +241,24 @@ namespace LecturerTrainer.Model
                 xmlSkeletonWriter.WriteStartElement("Skeletons");
                 xmlSkeletonQueue = new PCQueue<Skeleton>(sk =>
                 {
-                    xmlSkeletonWriter.WriteStartElement("Skeleton_" + nbSkFrame++);
-                    xmlSkeletonWriter.WriteAttributeString("TrackingState", sk.TrackingState.ToString());
-                    List<Joint> lJoints = sk.Joints.ToList();
-                    lJoints.ForEach(joint =>
+                    nbSkFrame++;
+                    if(nbSkFrame % 2 == 1 || nbSkFrame == 0)
                     {
-                        xmlSkeletonWriter.WriteStartElement(joint.JointType.ToString());
-                        xmlSkeletonWriter.WriteAttributeString("TrackingState", joint.TrackingState.ToString());
-                        xmlSkeletonWriter.WriteAttributeString("X", joint.Position.X.ToString());
-                        xmlSkeletonWriter.WriteAttributeString("Y", joint.Position.Y.ToString());
-                        xmlSkeletonWriter.WriteAttributeString("Z", joint.Position.Z.ToString());
+                        xmlSkeletonWriter.WriteStartElement("Skeleton_" + count++);
+                        xmlSkeletonWriter.WriteAttributeString("TrackingState", sk.TrackingState.ToString());
+                        List<Joint> lJoints = sk.Joints.ToList();
+                        lJoints.ForEach(joint =>
+                        {
+                            xmlSkeletonWriter.WriteStartElement(joint.JointType.ToString());
+                            xmlSkeletonWriter.WriteAttributeString("TrackingState", joint.TrackingState.ToString());
+                            xmlSkeletonWriter.WriteAttributeString("X", joint.Position.X.ToString());
+                            xmlSkeletonWriter.WriteAttributeString("Y", joint.Position.Y.ToString());
+                            xmlSkeletonWriter.WriteAttributeString("Z", joint.Position.Z.ToString());
+                            xmlSkeletonWriter.WriteEndElement();
+                        });
                         xmlSkeletonWriter.WriteEndElement();
-                    });
-                    xmlSkeletonWriter.WriteEndElement();
+                    }
+                    
 
                 }, () =>
                 {

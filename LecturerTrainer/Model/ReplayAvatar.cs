@@ -249,7 +249,7 @@ namespace LecturerTrainer.Model
                 // We only draw the last skeleton
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
 
-                elapsedVideoTime += ReplayViewModel.normalSpeed;
+                elapsedVideoTime += (ReplayViewModel.normalSpeed);
                 setDisplayedTime();
 
             }
