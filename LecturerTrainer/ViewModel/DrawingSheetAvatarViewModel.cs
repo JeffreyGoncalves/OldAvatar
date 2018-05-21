@@ -549,10 +549,10 @@ namespace LecturerTrainer.Model
             face23 = new Vector3(faceP3D.ElementAt(23).X, faceP3D.ElementAt(23).Y, faceP3D.ElementAt(23).Z) + faceAdjustment;
             face24 = new Vector3(faceP3D.ElementAt(24).X, faceP3D.ElementAt(24).Y, faceP3D.ElementAt(24).Z) + faceAdjustment;
             // Right eyebrow
-            face15 = new Vector3(faceP3D.ElementAt(15).X, faceP3D.ElementAt(15).Y, faceP3D.ElementAt(15).Z) + faceAdjustment;
-            face16 = new Vector3(faceP3D.ElementAt(16).X, faceP3D.ElementAt(16).Y, faceP3D.ElementAt(16).Z) + faceAdjustment;
-            face17 = new Vector3(faceP3D.ElementAt(17).X, faceP3D.ElementAt(17).Y, faceP3D.ElementAt(17).Z) + faceAdjustment;
-            face18 = new Vector3(faceP3D.ElementAt(18).X, faceP3D.ElementAt(18).Y, faceP3D.ElementAt(18).Z) + faceAdjustment;
+            face15 = new Vector3(faceP3D.ElementAt(15).X, faceP3D.ElementAt(15).Y * 1.25f, faceP3D.ElementAt(15).Z) + faceAdjustment;
+            face16 = new Vector3(faceP3D.ElementAt(16).X, faceP3D.ElementAt(16).Y * 1.25f, faceP3D.ElementAt(16).Z) + faceAdjustment;
+            face17 = new Vector3(faceP3D.ElementAt(17).X, faceP3D.ElementAt(17).Y * 1.25f, faceP3D.ElementAt(17).Z) + faceAdjustment;
+            face18 = new Vector3(faceP3D.ElementAt(18).X, faceP3D.ElementAt(18).Y * 1.25f, faceP3D.ElementAt(18).Z) + faceAdjustment;
             // Left eye
             face52 = new Vector3(faceP3D.ElementAt(52).X, faceP3D.ElementAt(52).Y, faceP3D.ElementAt(52).Z) + faceAdjustment;
             face53 = new Vector3(faceP3D.ElementAt(53).X, faceP3D.ElementAt(53).Y, faceP3D.ElementAt(53).Z) + faceAdjustment;
@@ -561,14 +561,14 @@ namespace LecturerTrainer.Model
             face56 = new Vector3(faceP3D.ElementAt(56).X, faceP3D.ElementAt(56).Y, faceP3D.ElementAt(56).Z) + faceAdjustment;
             face57 = new Vector3(faceP3D.ElementAt(57).X, faceP3D.ElementAt(57).Y, faceP3D.ElementAt(57).Z) + faceAdjustment;
             // Left eyebrow
-            face48 = new Vector3(faceP3D.ElementAt(48).X, faceP3D.ElementAt(48).Y, faceP3D.ElementAt(48).Z) + faceAdjustment;
-            face49 = new Vector3(faceP3D.ElementAt(49).X, faceP3D.ElementAt(49).Y, faceP3D.ElementAt(49).Z) + faceAdjustment;
-            face50 = new Vector3(faceP3D.ElementAt(50).X, faceP3D.ElementAt(50).Y, faceP3D.ElementAt(50).Z) + faceAdjustment;
-            face51 = new Vector3(faceP3D.ElementAt(51).X, faceP3D.ElementAt(51).Y, faceP3D.ElementAt(51).Z) + faceAdjustment;
+            face48 = new Vector3(faceP3D.ElementAt(48).X, faceP3D.ElementAt(48).Y*1.25f, faceP3D.ElementAt(48).Z) + faceAdjustment;
+            face49 = new Vector3(faceP3D.ElementAt(49).X, faceP3D.ElementAt(49).Y*1.25f, faceP3D.ElementAt(49).Z) + faceAdjustment;
+            face50 = new Vector3(faceP3D.ElementAt(50).X, faceP3D.ElementAt(50).Y*1.25f, faceP3D.ElementAt(50).Z) + faceAdjustment;
+            face51 = new Vector3(faceP3D.ElementAt(51).X, faceP3D.ElementAt(51).Y*1.25f, faceP3D.ElementAt(51).Z) + faceAdjustment;
 
             //Finally, we want to lengthen face elements
-            float verticalFaceGap = 0.02f;
-            float horizontalFaceGap = 0.05f;
+            float verticalFaceGap = 0.02f * 2.0f;
+            float horizontalFaceGap = 0.05f * 2.0f;
             // Eyes spreading
             lengthenSegment(ref face19, ref face52, horizontalFaceGap);
             lengthenSegment(ref face24, ref face57, horizontalFaceGap);
@@ -587,11 +587,11 @@ namespace LecturerTrainer.Model
             lengthenSegment(ref face15, ref face48, horizontalFaceGap);
             lengthenSegment(ref face16, ref face49, horizontalFaceGap);
             lengthenSegment(ref face18, ref face51, horizontalFaceGap);
-            lengthenSegment(ref face49, ref face51, verticalFaceGap);
-            lengthenSegment(ref face16, ref face18, verticalFaceGap);
+            lengthenSegment(ref face49, ref face51, verticalFaceGap/3);
+            lengthenSegment(ref face16, ref face18, verticalFaceGap/3);
             // Mouth enlargement
             lengthenSegment(ref MTUL, ref MBLL, verticalFaceGap);
-            lengthenSegment(ref ORCM, ref OLCM, horizontalFaceGap);
+            lengthenSegment(ref ORCM, ref OLCM, horizontalFaceGap*1.5f);
 
             for (int i = 0; i < faceP.Count; i++)
             {
@@ -1595,7 +1595,7 @@ namespace LecturerTrainer.Model
                             headCenter.X, headCenter.Y, headCenter.Z, bonesRadius, color);
             DrawSphere1P(shoulderCenter.X, shoulderCenter.Y, shoulderCenter.Z, bonesRadius, color);
 
-            DrawSphere1P(headCenter.X, headCenter.Y, headCenter.Z, headRadius, color);
+            DrawSphere1P(headCenter.X, headCenter.Y, headCenter.Z, headRadius*1.5f, color);
         }
 
         /// <summary>
