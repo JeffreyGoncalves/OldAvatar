@@ -89,6 +89,7 @@ namespace LecturerTrainer.ViewModel
         public static HandTraining _handgesture = new HandTraining();
         public static PowerTraining _powergesture = new PowerTraining();
         public static WelcomeTraining _welcomegesture = new WelcomeTraining();
+        public static SaluteTraining _salutegesture = new SaluteTraining();
 
         public static string AvatarGesture;
 
@@ -109,6 +110,7 @@ namespace LecturerTrainer.ViewModel
             _handgesture.GestureRecognized += HandTraining_GestureRecognized;
             _powergesture.GestureRecognized += PowerTraining_GestureRecognized;
             _welcomegesture.GestureRecognized += WelcomeTraining_GestureRecognized;
+            _salutegesture.GestureRecognized += SaluteTraining_GestureRecognized;
 
         }
 
@@ -389,5 +391,30 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+        public static void SaluteTraining_GestureRecognized(object sender, EventArgs e)
+        {
+            bool complete = ((SaluteTraining)sender).Complete;
+            bool wrong = ((SaluteTraining)sender).Wrong;
+            bool slow = ((SaluteTraining)sender).Slow;
+
+            if (complete)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Right_Gesture.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+            else if(slow)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Too_Slow.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+            else if (wrong)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Wrong_Gesture.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+        }
     }
 }
