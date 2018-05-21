@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using LecturerTrainer.View;
 using Tao.FreeGlut;
+using Tao.OpenGl;
 using OpenTK.Graphics.OpenGL;
 using System.Windows.Forms;
 using OpenTK;
@@ -17,6 +18,7 @@ using System.Drawing.Imaging;
 using OpenTK.Graphics;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 using System.Text.RegularExpressions;
+
 
 // TO NOTE : the z axis has been reversed for a better visibility of the avatar
 namespace LecturerTrainer.Model
@@ -113,6 +115,7 @@ namespace LecturerTrainer.Model
         /// Radius of the 3D elements composing the avatar
         /// </summary>
         private readonly float jointsRadius = 0.04f;
+        private readonly float jointsHandRadius = 0.02f;
         private readonly float bonesRadius = 0.05f;
         private readonly float headRadius = 0.15f;
         private readonly float shoulderRadius = 0.06f;
@@ -1095,22 +1098,29 @@ namespace LecturerTrainer.Model
         /// <author>Vincent Fabioux</author>
         private void HudDrawImage(String imgName, float w, float h, float x = 0f, float y = 0f)
         {
-            GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name == imgName select p.idTextureOpenGL).First());
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            try
+            {
+                GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name == imgName select p.idTextureOpenGL).First());
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
 
-            GL.Begin(PrimitiveType.Polygon);
-            GL.TexCoord2(1.0, 0.0);
-            GL.Vertex3(x + w, y - h, 0);
-            GL.TexCoord2(1.0, 1.0);
-            GL.Vertex3(x + w, y + h, 0);
-            GL.TexCoord2(0.0, 1.0);
-            GL.Vertex3(x - w, y + h, 0);
-            GL.TexCoord2(0.0, 0.0);
-            GL.Vertex3(x - w, y - h, 0);
-            GL.End();
+                GL.Begin(PrimitiveType.Polygon);
+                GL.TexCoord2(1.0, 0.0);
+                GL.Vertex3(x + w, y - h, 0);
+                GL.TexCoord2(1.0, 1.0);
+                GL.Vertex3(x + w, y + h, 0);
+                GL.TexCoord2(0.0, 1.0);
+                GL.Vertex3(x - w, y + h, 0);
+                GL.TexCoord2(0.0, 0.0);
+                GL.Vertex3(x - w, y - h, 0);
+                GL.End();
+            }
+            catch(Exception e)
+            {
+
+            }
         }
 
         #endregion
@@ -1396,7 +1406,35 @@ namespace LecturerTrainer.Model
             }
             if (colorSelected)
             {
+                
                 DrawSphere1P(position.X, position.Y, position.Z, jointsRadius, drawColor);
+                
+            }
+        }
+        /// <summary>
+        /// this is for having a better visibility of the two hands
+        /// <author>Alban Descottes</author>
+        /// </summary>
+        /// <param name="joint"></param>
+        /// <param name="position"></param>
+        private void drawJointHand(Joint joint, Vector3 position)
+        {
+            OpenTK.Vector4 drawColor = new OpenTK.Vector4();
+            bool colorSelected = false;
+            if (joint.TrackingState == JointTrackingState.Tracked)
+            {
+                drawColor = this.trackedJointColor;
+                colorSelected = true;
+            }
+            else if (joint.TrackingState == JointTrackingState.Inferred)
+            {
+                drawColor = this.inferredJointColor;
+                colorSelected = true;
+            }
+            if (colorSelected)
+            {
+                DrawSphere1P(position.X, position.Y, position.Z, jointsHandRadius, drawColor);
+
             }
         }
 
@@ -1482,7 +1520,7 @@ namespace LecturerTrainer.Model
                         DrawHand(point0, point1, drawColor);
 
                         // Drawing of the second joint (hand is an extremity)
-                        drawJoint(joint1, point1);
+                        drawJointHand(joint1, point1);
                     }
 
                     else if ((jointType0 == JointType.Head && jointType1 == JointType.ShoulderCenter))
@@ -1590,8 +1628,20 @@ namespace LecturerTrainer.Model
         /// <param name="color"></param>
         private void DrawArm(Vector3 shoulderEnd, Vector3 elbow, OpenTK.Vector4 color)
         {
-            DrawCylinder2P(shoulderEnd.X, shoulderEnd.Y, shoulderEnd.Z,
-                           elbow.X, elbow.Y, elbow.Z, bonesRadius, color);
+            Vector3 centerup = new Vector3(shoulderEnd.X + (elbow.X - shoulderEnd.X) * 0.3f,
+                                        shoulderEnd.Y + (elbow.Y - shoulderEnd.Y) * 0.3f,
+                                        shoulderEnd.Z + (elbow.Z - shoulderEnd.Z) * 0.3f);
+            Vector3 centerdown = new Vector3(shoulderEnd.X + (elbow.X - shoulderEnd.X) * 0.7f,
+                                        shoulderEnd.Y + (elbow.Y - shoulderEnd.Y) * 0.7f,
+                                        shoulderEnd.Z + (elbow.Z - shoulderEnd.Z) * 0.7f);
+            DrawCylinderWithTwoRadius(centerup.X, centerup.Y, centerup.Z, shoulderEnd.X, shoulderEnd.Y,
+                       shoulderEnd.Z, bonesRadius + 0.02f, bonesRadius, color);
+            DrawCylinderWithTwoRadius(centerup.X, centerup.Y, centerup.Z, centerdown.X, centerdown.Y,
+                       centerdown.Z, bonesRadius + 0.02f, bonesRadius + 0.02f, color);
+            DrawCylinderWithTwoRadius(centerdown.X, centerdown.Y, centerdown.Z, elbow.X, elbow.Y,
+                       elbow.Z, bonesRadius + 0.02f, bonesRadius, color);
+            //DrawCylinder2P(shoulderEnd.X, shoulderEnd.Y, shoulderEnd.Z,
+            //             elbow.X, elbow.Y, elbow.Z, bonesRadius, color);
         }
 
         /// <summary>
@@ -1602,8 +1652,15 @@ namespace LecturerTrainer.Model
         /// <param name="color"></param>
         private void DrawForeArm(Vector3 elbow, Vector3 wrist, OpenTK.Vector4 color)
         {
-            DrawCylinder2P(elbow.X, elbow.Y, elbow.Z,
-                           wrist.X, wrist.Y, wrist.Z, bonesRadius-0.01f, color);
+            Vector3 center = new Vector3(elbow.X + (wrist.X - elbow.X) * 0.2f,
+                                         elbow.Y + (wrist.Y - elbow.Y) * 0.2f,
+                                         elbow.Z + (wrist.Z - elbow.Z) * 0.2f);
+            DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, elbow.X, elbow.Y,
+                       elbow.Z, bonesRadius + 0.01f, bonesRadius, color);
+            DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, wrist.X, wrist.Y,
+                       wrist.Z, bonesRadius + 0.01f, bonesRadius - 0.02f, color);
+            //DrawCylinder2P(elbow.X, elbow.Y, elbow.Z,
+            //               wrist.X, wrist.Y, wrist.Z, bonesRadius-0.01f, color);
         }
 
         /// <summary>
@@ -1614,11 +1671,14 @@ namespace LecturerTrainer.Model
         /// <param name="color"></param>
         private void DrawHand(Vector3 wrist, Vector3 handEnd, OpenTK.Vector4 color)
         {
+
+            DrawHandSecondversion(wrist.X, wrist.Y, wrist.Z, handEnd.X, handEnd.Y, handEnd.Z, color);                       
+            /*
             float centerX = (wrist.X + handEnd.X) / 2;
             float centerY = (wrist.Y + handEnd.Y) / 2;
             float centerZ = (wrist.Z + handEnd.Z) / 2;
             DrawCylinder2P(handEnd.X, handEnd.Y, handEnd.Z,
-                       wrist.X, wrist.Y, wrist.Z, bonesRadius, color);
+                       wrist.X, wrist.Y, wrist.Z, bonesRadius, color);*/
         }
 
         /// <summary>
@@ -1696,10 +1756,10 @@ namespace LecturerTrainer.Model
                                          hipEnd.Y + (knee.Y - hipEnd.Y) * 0.5f,
                                          hipEnd.Z + (knee.Z - hipEnd.Z) * 0.5f);
             // Drawing of the two cones
-            DrawCylinder2P(center.X, center.Y, center.Z, hipEnd.X, hipEnd.Y,
-                       hipEnd.Z, hipRadius - 0.02f, color);
-            DrawCylinder2P(center.X, center.Y, center.Z, knee.X, knee.Y,
-                       knee.Z, hipRadius-0.02f, color);
+            DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, hipEnd.X, hipEnd.Y,
+                       hipEnd.Z, hipRadius, hipRadius, color);
+            DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, knee.X, knee.Y,
+                       knee.Z, hipRadius, hipRadius - 0.02f, color);
         }
 
         /// <summary>
@@ -1715,10 +1775,10 @@ namespace LecturerTrainer.Model
                                          knee.Y + (ankle.Y - knee.Y) * 0.5f,
                                          knee.Z + (ankle.Z - knee.Z) * 0.5f);
             // Drawing of the two cones
-            DrawCylinder2P(center.X, center.Y, center.Z, knee.X, knee.Y,
-                       knee.Z, bonesRadius , color);
-            DrawCylinder2P(center.X, center.Y, center.Z, ankle.X, ankle.Y,
-                       ankle.Z, bonesRadius , color);
+            DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, knee.X, knee.Y,
+                       knee.Z, bonesRadius, bonesRadius + 0.01f, color);
+            DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, ankle.X, ankle.Y,
+                       ankle.Z, bonesRadius, bonesRadius - 0.01f, color);
         }
 
         /// <summary>
@@ -1889,6 +1949,137 @@ namespace LecturerTrainer.Model
                 GL.Rotate(aX, rX, rY, 0.0);
                 GL.Color4(color);
                 Glut.glutSolidCone(radius, v, generalSlices, generalStacks);
+            }
+            GL.PopMatrix();
+        }
+        /// <summary>
+        /// <author> Alban Descottes</author>
+        /// </summary>
+        /// <param name="X1"></param>
+        /// <param name="Y1"></param>
+        /// <param name="Z1"></param>
+        /// <param name="X2"></param>
+        /// <param name="Y2"></param>
+        /// <param name="Z2"></param>
+        /// <param name="radius1"></param>
+        /// <param name="radius2"></param>
+        /// <param name="color"></param>
+        void DrawCylinderWithTwoRadius(float X1, float Y1, float Z1, float X2, float Y2, float Z2, float radius1, float radius2, OpenTK.Vector4 color)
+        {
+            // Reversed Z axis give a better visibility
+            Z1 = -Z1;
+            Z2 = -Z2;
+            float vX = X2 - X1;
+            float vY = Y2 - Y1;
+            float vZ = Z2 - Z1;
+
+            if (vZ == 0)
+                vZ = 0.0001f;
+
+            // Size of the vector separating the two points
+            double v = Math.Sqrt(vX * vX + vY * vY + vZ * vZ);
+
+            // Angle between the vector and Z axis
+            double aX = 57.2957795 * Math.Acos(vZ / v);
+            if (vZ < 0.0)
+                aX = -aX;
+            float rX = -vY * vZ;
+            float rY = vX * vZ;
+            GL.PushMatrix();
+            {
+                GL.Translate(X1, Y1, Z1);
+                GL.Rotate(aX, rX, rY, 0.0);
+                GL.Color4(color);
+                Glu.GLUquadric test = Glu.gluNewQuadric();
+                Glu.gluCylinder(test, radius1, radius2, v, generalSlices, generalStacks);
+            }
+            GL.PopMatrix();
+        }
+
+
+        /// <summary>
+        /// Better shape of the hands
+        /// <author>Alban Descottes</author>
+        /// </summary>
+        /// <param name="X1"></param>
+        /// <param name="Y1"></param>
+        /// <param name="Z1"></param>
+        /// <param name="X2"></param>
+        /// <param name="Y2"></param>
+        /// <param name="Z2"></param>
+        /// <param name="color"></param>
+        void DrawHandSecondversion(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color)
+        {
+            Z1 = -Z1;
+            Z2 = -Z2;
+            float vX = X2 - X1;
+            float vY = Y2 - Y1;
+            float vZ = Z2 - Z1;
+
+            if (vZ == 0)
+                vZ = 0.0001f;
+
+            // Size of the vector separating the two points
+            double v = Math.Sqrt(vX * vX + vY * vY + vZ * vZ);
+
+            // Angle between the vector and Z axis
+            double aX = 57.2957795 * Math.Acos(vZ / v);
+            if (vZ < 0.0)
+                aX = -aX;
+            float rX = -vY * vZ;
+            float rY = vX * vZ;
+            GL.PushMatrix();
+            {
+                //draw the cylinder body
+                GL.Translate(X1, Y1, Z1);
+                GL.Rotate(aX, rX, rY, 0.0);
+                GL.Color4(color);
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+
+                // first attempt, we can see the shape away fro; the really hand
+                /*
+                Gl.glBegin(Gl.GL_POLYGON);
+                {
+                    Gl.glVertex3f(X1, Y1, Z1);
+                    Gl.glVertex3f(X1 + 0.05f, Y1, Z1);
+                    Gl.glVertex3f(X1 + 0.05f, Y1, Z1 + 0.05f);
+                    Gl.glVertex3f(X1 - 0.05f, Y1, Z1 + 0.05f);
+                    Gl.glVertex3f(X1 - 0.05f, Y1, Z1);
+                }
+                Gl.glEnd();
+                */
+                // second attempt it works for a polygon shape, but just for 2D shape
+                /*
+                Gl.glBegin(Gl.GL_POLYGON);
+                {
+                    Gl.glVertex3f(0, 0, 0);
+                    Gl.glVertex3f(0.05f, 0, 0);
+                    Gl.glVertex3f(0.05f, 0, 0.1f);
+                    Gl.glVertex3f(-0.05f, 0, 0.1f);
+                    Gl.glVertex3f(-0.05f, 0, 0);
+
+                }
+                Gl.glEnd();
+                */
+                // third attempt with GL_QUAD_STRIP, try to do 4 quads
+                Gl.glShadeModel(Gl.GL_FLAT);
+                Gl.glBegin(Gl.GL_QUAD_STRIP);
+                {
+                    
+                    Gl.glVertex3f(-0.02f, 0, 0.07f);
+                    Gl.glVertex3f(-0.02f, 0, 0);
+                    Gl.glVertex3f(0.02f, 0, 0.07f);
+                    Gl.glVertex3f(0.02f, 0, 0);
+                    Gl.glVertex3f(0.02f, -0.04f, 0.07f);
+                    Gl.glVertex3f(0.02f, -0.04f, 0);
+                    Gl.glVertex3f(-0.02f, -0.04f, 0.07f);
+                    Gl.glVertex3f(-0.02f, -0.04f, 0);
+                    Gl.glVertex3f(-0.02f, 0, 0.07f);
+                    Gl.glVertex3f(-0.02f, 0, 0);
+                    
+                }
+                Gl.glEnd();
+                Gl.glShadeModel(Gl.GL_SMOOTH);
             }
             GL.PopMatrix();
         }
