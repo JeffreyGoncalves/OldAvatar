@@ -1099,22 +1099,29 @@ namespace LecturerTrainer.Model
         /// <author>Vincent Fabioux</author>
         private void HudDrawImage(String imgName, float w, float h, float x = 0f, float y = 0f)
         {
-            GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name == imgName select p.idTextureOpenGL).First());
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            try
+            {
+                GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name == imgName select p.idTextureOpenGL).First());
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
 
-            GL.Begin(PrimitiveType.Polygon);
-            GL.TexCoord2(1.0, 0.0);
-            GL.Vertex3(x + w, y - h, 0);
-            GL.TexCoord2(1.0, 1.0);
-            GL.Vertex3(x + w, y + h, 0);
-            GL.TexCoord2(0.0, 1.0);
-            GL.Vertex3(x - w, y + h, 0);
-            GL.TexCoord2(0.0, 0.0);
-            GL.Vertex3(x - w, y - h, 0);
-            GL.End();
+                GL.Begin(PrimitiveType.Polygon);
+                GL.TexCoord2(1.0, 0.0);
+                GL.Vertex3(x + w, y - h, 0);
+                GL.TexCoord2(1.0, 1.0);
+                GL.Vertex3(x + w, y + h, 0);
+                GL.TexCoord2(0.0, 1.0);
+                GL.Vertex3(x - w, y + h, 0);
+                GL.TexCoord2(0.0, 0.0);
+                GL.Vertex3(x - w, y - h, 0);
+                GL.End();
+            }
+            catch(Exception e)
+            {
+
+            }
         }
 
         #endregion
