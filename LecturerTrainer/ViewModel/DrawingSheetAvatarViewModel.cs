@@ -114,7 +114,7 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// Radius of the 3D elements composing the avatar
         /// </summary>
-        private readonly float jointsRadius = 0.04f;
+        private readonly float jointsRadius = 0.03f;
         private readonly float jointsHandRadius = 0.02f;
         private readonly float bonesRadius = 0.05f;
         private readonly float headRadius = 0.15f;
@@ -122,6 +122,7 @@ namespace LecturerTrainer.Model
         private readonly float upperTorsoRadius = 0.19f;
         private readonly float lowerTorsoRadius = 0.16f;
         private readonly float hipRadius = 0.08f;
+        private readonly float armRadius = 0.04f;
 
         /// <summary>
         /// Avatar initial position.
@@ -1175,12 +1176,12 @@ namespace LecturerTrainer.Model
             // Left Arm
             this.DrawArm(initialShoulderLeft, initialElbowLeft, trackedBoneColor);
             this.DrawForeArm(initialElbowLeft, initialWristLeft, trackedBoneColor);
-            this.DrawHand(initialWristLeft, initialHandLeft, trackedBoneColor);
+            this.DrawHand(initialWristLeft, initialHandLeft, trackedBoneColor, true);
 
             // Right Arm
             this.DrawArm(initialShoulderRight, initialElbowRight, trackedBoneColor);
             this.DrawForeArm(initialElbowRight, initialWristRight, trackedBoneColor);
-            this.DrawHand(initialWristRight, initialHandRight, trackedBoneColor);
+            this.DrawHand(initialWristRight, initialHandRight, trackedBoneColor, false);
 
             // Left Leg
             this.DrawThigh(initialHipLeft, initialKneeLeft, trackedBoneColor);
@@ -1510,7 +1511,10 @@ namespace LecturerTrainer.Model
                         currentAdjustment = calculateAdjustment(currentBone, properWristToHand);
                         specificAdjustment += currentAdjustment;
                         point1 += currentAdjustment;
-                        DrawHand(point0, point1, drawColor);
+                        if(jointType1 == JointType.HandLeft)
+                            DrawHand(point0, point1, drawColor, true);
+                        else
+                            DrawHand(point0, point1, drawColor, false);
 
                         // Drawing of the second joint (hand is an extremity)
                         drawJointHand(joint1, point1);
@@ -1628,11 +1632,11 @@ namespace LecturerTrainer.Model
                                         shoulderEnd.Y + (elbow.Y - shoulderEnd.Y) * 0.7f,
                                         shoulderEnd.Z + (elbow.Z - shoulderEnd.Z) * 0.7f);
             DrawCylinderWithTwoRadius(centerup.X, centerup.Y, centerup.Z, shoulderEnd.X, shoulderEnd.Y,
-                       shoulderEnd.Z, bonesRadius + 0.02f, bonesRadius, color);
+                       shoulderEnd.Z, armRadius + 0.02f, armRadius, color);
             DrawCylinderWithTwoRadius(centerup.X, centerup.Y, centerup.Z, centerdown.X, centerdown.Y,
-                       centerdown.Z, bonesRadius + 0.02f, bonesRadius + 0.02f, color);
+                       centerdown.Z, armRadius + 0.02f, armRadius + 0.02f, color);
             DrawCylinderWithTwoRadius(centerdown.X, centerdown.Y, centerdown.Z, elbow.X, elbow.Y,
-                       elbow.Z, bonesRadius + 0.02f, bonesRadius, color);
+                       elbow.Z, armRadius + 0.02f, armRadius, color);
             //DrawCylinder2P(shoulderEnd.X, shoulderEnd.Y, shoulderEnd.Z,
             //             elbow.X, elbow.Y, elbow.Z, bonesRadius, color);
         }
@@ -1649,9 +1653,9 @@ namespace LecturerTrainer.Model
                                          elbow.Y + (wrist.Y - elbow.Y) * 0.2f,
                                          elbow.Z + (wrist.Z - elbow.Z) * 0.2f);
             DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, elbow.X, elbow.Y,
-                       elbow.Z, bonesRadius + 0.01f, bonesRadius, color);
+                       elbow.Z, armRadius + 0.01f, armRadius, color);
             DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, wrist.X, wrist.Y,
-                       wrist.Z, bonesRadius + 0.01f, bonesRadius - 0.02f, color);
+                       wrist.Z, armRadius + 0.01f, armRadius - 0.02f, color);
             //DrawCylinder2P(elbow.X, elbow.Y, elbow.Z,
             //               wrist.X, wrist.Y, wrist.Z, bonesRadius-0.01f, color);
         }
@@ -1662,10 +1666,10 @@ namespace LecturerTrainer.Model
         /// <param name="wrist"></param>
         /// <param name="handEnd"></param>
         /// <param name="color"></param>
-        private void DrawHand(Vector3 wrist, Vector3 handEnd, OpenTK.Vector4 color)
+        private void DrawHand(Vector3 wrist, Vector3 handEnd, OpenTK.Vector4 color, bool left)
         {
 
-            DrawHandSecondversion(wrist.X, wrist.Y, wrist.Z, handEnd.X, handEnd.Y, handEnd.Z, color);                       
+            DrawHandSecondversion(wrist.X, wrist.Y, wrist.Z, handEnd.X, handEnd.Y, handEnd.Z, color, left);                       
             /*
             float centerX = (wrist.X + handEnd.X) / 2;
             float centerY = (wrist.Y + handEnd.Y) / 2;
@@ -2001,7 +2005,8 @@ namespace LecturerTrainer.Model
         /// <param name="Y2"></param>
         /// <param name="Z2"></param>
         /// <param name="color"></param>
-        void DrawHandSecondversion(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color)
+        /// <param name="left"></param>
+        void DrawHandSecondversion(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color, bool left)
         {
             Z1 = -Z1;
             Z2 = -Z2;
@@ -2026,53 +2031,111 @@ namespace LecturerTrainer.Model
                 //draw the cylinder body
                 GL.Translate(X1, Y1, Z1);
                 GL.Rotate(aX, rX, rY, 0.0);
+                if(left)
+                    GL.Rotate(80, 0, 0, 1.0f);
+                else
+                    GL.Rotate(-80, 0, 0, 1.0f);
                 GL.Color4(color);
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-
-                // first attempt, we can see the shape away fro; the really hand
-                /*
-                Gl.glBegin(Gl.GL_POLYGON);
-                {
-                    Gl.glVertex3f(X1, Y1, Z1);
-                    Gl.glVertex3f(X1 + 0.05f, Y1, Z1);
-                    Gl.glVertex3f(X1 + 0.05f, Y1, Z1 + 0.05f);
-                    Gl.glVertex3f(X1 - 0.05f, Y1, Z1 + 0.05f);
-                    Gl.glVertex3f(X1 - 0.05f, Y1, Z1);
-                }
-                Gl.glEnd();
-                */
-                // second attempt it works for a polygon shape, but just for 2D shape
-                /*
-                Gl.glBegin(Gl.GL_POLYGON);
-                {
-                    Gl.glVertex3f(0, 0, 0);
-                    Gl.glVertex3f(0.05f, 0, 0);
-                    Gl.glVertex3f(0.05f, 0, 0.1f);
-                    Gl.glVertex3f(-0.05f, 0, 0.1f);
-                    Gl.glVertex3f(-0.05f, 0, 0);
-
-                }
-                Gl.glEnd();
-                */
-                // third attempt with GL_QUAD_STRIP, try to do 4 quads
+                
+                // third attempt with GL_QUAD_STRIP, try to do 6 quads
                 Gl.glShadeModel(Gl.GL_FLAT);
                 Gl.glBegin(Gl.GL_QUAD_STRIP);
                 {
-                    
-                    Gl.glVertex3f(-0.02f, 0, 0.07f);
-                    Gl.glVertex3f(-0.02f, 0, 0);
-                    Gl.glVertex3f(0.02f, 0, 0.07f);
-                    Gl.glVertex3f(0.02f, 0, 0);
-                    Gl.glVertex3f(0.02f, -0.04f, 0.07f);
-                    Gl.glVertex3f(0.02f, -0.04f, 0);
-                    Gl.glVertex3f(-0.02f, -0.04f, 0.07f);
-                    Gl.glVertex3f(-0.02f, -0.04f, 0);
-                    Gl.glVertex3f(-0.02f, 0, 0.07f);
-                    Gl.glVertex3f(-0.02f, 0, 0);
+                    // thoses lines represent the base of the hand (link with forearm)
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
+                    Gl.glVertex3f(-0.025f, 0.01f, 0);
+                    Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
+                    Gl.glVertex3f(-0.02f, 0.02f, 0);
+                    Gl.glVertex3f(0.02f, 0.02f, 0.02f);
+                    Gl.glVertex3f(0.02f, 0.02f, 0);
+                    Gl.glVertex3f(0.04f, 0.01f, 0.02f);
+                    Gl.glVertex3f(0.025f, 0.01f, 0);
+                    Gl.glVertex3f(0.04f, -0.01f, 0.02f);
+                    Gl.glVertex3f(0.025f, -0.01f, 0);
+                    Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
+                    Gl.glVertex3f(-0.025f, -0.01f, 0);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
+                    Gl.glVertex3f(-0.025f, 0.01f, 0);
+
+                }
+                Gl.glEnd();
+                Gl.glBegin(Gl.GL_QUAD_STRIP);
+                {
+                    // thoses lines represent the palm
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
+                    Gl.glVertex3f(-0.02f, 0.02f, 0.07f);
+                    Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
+                    Gl.glVertex3f(0.02f, 0.02f, 0.07f);
+                    Gl.glVertex3f(0.02f, 0.02f, 0.02f);
+                    Gl.glVertex3f(0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(0.04f, 0.01f, 0.02f);
+                    Gl.glVertex3f(0.04f, -0.01f, 0.07f);
+                    Gl.glVertex3f(0.04f, -0.01f, 0.02f);
+                    Gl.glVertex3f(-0.04f, -0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
                     
                 }
                 Gl.glEnd();
                 Gl.glShadeModel(Gl.GL_SMOOTH);
+                // thumb
+                if (left)
+                {
+                    Gl.glBegin(Gl.GL_QUAD_STRIP);
+                    {
+                        Gl.glVertex3f(0.04f, -0.01f, 0.02f);
+                        Gl.glVertex3f(0.04f, -0.01f, 0.055f);
+                        Gl.glVertex3f(0.04f, -0.01f, 0.02f);
+                        Gl.glVertex3f(0.06f, -0.01f, 0.055f);
+                        Gl.glVertex3f(0.04f, 0.01f, 0.02f);
+                        Gl.glVertex3f(0.06f, 0.01f, 0.055f);
+                        Gl.glVertex3f(0.04f, 0.01f, 0.02f);
+                        Gl.glVertex3f(0.04f, 0.01f, 0.055f);
+                    }
+                    Gl.glEnd();
+                    GL.Translate(0.05f, 0, 0.04f);
+                    Glut.glutSolidCylinder(0.007f, 0.05f, generalSlices, generalStacks);
+                    GL.Translate(-0.05f - 0.03f, 0, 0.03f);
+                }
+                else
+                {
+                    Gl.glBegin(Gl.GL_QUAD_STRIP);
+                    {
+                        Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
+                        Gl.glVertex3f(-0.04f, -0.01f, 0.055f);
+                        Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
+                        Gl.glVertex3f(-0.06f, -0.01f, 0.055f);
+                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
+                        Gl.glVertex3f(-0.06f, 0.01f, 0.055f);
+                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
+                        Gl.glVertex3f(-0.04f, 0.01f, 0.055f);
+                    }
+                    Gl.glEnd();
+                    GL.Translate(-0.05f, 0, 0.04f);
+                    Glut.glutSolidCylinder(0.007f, 0.05f, generalSlices, generalStacks);
+                    GL.Translate(0.05f - 0.03f, 0, 0.03f);
+                }
+                // draw the first part of the four fingers
+                Glut.glutSolidCylinder(0.008f, 0.03f, generalSlices, generalStacks);
+                for(int i=0;i<3; i++)
+                {
+                    GL.Translate(0.02f, 0, 0);
+                    Glut.glutSolidCylinder(0.008f, 0.03f, generalSlices, generalStacks);
+                }
+                // draw the second part of the four fingers
+                GL.Translate(-0.06f, 0, 0.03f);
+                GL.Rotate(30, 1.0f, 0, 0);
+                Glut.glutSolidCylinder(0.006f, 0.02f, generalSlices, generalStacks);
+                for (int i = 0; i < 3; i++)
+                {
+                    GL.Translate(0.02f, 0, 0);
+                    Glut.glutSolidCylinder(0.006f, 0.02f, generalSlices, generalStacks);
+                }
+                
+
             }
             GL.PopMatrix();
         }
