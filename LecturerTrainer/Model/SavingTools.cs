@@ -228,6 +228,7 @@ namespace LecturerTrainer.Model
         public static void StartSavingXMLSkeleton()
         {
             int nbSkFrame = 0;
+            
             try
             {
                 XmlWriterSettings settings = new XmlWriterSettings()
