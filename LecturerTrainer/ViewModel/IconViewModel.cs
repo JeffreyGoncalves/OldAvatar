@@ -96,7 +96,7 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// Speed icon's image source
         /// </summary>
-        private string speedIconSource = "Icons/speedEmpty.png";
+        private string speedIconSource = "Icons/speed_empty.png";
 
         /// <summary>
         /// fft variables 

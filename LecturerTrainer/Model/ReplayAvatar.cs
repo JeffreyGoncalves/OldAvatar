@@ -174,15 +174,16 @@ namespace LecturerTrainer.Model
         private void updateSpeed(double newSpeed)
         {
             // Update of the timer interval
-            if (newSpeed > 1)
+            if (newSpeed != 1)
             {
-                nbSkeletonsPerFrame = (int)newSpeed;
-                timeToUpdate.Interval = TimeSpan.FromMilliseconds(ReplayViewModel.normalSpeed);
+                if (newSpeed > 1)
+                    nbSkeletonsPerFrame = (int)newSpeed;
+                timeToUpdate.Interval = TimeSpan.FromMilliseconds(getSpeedInMS(newSpeed));
             }
             else
             {
                 nbSkeletonsPerFrame = 1;
-                timeToUpdate.Interval = TimeSpan.FromMilliseconds(getSpeedInMS(newSpeed));
+                timeToUpdate.Interval = TimeSpan.FromMilliseconds(ReplayViewModel.normalSpeed);
             }
         }
 
