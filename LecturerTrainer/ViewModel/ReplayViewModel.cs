@@ -244,7 +244,7 @@ namespace LecturerTrainer.ViewModel
                 }
             }
             timeRecord += 200 * speedRatios[speedRatioIndex];
-            ElapsedTime = ReplayAvatar.convertSInString((int)timeRecord/1000);
+
         }
 
         /// <summary>
