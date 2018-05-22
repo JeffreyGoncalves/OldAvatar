@@ -13,13 +13,19 @@ namespace LecturerTrainer.Model.BodyAnalysis
     {
         public event EventHandler GestureRecognized;
 
-        public static DateTime departure;
-        public static DateTime currentTime;
-        private static bool start;
+        private static int errorMax = 40;
+        private static int countError = 0;
         private static int nbFrames = 0;
+        private static int nbStay = 0;
+        private static int tooSlow = 240;
+        private static int tooFast = 480;
+        private static int waitingTime = 120;
+        private static bool start = false;
+        private static bool begin = false;
         public static bool complete;
-        public static bool wrong;
+        public static bool stay;
         public static bool slow;
+        public static bool fast;
 
         bool _slow;
 
@@ -28,6 +34,26 @@ namespace LecturerTrainer.Model.BodyAnalysis
             get
             {
                 return _slow;
+            }
+        }
+
+        bool _fast;
+
+        public bool Fast
+        {
+            get
+            {
+                return _fast;
+            }
+        }
+
+        bool _stay;
+
+        public bool Stay
+        {
+            get
+            {
+                return _stay;
             }
         }
 
@@ -40,31 +66,22 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 return _complete;
             }
         }
-
-        bool _wrong;
-
-        public bool Wrong
-        {
-            get
-            {
-                return _wrong;
-            }
-        }
+        
 
         public void Update(Skeleton sk)
         {
-            complete = false;
-            wrong = false;
-            start = false;
-            slow = false;
-
-            //&& Math.Abs(sk.Joints[JointType.HandRight].Position.Y - sk.Joints[JointType.Head].Position.Y) < 0.05
+            _stay = false;
+            _slow = false;
+            _complete = false;
+            nbFrames++;
 
             Point3D hand = new Point3D(sk.Joints[JointType.HandRight].Position);
             Point3D elbow = new Point3D(sk.Joints[JointType.ElbowRight].Position);
             Point3D shoulder = new Point3D(sk.Joints[JointType.ShoulderRight].Position);
-            Point3D shoulderCenter = new Point3D(sk.Joints[JointType.ShoulderRight].Position);
+            Point3D shoulderLeft = new Point3D(sk.Joints[JointType.ShoulderLeft].Position);
+            Point3D head = new Point3D(sk.Joints[JointType.Head].Position);
 
+            //calculation of the angle formed by the arm
             double lenghtHandElbow = Math.Sqrt(Math.Pow(hand.X - elbow.X, 2) + Math.Pow(hand.Y - elbow.Y, 2) + Math.Pow(hand.Z - elbow.Z, 2));
             double lenghtHandShoulder = Math.Sqrt(Math.Pow(hand.X - shoulder.X, 2) + Math.Pow(hand.Y - shoulder.Y, 2) + Math.Pow(hand.Z - shoulder.Z, 2));
             double lenghtElbowShoulder = Math.Sqrt(Math.Pow(shoulder.X - elbow.X, 2) + Math.Pow(shoulder.Y - elbow.Y, 2) + Math.Pow(shoulder.Z - elbow.Z, 2));
@@ -72,29 +89,53 @@ namespace LecturerTrainer.Model.BodyAnalysis
             double cosAngle = (Math.Pow(lenghtElbowShoulder, 2) - Math.Pow(lenghtHandShoulder, 2) - Math.Pow(lenghtHandElbow, 2)) / (-2*lenghtHandShoulder*lenghtHandElbow);
             double angle = Math.Acos(cosAngle) * 180/Math.PI;
 
-            Vector3 vectorShoulder = new Vector3((float)(shoulder.X - shoulderCenter.X), (float)(shoulder.Y - shoulderCenter.Y), (float)(shoulder.Z - shoulderCenter.Z));
+            //arm alignment check (version 1)
+            Vector3 vectorShoulder = new Vector3((float)(shoulder.X - shoulderLeft.X), (float)(shoulder.Y - shoulderLeft.Y), (float)(shoulder.Z - shoulderLeft.Z));
             Vector3 vectorShoulderElbow = new Vector3((float)(elbow.X - shoulder.X), (float)(elbow.Y - shoulder.Y), (float)(elbow.Z - shoulder.Z));
 
-            float ratioX = vectorShoulder.X/ vectorShoulderElbow.X;
-            float ratioY = vectorShoulder.Y/ vectorShoulderElbow.Y;
-            float ratioZ = vectorShoulder.Z/ vectorShoulderElbow.Z;
+            float crossProductX = vectorShoulder.Y * vectorShoulderElbow.Z - vectorShoulder.Z * vectorShoulderElbow.Y;
+            float crossProductY = vectorShoulder.Z * vectorShoulderElbow.X - vectorShoulder.X * vectorShoulderElbow.Z;
+            float crossProductZ = vectorShoulder.X * vectorShoulderElbow.Y - vectorShoulder.Y * vectorShoulderElbow.X;
 
-            //Math.Abs(sk.Joints[JointType.HandRight].Position.Y - sk.Joints[JointType.Head].Position.Y) < 0.1 &&
-            //Math.Abs(sk.Joints[JointType.HandRight].Position.X - sk.Joints[JointType.Head].Position.X) < 0.20) //headradius = 0.15f
+            //arm alignment check (version 2)
+            double directionVector = (shoulder.Y - shoulderLeft.Y) / (shoulder.X - shoulderLeft.X);
+            double k = shoulder.Y - (shoulder.X * directionVector);
 
-            Console.WriteLine("angle " + angle);
-            //Console.WriteLine("x : " + Math.Abs(sk.Joints[JointType.HandRight].Position.X - sk.Joints[JointType.Head].Position.X));
-            //Console.WriteLine("y : " +Math.Abs(sk.Joints[JointType.HandRight].Position.Y - sk.Joints[JointType.Head].Position.Y));
+            double theoreticalY = elbow.X * directionVector + k;
+            
+            //distance between the head and the hand
+            double distance = Math.Sqrt(Geometry.distanceSquare(head, hand));
 
-            if (angle > 30 && angle < 40 && ratioX - ratioY > -0.01 && ratioX - ratioY < 0.01 &&
-                ratioX - ratioZ > -0.01 && ratioX - ratioZ < 0.01 && ratioZ - ratioY > -0.01 && ratioZ - ratioY < 0.01 &&
-                Math.Abs(sk.Joints[JointType.HandRight].Position.X - sk.Joints[JointType.Head].Position.X) < 0.20) //headradius = 0.15f
+            //if (angle > 42 && angle < 48 && Math.Abs(crossProductX) < 0.03 &&
+            //    Math.Abs(crossProductY) < 0.03 && Math.Abs(crossProductZ) < 0.03 &&
+            //   distance < 0.25 && Math.Abs(head.Y - hand.Y) < 0.1) //headradius = 0.15f
+
+            if(!begin && nbFrames > tooSlow)
+            {
+                countError = 0;
+                nbFrames = 0;
+                _slow = true;
+
+                if (GestureRecognized != null)
+                {
+                    GestureRecognized(this, new EventArgs());
+                }
+            }
+
+
+            if(angle > 42 && angle < 48 && Math.Abs(theoreticalY - elbow.Y) < 0.1 && Math.Abs(head.Y - hand.Y) < 0.1)
             {
                 start = true;
-                nbFrames++;
+                begin = true;
+                nbStay++;
 
-                if(nbFrames >= 120)
+                if(nbStay >= waitingTime)
                 {
+                    start = false;
+                    begin = false;
+                    countError = 0;
+                    nbFrames = 0;
+                    nbStay = 0;
                     _complete = true;
 
                     if (GestureRecognized != null)
@@ -106,10 +147,17 @@ namespace LecturerTrainer.Model.BodyAnalysis
             else
             {
                 if(start)
+                    countError++;
+
+                if (start && nbFrames < tooFast && countError > errorMax)
                 {
+                    countError = 0;
                     nbFrames = 0;
+                    nbStay = 0;
                     start = false;
-                    _wrong = true;
+                    begin = false;
+                    _stay = true;
+
                     if (GestureRecognized != null)
                     {
                         GestureRecognized(this, new EventArgs());

@@ -394,13 +394,13 @@ namespace LecturerTrainer.ViewModel
         public static void SaluteTraining_GestureRecognized(object sender, EventArgs e)
         {
             bool complete = ((SaluteTraining)sender).Complete;
-            bool wrong = ((SaluteTraining)sender).Wrong;
             bool slow = ((SaluteTraining)sender).Slow;
+            bool stay = ((SaluteTraining)sender).Stay;
 
             if (complete)
             {
                 string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
-                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Right_Gesture.skd");
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
             else if(slow)
@@ -409,10 +409,10 @@ namespace LecturerTrainer.ViewModel
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Too_Slow.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
-            else if (wrong)
+            else if (stay)
             {
                 string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
-                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Wrong_Gesture.skd");
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Stay_2_seconds.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
         }
