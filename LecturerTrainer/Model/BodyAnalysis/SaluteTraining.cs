@@ -13,15 +13,14 @@ namespace LecturerTrainer.Model.BodyAnalysis
     {
         public event EventHandler GestureRecognized;
 
-        private static int errorMax = 40;
+        private static int errorMax = 120;
         private static int countError = 0;
         private static int nbFrames = 0;
         private static int nbStay = 0;
         private static int tooSlow = 240;
         private static int tooFast = 480;
-        private static int waitingTime = 120;
+        private static int waitingTime = 2;
         private static bool start = false;
-        private static bool begin = false;
         public static bool complete;
         public static bool stay;
         public static bool slow;
@@ -80,6 +79,8 @@ namespace LecturerTrainer.Model.BodyAnalysis
             Point3D shoulder = new Point3D(sk.Joints[JointType.ShoulderRight].Position);
             Point3D shoulderLeft = new Point3D(sk.Joints[JointType.ShoulderLeft].Position);
             Point3D head = new Point3D(sk.Joints[JointType.Head].Position);
+            Point3D handLeft = new Point3D(sk.Joints[JointType.HandLeft].Position);
+            Point3D hipLeft = new Point3D(sk.Joints[JointType.HipLeft].Position);
 
             //calculation of the angle formed by the arm
             double lenghtHandElbow = Math.Sqrt(Math.Pow(hand.X - elbow.X, 2) + Math.Pow(hand.Y - elbow.Y, 2) + Math.Pow(hand.Z - elbow.Z, 2));
@@ -102,15 +103,58 @@ namespace LecturerTrainer.Model.BodyAnalysis
             double k = shoulder.Y - (shoulder.X * directionVector);
 
             double theoreticalY = elbow.X * directionVector + k;
-            
-            //distance between the head and the hand
-            double distance = Math.Sqrt(Geometry.distanceSquare(head, hand));
 
-            //if (angle > 42 && angle < 48 && Math.Abs(crossProductX) < 0.03 &&
-            //    Math.Abs(crossProductY) < 0.03 && Math.Abs(crossProductZ) < 0.03 &&
-            //   distance < 0.25 && Math.Abs(head.Y - hand.Y) < 0.1) //headradius = 0.15f
+            //distance between left hand and hip
+            double distance = Math.Sqrt(Geometry.distanceSquare(handLeft, hipLeft));
 
-            if(!begin && nbFrames > tooSlow)
+            /*if (!(Math.Abs(angle - 45) < 1 && Math.Abs(theoreticalY - elbow.Y) < 0.05 && Math.Abs(head.Y - hand.Y) < 0.1 &&
+                Math.Abs(head.Z - hand.Z) < 0.1 && distance < 0.5))
+            {
+                if(Math.Abs(angle - 45) < 1)
+                {
+                    Console.WriteLine("######## ANGLE OK ###########");
+                    Console.WriteLine("distance " + distance);
+                    Console.WriteLine("alignment " + Math.Abs(theoreticalY - elbow.Y));
+                    Console.WriteLine("y " + Math.Abs(head.Y - hand.Y));
+                    Console.WriteLine("z " + Math.Abs(head.Z - hand.Z));
+                }
+                else if(Math.Abs(theoreticalY - elbow.Y) < 0.05)
+                {
+                    Console.WriteLine("######## ALIGNMENT OK ###########");
+                    Console.WriteLine("distance " + distance);
+                    Console.WriteLine("angle " + angle);
+                    Console.WriteLine("y " + Math.Abs(head.Y - hand.Y));
+                    Console.WriteLine("z " + Math.Abs(head.Z - hand.Z));
+                }
+                else if(Math.Abs(head.Y - hand.Y) < 0.1)
+                {
+                    Console.WriteLine("######## Y OK ###########");
+                    Console.WriteLine("distance " + distance);
+                    Console.WriteLine("angle " + angle);
+                    Console.WriteLine("alignment " + Math.Abs(theoreticalY - elbow.Y));
+                    Console.WriteLine("z " + Math.Abs(head.Z - hand.Z));
+                }
+                else if(Math.Abs(head.Z - hand.Z) < 0.1)
+                {
+                    Console.WriteLine("######## Z OK ###########");
+                    Console.WriteLine("distance " + distance);
+                    Console.WriteLine("angle " + angle);
+                    Console.WriteLine("alignment " + Math.Abs(theoreticalY - elbow.Y));
+                    Console.WriteLine("y " + Math.Abs(head.Y - hand.Y));
+                }
+                else if(distance < 0.1)
+                {
+                    Console.WriteLine("######## DISTANCE OK ###########");
+                    Console.WriteLine("angle " + angle);
+                    Console.WriteLine("alignment " + Math.Abs(theoreticalY - elbow.Y));
+                    Console.WriteLine("y " + Math.Abs(head.Y - hand.Y));
+                    Console.WriteLine("z " + Math.Abs(head.Z - hand.Z));
+                }
+                
+            }*/
+
+            //if the salute is not made in time
+            if (!start && nbFrames > tooSlow)
             {
                 countError = 0;
                 nbFrames = 0;
@@ -122,17 +166,17 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 }
             }
 
-
-            if(angle > 42 && angle < 48 && Math.Abs(theoreticalY - elbow.Y) < 0.1 && Math.Abs(head.Y - hand.Y) < 0.1)
+            //good position of salute
+            if(Math.Abs(angle - 45) < 1 && Math.Abs(theoreticalY - elbow.Y) < 0.05 && Math.Abs(head.Y - hand.Y) < 0.1 && 
+                Math.Abs(head.Z - hand.Z) < 0.1 && distance < 0.3)
             {
                 start = true;
-                begin = true;
                 nbStay++;
 
+                //salute complete
                 if(nbStay >= waitingTime)
                 {
                     start = false;
-                    begin = false;
                     countError = 0;
                     nbFrames = 0;
                     nbStay = 0;
@@ -149,13 +193,13 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 if(start)
                     countError++;
 
+                //if the user does not stay waiting
                 if (start && nbFrames < tooFast && countError > errorMax)
                 {
                     countError = 0;
                     nbFrames = 0;
                     nbStay = 0;
                     start = false;
-                    begin = false;
                     _stay = true;
 
                     if (GestureRecognized != null)
