@@ -90,6 +90,7 @@ namespace LecturerTrainer.ViewModel
         public static PowerTraining _powergesture = new PowerTraining();
         public static WelcomeTraining _welcomegesture = new WelcomeTraining();
         public static SaluteTraining _salutegesture = new SaluteTraining();
+        public static HypeTraining _hypegesture = new HypeTraining();
 
         public static string AvatarGesture;
 
@@ -111,7 +112,7 @@ namespace LecturerTrainer.ViewModel
             _powergesture.GestureRecognized += PowerTraining_GestureRecognized;
             _welcomegesture.GestureRecognized += WelcomeTraining_GestureRecognized;
             _salutegesture.GestureRecognized += SaluteTraining_GestureRecognized;
-
+            _hypegesture.GestureRecognized += HypeTraining_GestureRecognized;
         }
 
         public void initialize()
@@ -396,6 +397,9 @@ namespace LecturerTrainer.ViewModel
             bool complete = ((SaluteTraining)sender).Complete;
             bool slow = ((SaluteTraining)sender).Slow;
             bool stay = ((SaluteTraining)sender).Stay;
+            bool angle = ((SaluteTraining)sender).AngleB;
+            bool alignment = ((SaluteTraining)sender).Alignment;
+            bool hand = ((SaluteTraining)sender).LeftHand;
 
             if (complete)
             {
@@ -409,10 +413,62 @@ namespace LecturerTrainer.ViewModel
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Too_Slow.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
+            else if (hand)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Keep_your_left_hand_close_to_the_hip.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
             else if (stay)
             {
                 string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Stay_2_seconds.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+            else if (angle)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_The_arm_angle_must_be_45_degrees.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+            else if (alignment)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_The_arm_must_be_aligned_with_the_shoulders.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+        }
+
+        public static void HypeTraining_GestureRecognized(object sender, EventArgs e)
+        {
+
+            bool complete = ((HypeTraining)sender).Complete;
+            bool spread = ((HypeTraining)sender).Spread;
+            bool stretch = ((HypeTraining)sender).Stretch;
+            bool up = ((HypeTraining)sender).Up;
+
+            if (complete)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+            else if(spread)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Spread_your_arms.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+            else if(stretch)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Stretch_your_arms.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+            else if(up)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Raise_your_arms.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
         }

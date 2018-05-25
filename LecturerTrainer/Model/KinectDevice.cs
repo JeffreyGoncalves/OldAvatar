@@ -395,6 +395,8 @@ namespace LecturerTrainer.Model
                                 TrainingWithAvatarViewModel._welcomegesture.Update(watchedSkeleton);
                             if(String.Compare(TrainingWithAvatarViewModel.AvatarGesture, "SaluteTraining") == 0)
                                 TrainingWithAvatarViewModel._salutegesture.Update(watchedSkeleton);
+                            if (String.Compare(TrainingWithAvatarViewModel.AvatarGesture, "HypeTraining") == 0)
+                                TrainingWithAvatarViewModel._hypegesture.Update(watchedSkeleton);
                         }
                     }                    
                     if (KinectDevice.useAutoElevation)
