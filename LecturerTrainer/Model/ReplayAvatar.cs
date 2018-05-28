@@ -326,7 +326,6 @@ namespace LecturerTrainer.Model
             currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
             DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
             DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
-            replayViewModel.raiseFeedbacksOnTime();
             elapsedVideoTime = 0;
         }
         #endregion
