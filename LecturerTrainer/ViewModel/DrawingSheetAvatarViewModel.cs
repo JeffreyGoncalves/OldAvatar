@@ -1469,7 +1469,15 @@ namespace LecturerTrainer.Model
 
             // Drawing of the top joint
             drawJoint(joint0, point0);
-
+            // Alban's idea
+            /*
+            if (joint0.JointType == JointType.ShoulderCenter && joint1.JointType == JointType.Spine)
+            {
+                Console.Out.WriteLine("-- " + joint0.JointType.ToString() + " -- " + joint1.JointType.ToString());
+                Console.Out.WriteLine(Math.Sqrt((point0.X - point1.X) * (point0.X - point1.X) +
+                    (point0.Y - point1.Y) * (point0.Y - point1.Y) +
+                    (point0.Z - point1.Z) * (point0.Z - point1.Z)) + "\n--");
+            }*/
             if (IsBoneDrawable(joint0, joint1))
             {
                 // We assume all drawn bones are inferred unless BOTH joints are tracked
@@ -1803,78 +1811,7 @@ namespace LecturerTrainer.Model
             DrawFootSecondVersion(ankle.X, ankle.Y, ankle.Z, footEnd.X, footEnd.Y, footEnd.Z, color, left);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="X1"></param>
-        /// <param name="Y1"></param>
-        /// <param name="Z1"></param>
-        /// <param name="X2"></param>
-        /// <param name="Y2"></param>
-        /// <param name="Z2"></param>
-        /// <param name="color"></param>
-        /// <param name="left"></param>
-        private void DrawFootSecondVersion(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color, bool left)
-        {
-            Z1 = -Z1;
-            Z2 = -Z2;
-            float vX = X2 - X1;
-            float vY = Y2 - Y1;
-            float vZ = Z2 - Z1;
-
-            if (vZ == 0)
-                vZ = 0.0001f;
-
-            // Size of the vector separating the two points
-            double v = Math.Sqrt(vX * vX + vY * vY + vZ * vZ);
-
-            // Angle between the vector and Z axis
-            double aX = 57.2957795 * Math.Acos(vZ / v);
-            if (vZ < 0.0)
-                aX = -aX;
-            float rX = -vY * vZ;
-            float rY = vX * vZ;
-            GL.PushMatrix();
-            {
-                //draw the cylinder body
-                GL.Translate(X1, Y1, Z1);
-                GL.Rotate(aX, rX, rY, 0.0);
-                GL.Color4(color);
-                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-                Gl.glShadeModel(Gl.GL_FLAT);
-                Gl.glBegin(Gl.GL_QUAD_STRIP);
-                {
-                    Gl.glVertex3f(-0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(-0.03f, 0.005f, 0);
-                    Gl.glVertex3f(-0.02f, 0.01f, 0.1f);
-                    Gl.glVertex3f(-0.02f, 0.02f, 0);
-                    Gl.glVertex3f(0.02f, 0.01f, 0.1f);
-                    Gl.glVertex3f(0.02f, 0.02f, 0);
-                    Gl.glVertex3f(0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(0.03f, 0.005f, 0);
-                    Gl.glVertex3f(0.03f, -0.01f, 0.1f);
-                    Gl.glVertex3f(0.03f, -0.01f, 0);
-                    Gl.glVertex3f(-0.03f, -0.01f, 0.1f);
-                    Gl.glVertex3f(-0.03f, -0.01f, 0);
-                    Gl.glVertex3f(-0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(-0.03f, 0.005f, 0);
-                }
-                Gl.glEnd();
-                Gl.glBegin(Gl.GL_POLYGON);
-                {
-                    Gl.glVertex3f(-0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(-0.02f, 0.01f, 0.1f);
-                    Gl.glVertex3f(0.02f, 0.01f, 0.1f);
-                    Gl.glVertex3f(0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(0.03f, -0.01f, 0.1f);
-                    Gl.glVertex3f(-0.03f, -0.01f, 0.1f);
-                    Gl.glVertex3f(-0.03f, -0.01f, 0.1f);
-                }
-                Gl.glEnd();
-                Gl.glShadeModel(Gl.GL_SMOOTH);
-            }
-            GL.PopMatrix();
-        }
+        
 
         #endregion
 
@@ -2127,18 +2064,21 @@ namespace LecturerTrainer.Model
                 // thoses lines represent the base of the hand (link with forearm)
                 Gl.glBegin(Gl.GL_QUAD_STRIP);
                 {
-                    Gl.glNormal3f(0.0f, -1.0f, 0.0f);
+                    Gl.glNormal3f(-1.0f, 1.0f, 0.0f);// GL.Color4(Color.Purple);
                     Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
                     Gl.glVertex3f(-0.025f, 0.01f, 0);
                     Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
                     Gl.glVertex3f(-0.02f, 0.02f, 0);
-                    Gl.glNormal3f(1.0f, 0.0f, 0.0f);
+                    Gl.glNormal3f(0.0f, 1.0f, 0.0f);//GL.Color4(Color.Blue);
                     Gl.glVertex3f(0.02f, 0.02f, 0.02f);
                     Gl.glVertex3f(0.02f, 0.02f, 0);
+                    Gl.glNormal3f(1.0f, 1.0f, 0.0f);// GL.Color4(Color.Green);
                     Gl.glVertex3f(0.04f, 0.01f, 0.02f);
                     Gl.glVertex3f(0.025f, 0.01f, 0);
+                    Gl.glNormal3f(1.0f, 0.0f, 0.0f);// GL.Color4(Color.Yellow);
                     Gl.glVertex3f(0.04f, -0.01f, 0.02f);
                     Gl.glVertex3f(0.025f, -0.01f, 0);
+                    Gl.glNormal3f(-1.0f, -1.0f, 0.0f);// GL.Color4(Color.Red);
                     Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
                     Gl.glVertex3f(-0.025f, -0.01f, 0);
                     Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
@@ -2252,6 +2192,79 @@ namespace LecturerTrainer.Model
                 }
                 
 
+            }
+            GL.PopMatrix();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="X1"></param>
+        /// <param name="Y1"></param>
+        /// <param name="Z1"></param>
+        /// <param name="X2"></param>
+        /// <param name="Y2"></param>
+        /// <param name="Z2"></param>
+        /// <param name="color"></param>
+        /// <param name="left"></param>
+        private void DrawFootSecondVersion(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color, bool left)
+        {
+            Z1 = -Z1;
+            Z2 = -Z2;
+            float vX = X2 - X1;
+            float vY = Y2 - Y1;
+            float vZ = Z2 - Z1;
+
+            if (vZ == 0)
+                vZ = 0.0001f;
+
+            // Size of the vector separating the two points
+            double v = Math.Sqrt(vX * vX + vY * vY + vZ * vZ);
+
+            // Angle between the vector and Z axis
+            double aX = 57.2957795 * Math.Acos(vZ / v);
+            if (vZ < 0.0)
+                aX = -aX;
+            float rX = -vY * vZ;
+            float rY = vX * vZ;
+            GL.PushMatrix();
+            {
+                //draw the cylinder body
+                GL.Translate(X1, Y1, Z1);
+                GL.Rotate(aX, rX, rY, 0.0);
+                GL.Color4(color);
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+                Gl.glShadeModel(Gl.GL_FLAT);
+                Gl.glBegin(Gl.GL_QUAD_STRIP);
+                {
+                    Gl.glVertex3f(-0.03f, 0.005f, 0.1f);
+                    Gl.glVertex3f(-0.03f, 0.005f, 0);
+                    Gl.glVertex3f(-0.02f, 0.01f, 0.1f);
+                    Gl.glVertex3f(-0.02f, 0.02f, 0);
+                    Gl.glVertex3f(0.02f, 0.01f, 0.1f);
+                    Gl.glVertex3f(0.02f, 0.02f, 0);
+                    Gl.glVertex3f(0.03f, 0.005f, 0.1f);
+                    Gl.glVertex3f(0.03f, 0.005f, 0);
+                    Gl.glVertex3f(0.03f, -0.01f, 0.1f);
+                    Gl.glVertex3f(0.03f, -0.01f, 0);
+                    Gl.glVertex3f(-0.03f, -0.01f, 0.1f);
+                    Gl.glVertex3f(-0.03f, -0.01f, 0);
+                    Gl.glVertex3f(-0.03f, 0.005f, 0.1f);
+                    Gl.glVertex3f(-0.03f, 0.005f, 0);
+                }
+                Gl.glEnd();
+                Gl.glBegin(Gl.GL_POLYGON);
+                {
+                    Gl.glVertex3f(-0.03f, 0.005f, 0.1f);
+                    Gl.glVertex3f(-0.02f, 0.01f, 0.1f);
+                    Gl.glVertex3f(0.02f, 0.01f, 0.1f);
+                    Gl.glVertex3f(0.03f, 0.005f, 0.1f);
+                    Gl.glVertex3f(0.03f, -0.01f, 0.1f);
+                    Gl.glVertex3f(-0.03f, -0.01f, 0.1f);
+                    Gl.glVertex3f(-0.03f, -0.01f, 0.1f);
+                }
+                Gl.glEnd();
+                Gl.glShadeModel(Gl.GL_SMOOTH);
             }
             GL.PopMatrix();
         }
