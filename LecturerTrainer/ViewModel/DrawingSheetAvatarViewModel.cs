@@ -115,59 +115,38 @@ namespace LecturerTrainer.Model
         /// Radius of the 3D elements composing the avatar
         /// </summary>
         private readonly float jointsRadius = 0.03f;
-        private readonly float jointsHandRadius = 0.01f;
+        private readonly float jointsHandRadius = 0.02f;
         private readonly float bonesRadius = 0.05f;
-        private readonly float headRadius = 0.1f;
-        private readonly float shoulderRadius = 0.05f;
-        private readonly float upperTorsoRadius = 0.16f;
+        private readonly float headRadius = 0.15f;
+        private readonly float shoulderRadius = 0.06f;
+        private readonly float upperTorsoRadius = 0.19f;
         private readonly float lowerTorsoRadius = 0.16f;
-        private readonly float hipRadius = 0.07f;
+        private readonly float hipRadius = 0.08f;
         private readonly float armRadius = 0.04f;
-        private readonly float legRadius = 0.07f;
 
         /// <summary>
         /// Avatar initial position.
         /// </summary>
-        //private readonly Vector3 initialHead = new Vector3(0.135897f, 0.7635499f, 2.229455f);
-        private readonly Vector3 initialHead = new Vector3(0, 0.7f, 2.229455f);
-        //private readonly Vector3 initialShoulderCenter = new Vector3(0.1280521f, 0.5663089f, 2.229455f);
-        private readonly Vector3 initialShoulderCenter = new Vector3(0, 0.55f, 2.229455f);
-        //private readonly Vector3 initialShoulderLeft = new Vector3(-0.03456776f, 0.4672897f, 2.229455f);
-        private readonly Vector3 initialShoulderLeft = new Vector3(-0.18f, 0.45f, 2.229455f);
-        //private readonly Vector3 initialShoulderRight = new Vector3(0.3046574f, 0.4610354f, 2.229455f);
-        private readonly Vector3 initialShoulderRight = new Vector3(0.18f, 0.45f, 2.229455f);
-        //private readonly Vector3 initialElbowLeft = new Vector3(-0.1046979f, 0.2168238f, 2.21722f);
-        private readonly Vector3 initialElbowLeft = new Vector3(-0.24f, 0.2f, 2.229455f);
-        //private readonly Vector3 initialElbowRight = new Vector3(0.3838935f, 0.2056853f, 2.254441f);
-        private readonly Vector3 initialElbowRight = new Vector3(0.24f, 0.2f, 2.229455f);
-        //private readonly Vector3 initialWristLeft = new Vector3(-0.1332553f, -0.02705427f, 2.115675f);
-        private readonly Vector3 initialWristLeft = new Vector3(-0.2f, -0.05f, 2.229455f);
-        //private readonly Vector3 initialWristRight = new Vector3(0.4350696f, 0.007437438f, 2.160146f);
-        private readonly Vector3 initialWristRight = new Vector3(0.2f, -0.05f, 2.229455f);
-        //private readonly Vector3 initialHandLeft = new Vector3(-0.1316205f, -0.1162565f, 2.085958f);
-        private readonly Vector3 initialHandLeft = new Vector3(-0.19f, -0.2f, 2.229455f);
-        //private readonly Vector3 initialHandRight = new Vector3(0.4430848f, -0.0936875f, 2.119174f);
-        private readonly Vector3 initialHandRight = new Vector3(0.19f, -0.2f, 2.229455f);
-        //private readonly Vector3 initialSpine = new Vector3(0.1352139f, 0.1978379f, 2.229455f);
-        private readonly Vector3 initialSpine = new Vector3(0, 0.1f, 2.229455f);
-        //private readonly Vector3 initialHipCenter = new Vector3(0.1422898f, 0.1372883f, 2.229455f);
-        private readonly Vector3 initialHipCenter = new Vector3(0, 0.05f, 2.229455f);
-        //private readonly Vector3 initialHipLeft = new Vector3(0.06824586f, 0.06192002f, 2.204764f);
-        private readonly Vector3 initialHipLeft = new Vector3(-0.075f, 0, 2.229455f);
-        //private readonly Vector3 initialHipRight = new Vector3(0.2213473f, 0.06250456f, 2.221346f);
-        private readonly Vector3 initialHipRight = new Vector3(0.075f, 0, 2.229455f);
-        //private readonly Vector3 initialKneeLeft = new Vector3(0.002393939f, -0.4226111f, 2.23532f);
-        private readonly Vector3 initialKneeLeft = new Vector3(-0.085f, -0.4f, 2.229455f);
-        //private readonly Vector3 initialKneeRight = new Vector3(0.2920577f, -0.4315554f, 2.239343f);
-        private readonly Vector3 initialKneeRight = new Vector3(0.085f, -0.4f, 2.229455f);
-        //private readonly Vector3 initialAnkleLeft = new Vector3(-0.04282022f, -0.804864f, 2.239705f);
-        private readonly Vector3 initialAnkleLeft = new Vector3(-0.075f, -0.8f, 2.229455f);
-        //private readonly Vector3 initialAnkleRight = new Vector3(0.3301864f, -0.8169076f, 2.264407f);
-        private readonly Vector3 initialAnkleRight = new Vector3(0.075f, -0.8f, 2.229455f);
-        //private readonly Vector3 initialFootLeft = new Vector3(-0.06813762f, -0.8776183f, 2.208368f);
-        private readonly Vector3 initialFootLeft = new Vector3(-0.12f, -0.8776183f, 2.2f);
-        //private readonly Vector3 initialFootRight = new Vector3(0.3620958f, -0.8851607f, 2.2292f);
-        private readonly Vector3 initialFootRight = new Vector3(0.12f, -0.8776183f, 2.2f);
+        private readonly Vector3 initialHead = new Vector3(0.135897f, 0.7635499f, 2.229455f);
+        private readonly Vector3 initialShoulderCenter = new Vector3(0.1280521f, 0.5663089f, 2.229455f);
+        private readonly Vector3 initialShoulderLeft = new Vector3(-0.03456776f, 0.4672897f, 2.229455f);
+        private readonly Vector3 initialShoulderRight = new Vector3(0.3046574f, 0.4610354f, 2.229455f);
+        private readonly Vector3 initialElbowLeft = new Vector3(-0.1046979f, 0.2168238f, 2.21722f);
+        private readonly Vector3 initialElbowRight = new Vector3(0.3838935f, 0.2056853f, 2.254441f);
+        private readonly Vector3 initialWristLeft = new Vector3(-0.1332553f, -0.02705427f, 2.115675f);
+        private readonly Vector3 initialWristRight = new Vector3(0.4350696f, 0.007437438f, 2.160146f);
+        private readonly Vector3 initialHandLeft = new Vector3(-0.1316205f, -0.1162565f, 2.085958f);
+        private readonly Vector3 initialHandRight = new Vector3(0.4430848f, -0.0936875f, 2.119174f);
+        private readonly Vector3 initialSpine = new Vector3(0.1352139f, 0.1978379f, 2.229455f);
+        private readonly Vector3 initialHipCenter = new Vector3(0.1422898f, 0.1372883f, 2.229455f);
+        private readonly Vector3 initialHipLeft = new Vector3(0.06824586f, 0.06192002f, 2.204764f);
+        private readonly Vector3 initialHipRight = new Vector3(0.2213473f, 0.06250456f, 2.221346f);
+        private readonly Vector3 initialKneeLeft = new Vector3(0.002393939f, -0.4226111f, 2.23532f);
+        private readonly Vector3 initialKneeRight = new Vector3(0.2920577f, -0.4315554f, 2.239343f);
+        private readonly Vector3 initialAnkleLeft = new Vector3(-0.04282022f, -0.804864f, 2.239705f);
+        private readonly Vector3 initialAnkleRight = new Vector3(0.3301864f, -0.8169076f, 2.264407f);
+        private readonly Vector3 initialFootLeft = new Vector3(-0.06813762f, -0.8776183f, 2.208368f);
+        private readonly Vector3 initialFootRight = new Vector3(0.3620958f, -0.8851607f, 2.2292f);
 
         /// <summary>
         /// Proper dimensions of the avatar parts. 
@@ -893,7 +872,6 @@ namespace LecturerTrainer.Model
         /// <returns></returns>
         private float distance2Vectors(Vector3 v0, Vector3 v1)
         {
-            
             Vector3 tempV = new Vector3();
             Vector3.Subtract(ref v0, ref v1, out tempV);
             return tempV.Length;
@@ -969,73 +947,141 @@ namespace LecturerTrainer.Model
 
             //Test for 3D feedback by ASu 25 March 2016 ad modified by F Bechu June 2016
             /*The second part of the if (after the ||) is used to display the feedbacks when replaying an avatar, it's the same for all the feedbacks below*/
-            /*OpenGL feedback of the hands crossed*/
-            if (!isTraining)
-            {
-                if (Model.HandsJoined.hands ||
-                    (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Hands are joined")) && ReplayViewModel.Get().isReplaying))
+            /*OpenGL feedback of the hands crossed*/           
+            
+            if(!isTraining)
+			{
+                /*The way feedback is displayed changes wether we are in normal mode or replay mode*/
+
+                /* Normal mode feedback display */
+                if(!ReplayViewModel.Get().isReplaying)
                 {
-                    HudDrawImage("Hand_Joined", 0.15f, 0.15f,
-                        avatar.Joints[JointType.HandLeft].Position.X,
-                        avatar.Joints[JointType.HandLeft].Position.Y);
+                    /*OpenGL feedback of the hands crossed*/
+                    if(Model.HandsJoined.hands)
+                    {
+                        HudDrawImage("Hand_Joined", 0.15f, 0.15f,
+                            avatar.Joints[JointType.HandLeft].Position.X,
+                            avatar.Joints[JointType.HandLeft].Position.Y);
+                    }
+
+                    /*OpenGL feedback of the look at the center*/
+                    if(Model.EmotionRecognizer.lookingDirection.feedC)
+                    {
+                        HudDrawImage("Center_Arrow", 0.2f, 0.2f,
+                            headX,
+                            headY + 0.5f);
+                    }
+
+                    /*OpenGL feedback of the look at the left*/
+                    if(Model.EmotionRecognizer.lookingDirection.feedL)
+                    {
+                        HudDrawImage("Left_Arrow", 0.2f, 0.2f,
+                            headX - 0.5f,
+                            headY);
+                    }
+
+                    /*OpenGL feedback of the look at the right*/
+                    if(Model.EmotionRecognizer.lookingDirection.feedR)
+                    {
+                        HudDrawImage("Right_Arrow", 0.2f, 0.2f,
+                            headX + 0.5f,
+                            headY);
+                    }
+
+                    /*OpenGL feedback of the happy emotion*/
+                    if(Model.EmotionRecognizer.EmotionRecognition.happy)
+                    {
+                        HudDrawImage("Happy", 0.2f, 0.2f,
+                            0.75f,
+                            0.5f);
+                    }
+
+                    /*OpenGL feedback of the surprised emotion*/
+                    if(Model.EmotionRecognizer.EmotionRecognition.surprised)
+                    {
+                        HudDrawImage("Surprised", 0.2f, 0.2f,
+                            0.75f,
+                            0.5f);
+                    }
+
+                    /*OpenGL feedback of agitation*/
+                    if(Model.Agitation.feedAg)
+                    {
+                        HudDrawImage("Agitation", 0.2f, 0.2f,
+                            -1f,
+                            0);
+                    }
+
+                    /*OpenGL feedback of the arms crossed*/
+                    if(Model.BodyAnalysis.ArmsCrossed.feedArmsCrossed)
+                    {
+                        HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
+                            0.75f,
+                            0);
+                    }
                 }
-                /*OpenGL feedback of the look at the center*/
-                if (Model.EmotionRecognizer.lookingDirection.feedC ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the center")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Center_Arrow", 0.2f, 0.2f,
-                        headX,
-                        headY + 0.5f);
-                }
-                /*OpenGL feedback of the look at the left*/
-                if (Model.EmotionRecognizer.lookingDirection.feedL ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the left")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Left_Arrow", 0.2f, 0.2f,
-                        headX - 0.5f,
-                        headY);
-                }
-                /*OpenGL feedback of the look at the right*/
-                if (Model.EmotionRecognizer.lookingDirection.feedR ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the right")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Right_Arrow", 0.2f, 0.2f,
-                        headX + 0.5f,
-                        headY);
-                }
-                /*OpenGL feedback of the happy emotion*/
-                if (Model.EmotionRecognizer.EmotionRecognition.happy ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Happy")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Happy", 0.2f, 0.2f,
-                        0.75f,
-                        0.5f);
-                }
-                /*OpenGL feedback of the surprised emotion*/
-                if (Model.EmotionRecognizer.EmotionRecognition.surprised ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Surprised")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Surprised", 0.2f, 0.2f,
-                        0.75f,
-                        0.5f);
-                }
-                /*OpenGL feedback of agitation*/
-                if (Model.Agitation.feedAg ||
-                    (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Too agitated!")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Agitation", 0.2f, 0.2f,
-                        -1f,
-                        0);
-                }
-                /*OpenGL feedback of the arms crossed*/
-                if (Model.BodyAnalysis.ArmsCrossed.feedArmsCrossed ||
-                    (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Arms Crossed")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
-                        0.75f,
-                        0);
-                }
-            }
+                /* Replay Mode feedback display */
+                else{
+                    /* List containing all the feedbacks that must be displayed during the current frame */
+                    List<String> feedbacksToDisplay = ReplayViewModel.Get().feedbacksAtTime();
+                    
+                    /* Iterating through the list to see which feedback to display */
+                    foreach (String message in feedbacksToDisplay)
+                    {
+                        switch(message)
+                        {
+                            /*OpenGL feedback of the hands crossed*/
+                            case("Hands are joined"):
+                                HudDrawImage("Hand_Joined", 0.15f, 0.15f,
+                                    avatar.Joints[JointType.HandLeft].Position.X,
+                                    avatar.Joints[JointType.HandLeft].Position.Y);
+                                break;
+
+                            /*OpenGL feedback of the look at the center*/
+                            case("Look to the center"):
+                                HudDrawImage("Center_Arrow", 0.2f, 0.2f,
+                                    headX,
+                                    headY + 0.5f);
+                                break;
+                            
+                            /*OpenGL feedback of the look at the left*/
+                            case("Look to the left"):
+                                HudDrawImage("Left_Arrow", 0.2f, 0.2f,
+                                    headX - 0.5f,
+                                    headY);
+                                break;
+                            
+                            /*OpenGL feedback of the look at the right*/
+                            case("Look to the right"):
+                                HudDrawImage("Right_Arrow", 0.2f, 0.2f,
+                                    headX + 0.5f,
+                                    headY);
+                                break;
+                            
+                            /*OpenGL feedback of the happy emotion*/
+                            case("Happy"):
+                                HudDrawImage("Happy", 0.2f, 0.2f,
+                                    0.75f,
+                                    0.5f);
+                                break;
+                            
+                            /*OpenGL feedback of agitation*/
+                            case("Too agitated!"):
+                                HudDrawImage("Agitation", 0.2f, 0.2f,
+                                    -1f,
+                                    0);
+                                break;
+                            
+                            /*OpenGL feedback of the arms crossed*/
+                            case("Arms Crossed"):
+                                HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
+                                    0.75f,
+                                    0);
+                                break;
+                        }
+                    }
+				}
+			}
             else // Training mode
             {
                 if (TrainingWithAvatarViewModel.Get().PlayMode & mentor)
@@ -1190,7 +1236,6 @@ namespace LecturerTrainer.Model
         /// </summary>
         private void drawInitialAvatar()
         {
-            //GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             // Bones drawing
             // Head and Shoulders
             this.DrawHead(initialHead, initialShoulderCenter, trackedBoneColor);
@@ -1216,12 +1261,12 @@ namespace LecturerTrainer.Model
             // Left Leg
             this.DrawThigh(initialHipLeft, initialKneeLeft, trackedBoneColor);
             this.DrawLeg(initialKneeLeft, initialAnkleLeft, trackedBoneColor);
-            this.DrawFoot(initialAnkleLeft, initialFootLeft, trackedBoneColor, true);
+            this.DrawFoot(initialAnkleLeft, initialFootLeft, trackedBoneColor);
 
             // Right Leg
             this.DrawThigh(initialHipRight, initialKneeRight, trackedBoneColor);
             this.DrawLeg(initialKneeRight, initialAnkleRight, trackedBoneColor);
-            this.DrawFoot(initialAnkleRight, initialFootRight, trackedBoneColor, false);
+            this.DrawFoot(initialAnkleRight, initialFootRight, trackedBoneColor);
 
 
         }
@@ -1232,7 +1277,6 @@ namespace LecturerTrainer.Model
         /// <param name="sk"></param>
         private void DrawBonesAndJoints(Skeleton sk)
         {
-            // YOYO
             if (sk != null)
             {
                 // Head and Shoulders
@@ -1336,7 +1380,7 @@ namespace LecturerTrainer.Model
                 case JointType.FootRight:
                     point2 = new Vector3(point1.X + 0.0319094f, point1.Y - 0.0682531f, point1.Z - 0.035207f);
                     calculAdjustmentForNotTracked(properAnkleToFoot, ref point1, ref point2);
-                    DrawFoot(point1, point2, inferredBoneColor, false);
+                    DrawFoot(point1, point2, inferredBoneColor);
                     drawJoint(point2, inferredBoneColor);
                     break;
                 case JointType.HipLeft:
@@ -1357,7 +1401,7 @@ namespace LecturerTrainer.Model
                 case JointType.FootLeft:
                     point2 = new Vector3(point1.X - 0.0253174f, point1.Y - 0.0727543f, point1.Z - 0.031337f);
                     calculAdjustmentForNotTracked(properAnkleToFoot, ref point1, ref point2);
-                    DrawFoot(point1, point2, inferredBoneColor, true);
+                    DrawFoot(point1, point2, inferredBoneColor);
                     drawJoint(point2, inferredBoneColor);
                     break;
             }
@@ -1431,14 +1475,38 @@ namespace LecturerTrainer.Model
             }
             if (colorSelected)
             {
-                if(joint.JointType == JointType.HandLeft || joint.JointType == JointType.HandRight)
-                    DrawSphere1P(position.X, position.Y, position.Z, jointsHandRadius, drawColor);
-                else
-                    DrawSphere1P(position.X, position.Y, position.Z, jointsRadius, drawColor);
+                
+                DrawSphere1P(position.X, position.Y, position.Z, jointsRadius, drawColor);
                 
             }
         }
-      
+        /// <summary>
+        /// this is for having a better visibility of the two hands
+        /// <author>Alban Descottes</author>
+        /// </summary>
+        /// <param name="joint"></param>
+        /// <param name="position"></param>
+        private void drawJointHand(Joint joint, Vector3 position)
+        {
+            OpenTK.Vector4 drawColor = new OpenTK.Vector4();
+            bool colorSelected = false;
+            if (joint.TrackingState == JointTrackingState.Tracked)
+            {
+                drawColor = this.trackedJointColor;
+                colorSelected = true;
+            }
+            else if (joint.TrackingState == JointTrackingState.Inferred)
+            {
+                drawColor = this.inferredJointColor;
+                colorSelected = true;
+            }
+            if (colorSelected)
+            {
+                DrawSphere1P(position.X, position.Y, position.Z, jointsHandRadius, drawColor);
+
+            }
+        }
+
         private void drawJoint(Vector3 position, OpenTK.Vector4 color)
         {
             DrawSphere1P(position.X, position.Y, position.Z, jointsRadius, color);
@@ -1497,11 +1565,7 @@ namespace LecturerTrainer.Model
                         currentAdjustment = calculateAdjustment(currentBone, properAnkleToFoot);
                         specificAdjustment += currentAdjustment;
                         point1 += currentAdjustment;
-                        if (jointType1 == JointType.FootLeft)
-                            DrawFoot(point0, point1, drawColor, true);
-                        else
-                            DrawFoot(point0, point1, drawColor, false);
-
+                        DrawFoot(point0, point1, drawColor);
 
                         // Drawing of the second joint (foot is an extremity)
                         drawJoint(joint1, point1);
@@ -1528,7 +1592,7 @@ namespace LecturerTrainer.Model
                             DrawHand(point0, point1, drawColor, false);
 
                         // Drawing of the second joint (hand is an extremity)
-                        drawJoint(joint1, point1);
+                        drawJointHand(joint1, point1);
                     }
 
                     else if ((jointType0 == JointType.Head && jointType1 == JointType.ShoulderCenter))
@@ -1554,8 +1618,6 @@ namespace LecturerTrainer.Model
                         currentAdjustment = calculateAdjustment(currentBone, properSpineToHipCenter);
                         generalAdjustment += currentAdjustment;
                         point1 += currentAdjustment;
-                        // we must align the hipCenter with the spine, else it dispalys the avatar twisted
-                        point1.X = point0.X; point1.Z = point0.Z;
                         DrawLowerTorso(point0, point1, drawColor);
                     }
 
@@ -1626,12 +1688,12 @@ namespace LecturerTrainer.Model
             // Calculation of the point vertically alligned with shoulderCenter and
             // horizontally alligned with the shoulderEnd point
             DrawSphere1P(shoulderEnd.X, shoulderEnd.Y, shoulderEnd.Z, shoulderRadius, color);
-            DrawCylinderWithTwoRadius(shoulderEnd.X, shoulderEnd.Y, shoulderEnd.Z,
-                       shoulderCenter.X, shoulderCenter.Y, shoulderCenter.Z, shoulderRadius, shoulderRadius - 0.03f, color);
+            DrawCone2P(shoulderEnd.X, shoulderEnd.Y, shoulderEnd.Z,
+                       shoulderCenter.X, shoulderCenter.Y, shoulderCenter.Z, shoulderRadius, color);
         }
 
         /// <summary>
-        /// the arm is composed of three cylinders to look like more human
+        /// A cylinder draws the top part of the arm
         /// </summary>
         /// <param name="shoulderEnd"></param>
         /// <param name="elbow"></param>
@@ -1645,15 +1707,17 @@ namespace LecturerTrainer.Model
                                         shoulderEnd.Y + (elbow.Y - shoulderEnd.Y) * 0.7f,
                                         shoulderEnd.Z + (elbow.Z - shoulderEnd.Z) * 0.7f);
             DrawCylinderWithTwoRadius(centerup.X, centerup.Y, centerup.Z, shoulderEnd.X, shoulderEnd.Y,
-                       shoulderEnd.Z, armRadius + 0.01f, armRadius, color);
+                       shoulderEnd.Z, armRadius + 0.02f, armRadius, color);
             DrawCylinderWithTwoRadius(centerup.X, centerup.Y, centerup.Z, centerdown.X, centerdown.Y,
-                       centerdown.Z, armRadius + 0.01f, armRadius + 0.01f, color);
+                       centerdown.Z, armRadius + 0.02f, armRadius + 0.02f, color);
             DrawCylinderWithTwoRadius(centerdown.X, centerdown.Y, centerdown.Z, elbow.X, elbow.Y,
-                       elbow.Z, armRadius + 0.01f, armRadius - 0.005f, color);
+                       elbow.Z, armRadius + 0.02f, armRadius, color);
+            //DrawCylinder2P(shoulderEnd.X, shoulderEnd.Y, shoulderEnd.Z,
+            //             elbow.X, elbow.Y, elbow.Z, bonesRadius, color);
         }
 
         /// <summary>
-        /// The forearm is represented by two cylinders
+        /// The forearm is represented by a cone to enhance the wrist thickness
         /// </summary>
         /// <param name="elbow"></param>
         /// <param name="wrist"></param>
@@ -1664,21 +1728,29 @@ namespace LecturerTrainer.Model
                                          elbow.Y + (wrist.Y - elbow.Y) * 0.2f,
                                          elbow.Z + (wrist.Z - elbow.Z) * 0.2f);
             DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, elbow.X, elbow.Y,
-                       elbow.Z, armRadius , armRadius - 0.005f, color);
+                       elbow.Z, armRadius + 0.01f, armRadius, color);
             DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, wrist.X, wrist.Y,
-                       wrist.Z, armRadius , armRadius - 0.02f, color);
+                       wrist.Z, armRadius + 0.01f, armRadius - 0.02f, color);
+            //DrawCylinder2P(elbow.X, elbow.Y, elbow.Z,
+            //               wrist.X, wrist.Y, wrist.Z, bonesRadius-0.01f, color);
         }
 
-       /// <summary>
-       /// The function calls another function with coordinates of the wrist and the hand
-       /// </summary>
-       /// <param name="wrist"></param>
-       /// <param name="handEnd"></param>
-       /// <param name="color"></param>
-       /// <param name="left"></param>
+        /// <summary>
+        /// The hand is represented with two cones sharing the same base
+        /// </summary>
+        /// <param name="wrist"></param>
+        /// <param name="handEnd"></param>
+        /// <param name="color"></param>
         private void DrawHand(Vector3 wrist, Vector3 handEnd, OpenTK.Vector4 color, bool left)
         {
+
             DrawHandSecondversion(wrist.X, wrist.Y, wrist.Z, handEnd.X, handEnd.Y, handEnd.Z, color, left);                       
+            /*
+            float centerX = (wrist.X + handEnd.X) / 2;
+            float centerY = (wrist.Y + handEnd.Y) / 2;
+            float centerZ = (wrist.Z + handEnd.Z) / 2;
+            DrawCylinder2P(handEnd.X, handEnd.Y, handEnd.Z,
+                       wrist.X, wrist.Y, wrist.Z, bonesRadius, color);*/
         }
 
         /// <summary>
@@ -1690,27 +1762,25 @@ namespace LecturerTrainer.Model
         /// <param name="color"></param>
         private void DrawUpperTorso(Vector3 shoulderCenter, Vector3 spine, OpenTK.Vector4 color)
         {
+            // Radius of the cylinder
+            float cylinderRadius = 0.8f * lowerTorsoRadius;
+
             // Extremity point of the top cone
-            float rate = 0.15f;
+            float rate = 0.25f;
             Vector3 coneBasePoint = new Vector3(shoulderCenter.X + (spine.X - shoulderCenter.X) * rate,
                                                 shoulderCenter.Y + (spine.Y - shoulderCenter.Y) * rate,
                                                 shoulderCenter.Z + (spine.Z - shoulderCenter.Z) * rate);
-            Vector3 cylinderPoint = new Vector3(shoulderCenter.X + (spine.X - shoulderCenter.X) * 0.5f,
-                                               shoulderCenter.Y + (spine.Y - shoulderCenter.Y) * 0.5f,
-                                               shoulderCenter.Z + (spine.Z - shoulderCenter.Z) * 0.5f);
             // Drawing of the cone on the top
-            DrawCylinderWithTwoRadius(coneBasePoint.X, coneBasePoint.Y , coneBasePoint.Z, shoulderCenter.X,
-                       shoulderCenter.Y , shoulderCenter.Z, upperTorsoRadius, upperTorsoRadius - 0.1f, color);
-
-            DrawCylinderWithTwoRadius(coneBasePoint.X, coneBasePoint.Y, coneBasePoint.Z, cylinderPoint.X,
-                    cylinderPoint.Y, cylinderPoint.Z, upperTorsoRadius, upperTorsoRadius - 0.01f, color);
-            DrawCylinderWithTwoRadius(cylinderPoint.X, cylinderPoint.Y, cylinderPoint.Z,
-                spine.X, spine.Y, spine.Z, upperTorsoRadius - 0.01f, upperTorsoRadius - 0.03f, color);
-            DrawCylinderWithTwoRadius(cylinderPoint.X, cylinderPoint.Y, cylinderPoint.Z,
-                spine.X, spine.Y - 0.05f, spine.Z, upperTorsoRadius - 0.031f, upperTorsoRadius - 0.031f, color);
-
+            DrawCone2P(coneBasePoint.X, coneBasePoint.Y, coneBasePoint.Z, shoulderCenter.X,
+                       shoulderCenter.Y, shoulderCenter.Z, upperTorsoRadius, color);
+            // Drawing of the cone
+            DrawCone2P(coneBasePoint.X, coneBasePoint.Y, coneBasePoint.Z,
+                       spine.X, spine.Y, spine.Z, upperTorsoRadius, color);
+            // Drawing of the cylinder
+            DrawCylinder2P(coneBasePoint.X, coneBasePoint.Y, coneBasePoint.Z, spine.X,
+                           spine.Y, spine.Z, cylinderRadius, color);
         }
-    
+
         /// <summary>
         /// Function drawing the lower part of the torso.
         /// </summary>
@@ -1722,13 +1792,13 @@ namespace LecturerTrainer.Model
             float cylinderRadius = 0.8f * lowerTorsoRadius;
 
             // Extremity point of the main cone
-            float rate = 1.2f;
-            Vector3 coneExtr = new Vector3(hipCenter.X + (hipCenter.X - spine.X ) * rate,
-                                           hipCenter.Y + (hipCenter.Y - spine.Y ) * rate,
-                                           hipCenter.Z + (hipCenter.Z - spine.Z ) * rate);
+            float rate = 1.5f;
+            Vector3 coneExtr = new Vector3(spine.X + (spine.X - hipCenter.X) * rate,
+                                           spine.Y + (spine.Y - hipCenter.Y) * rate,
+                                           spine.Z + (spine.Z - hipCenter.Z) * rate);
             // Drawing of the cylinder
-            DrawCylinderWithTwoRadius(coneExtr.X, coneExtr.Y, coneExtr.Z,
-                           spine.X, spine.Y, spine.Z, lowerTorsoRadius - 0.005f, lowerTorsoRadius - 0.03f, color);
+            DrawCylinder2P(hipCenter.X, hipCenter.Y, hipCenter.Z,
+                           spine.X, spine.Y, spine.Z, cylinderRadius, color);
         }
 
         /// <summary>
@@ -1739,11 +1809,9 @@ namespace LecturerTrainer.Model
         /// <param name="color"></param>
         private void DrawHip(Vector3 hipCenter, Vector3 hipEnd, OpenTK.Vector4 color)
         {
-            
             DrawCylinder2P(hipCenter.X, hipCenter.Y, hipCenter.Z,
                            hipEnd.X, hipEnd.Y, hipEnd.Z, hipRadius, color);
-            DrawSphere1P(hipEnd.X, hipEnd.Y, hipEnd.Z, hipRadius - 0.005f, color);
-            
+            DrawSphere1P(hipEnd.X, hipEnd.Y, hipEnd.Z, hipRadius, color);
         }
 
         /// <summary>
@@ -1755,22 +1823,15 @@ namespace LecturerTrainer.Model
         /// <param name="color"></param>
         private void DrawThigh(Vector3 hipEnd, Vector3 knee, OpenTK.Vector4 color)
         {
-
-            Vector3 centerUp = new Vector3(hipEnd.X + (knee.X - hipEnd.X) * 0.15f,
-                                         hipEnd.Y + (knee.Y - hipEnd.Y) * 0.15f,
-                                         hipEnd.Z + (knee.Z - hipEnd.Z) * 0.15f);
             // Point situated on the center of the thigh
-            Vector3 centerdown = new Vector3(hipEnd.X + (knee.X - hipEnd.X) * 0.6f,
-                                         hipEnd.Y + (knee.Y - hipEnd.Y) * 0.6f,
-                                         hipEnd.Z + (knee.Z - hipEnd.Z) * 0.6f);
+            Vector3 center = new Vector3(hipEnd.X + (knee.X - hipEnd.X) * 0.5f,
+                                         hipEnd.Y + (knee.Y - hipEnd.Y) * 0.5f,
+                                         hipEnd.Z + (knee.Z - hipEnd.Z) * 0.5f);
             // Drawing of the two cones
-            DrawCylinderWithTwoRadius(centerUp.X, centerUp.Y, centerUp.Z, hipEnd.X, hipEnd.Y,
-                       hipEnd.Z, legRadius + 0.008f, legRadius , color);
-            DrawCylinderWithTwoRadius(centerdown.X, centerdown.Y, centerdown.Z, centerUp.X, centerUp.Y,
-                       centerUp.Z, legRadius + 0.008f, legRadius + 0.008f, color);
-            DrawCylinderWithTwoRadius(centerdown.X, centerdown.Y, centerdown.Z, knee.X, knee.Y,
-                       knee.Z, legRadius + 0.008f, legRadius - 0.02f, color);
-                       
+            DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, hipEnd.X, hipEnd.Y,
+                       hipEnd.Z, hipRadius, hipRadius, color);
+            DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, knee.X, knee.Y,
+                       knee.Z, hipRadius, hipRadius - 0.02f, color);
         }
 
         /// <summary>
@@ -1782,14 +1843,14 @@ namespace LecturerTrainer.Model
         private void DrawLeg(Vector3 knee, Vector3 ankle, OpenTK.Vector4 color)
         {
             // Point situated on the center of the thigh
-            Vector3 center = new Vector3(knee.X + (ankle.X - knee.X) * 0.2f,
-                                         knee.Y + (ankle.Y - knee.Y) * 0.2f,
-                                         knee.Z + (ankle.Z - knee.Z) * 0.2f);
+            Vector3 center = new Vector3(knee.X + (ankle.X - knee.X) * 0.5f,
+                                         knee.Y + (ankle.Y - knee.Y) * 0.5f,
+                                         knee.Z + (ankle.Z - knee.Z) * 0.5f);
             // Drawing of the two cones
             DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, knee.X, knee.Y,
-                       knee.Z, legRadius - 0.01f , legRadius - 0.02f , color);
+                       knee.Z, bonesRadius, bonesRadius + 0.01f, color);
             DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, ankle.X, ankle.Y,
-                       ankle.Z, legRadius - 0.01f , legRadius - 0.04f, color);
+                       ankle.Z, bonesRadius, bonesRadius - 0.01f, color);
         }
 
         /// <summary>
@@ -1798,82 +1859,10 @@ namespace LecturerTrainer.Model
         /// <param name="ankle"></param>
         /// <param name="footEnd"></param>
         /// <param name="color"></param>
-        private void DrawFoot(Vector3 ankle, Vector3 footEnd, OpenTK.Vector4 color, bool left)
+        private void DrawFoot(Vector3 ankle, Vector3 footEnd, OpenTK.Vector4 color)
         {
-            DrawFootSecondVersion(ankle.X, ankle.Y, ankle.Z, footEnd.X, footEnd.Y, footEnd.Z, color, left);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="X1"></param>
-        /// <param name="Y1"></param>
-        /// <param name="Z1"></param>
-        /// <param name="X2"></param>
-        /// <param name="Y2"></param>
-        /// <param name="Z2"></param>
-        /// <param name="color"></param>
-        /// <param name="left"></param>
-        private void DrawFootSecondVersion(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color, bool left)
-        {
-            Z1 = -Z1;
-            Z2 = -Z2;
-            float vX = X2 - X1;
-            float vY = Y2 - Y1;
-            float vZ = Z2 - Z1;
-
-            if (vZ == 0)
-                vZ = 0.0001f;
-
-            // Size of the vector separating the two points
-            double v = Math.Sqrt(vX * vX + vY * vY + vZ * vZ);
-
-            // Angle between the vector and Z axis
-            double aX = 57.2957795 * Math.Acos(vZ / v);
-            if (vZ < 0.0)
-                aX = -aX;
-            float rX = -vY * vZ;
-            float rY = vX * vZ;
-            GL.PushMatrix();
-            {
-                //draw the cylinder body
-                GL.Translate(X1, Y1, Z1);
-                GL.Rotate(aX, rX, rY, 0.0);
-                GL.Color4(color);
-                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-                Gl.glShadeModel(Gl.GL_FLAT);
-                Gl.glBegin(Gl.GL_QUAD_STRIP);
-                {
-                    Gl.glVertex3f(-0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(-0.03f, 0.005f, 0);
-                    Gl.glVertex3f(-0.02f, 0.01f, 0.1f);
-                    Gl.glVertex3f(-0.02f, 0.02f, 0);
-                    Gl.glVertex3f(0.02f, 0.01f, 0.1f);
-                    Gl.glVertex3f(0.02f, 0.02f, 0);
-                    Gl.glVertex3f(0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(0.03f, 0.005f, 0);
-                    Gl.glVertex3f(0.03f, -0.01f, 0.1f);
-                    Gl.glVertex3f(0.03f, -0.01f, 0);
-                    Gl.glVertex3f(-0.03f, -0.01f, 0.1f);
-                    Gl.glVertex3f(-0.03f, -0.01f, 0);
-                    Gl.glVertex3f(-0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(-0.03f, 0.005f, 0);
-                }
-                Gl.glEnd();
-                Gl.glBegin(Gl.GL_POLYGON);
-                {
-                    Gl.glVertex3f(-0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(-0.02f, 0.01f, 0.1f);
-                    Gl.glVertex3f(0.02f, 0.01f, 0.1f);
-                    Gl.glVertex3f(0.03f, 0.005f, 0.1f);
-                    Gl.glVertex3f(0.03f, -0.01f, 0.1f);
-                    Gl.glVertex3f(-0.03f, -0.01f, 0.1f);
-                    Gl.glVertex3f(-0.03f, -0.01f, 0.1f);
-                }
-                Gl.glEnd();
-                Gl.glShadeModel(Gl.GL_SMOOTH);
-            }
-            GL.PopMatrix();
+            DrawCylinder2P(ankle.X, ankle.Y, ankle.Z,
+                           footEnd.X, footEnd.Y, footEnd.Z, bonesRadius, color);
         }
 
         #endregion
@@ -2124,15 +2113,15 @@ namespace LecturerTrainer.Model
                 GL.Color4(color);
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 
-                // thoses lines represent the base of the hand (link with forearm)
+                // third attempt with GL_QUAD_STRIP, try to do 6 quads
+                Gl.glShadeModel(Gl.GL_FLAT);
                 Gl.glBegin(Gl.GL_QUAD_STRIP);
                 {
-                    Gl.glNormal3f(0.0f, -1.0f, 0.0f);
+                    // thoses lines represent the base of the hand (link with forearm)
                     Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
                     Gl.glVertex3f(-0.025f, 0.01f, 0);
                     Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
                     Gl.glVertex3f(-0.02f, 0.02f, 0);
-                    Gl.glNormal3f(1.0f, 0.0f, 0.0f);
                     Gl.glVertex3f(0.02f, 0.02f, 0.02f);
                     Gl.glVertex3f(0.02f, 0.02f, 0);
                     Gl.glVertex3f(0.04f, 0.01f, 0.02f);
@@ -2146,61 +2135,32 @@ namespace LecturerTrainer.Model
 
                 }
                 Gl.glEnd();
-                // thoses lines represent the palm
                 Gl.glBegin(Gl.GL_QUAD_STRIP);
                 {
-                    /*if (left)
-                    {*/
-                        Gl.glNormal3f(-1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
-                        Gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, -0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
-                        Gl.glNormal3f(1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(0.04f, -0.01f, 0.07f);
-                        Gl.glVertex3f(0.04f, -0.01f, 0.02f);
-                        Gl.glNormal3f(1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(0.04f, 0.01f, 0.02f);
-                        Gl.glVertex3f(0.02f, 0.02f, 0.07f);
-                        Gl.glVertex3f(0.02f, 0.02f, 0.02f);
-                        Gl.glVertex3f(-0.02f, 0.02f, 0.07f);
-                        Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
-                        Gl.glNormal3f(-1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
-                   /* }
-                    else
-                    {
-                        Gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
-                        Gl.glVertex3f(-0.02f, 0.02f, 0.07f);
-                        Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
-                        Gl.glNormal3f(1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(0.02f, 0.02f, 0.07f);
-                        Gl.glVertex3f(0.02f, 0.02f, 0.02f);
-                        Gl.glNormal3f(0.0f, 0.0f, 1.0f);
-                        Gl.glVertex3f(0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(0.04f, 0.01f, 0.02f);
-                        Gl.glVertex3f(0.04f, -0.01f, 0.07f);
-                        Gl.glVertex3f(0.04f, -0.01f, 0.02f);
-                        Gl.glNormal3f(0.0f, -1.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, -0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
-                    }*/
+                    // thoses lines represent the palm
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
+                    Gl.glVertex3f(-0.02f, 0.02f, 0.07f);
+                    Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
+                    Gl.glVertex3f(0.02f, 0.02f, 0.07f);
+                    Gl.glVertex3f(0.02f, 0.02f, 0.02f);
+                    Gl.glVertex3f(0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(0.04f, 0.01f, 0.02f);
+                    Gl.glVertex3f(0.04f, -0.01f, 0.07f);
+                    Gl.glVertex3f(0.04f, -0.01f, 0.02f);
+                    Gl.glVertex3f(-0.04f, -0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
+                    
                 }
                 Gl.glEnd();
-                //Gl.glShadeModel(Gl.GL_SMOOTH);
+                Gl.glShadeModel(Gl.GL_SMOOTH);
                 // thumb
                 if (left)
                 {
                     Gl.glBegin(Gl.GL_QUAD_STRIP);
                     {
-                        Gl.glNormal3f(1.0f, 0.0f, -1.0f); 
                         Gl.glVertex3f(0.04f, -0.01f, 0.02f);
                         Gl.glVertex3f(0.04f, -0.01f, 0.055f);
                         Gl.glVertex3f(0.04f, -0.01f, 0.02f);
@@ -2219,7 +2179,6 @@ namespace LecturerTrainer.Model
                 {
                     Gl.glBegin(Gl.GL_QUAD_STRIP);
                     {
-                        Gl.glNormal3f(-1.0f, 0.0f, -1.0f); 
                         Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
                         Gl.glVertex3f(-0.04f, -0.01f, 0.055f);
                         Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
