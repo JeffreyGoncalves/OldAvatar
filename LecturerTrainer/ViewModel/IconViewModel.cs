@@ -431,7 +431,7 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void clearSpeed()
         {
-            SpeedSource = "Icons/speedEmpty.png";
+            SpeedSource = "Icons/speed_empty.png";
             SpeedOpacity = minOpacity;
         }
 
@@ -528,7 +528,7 @@ namespace LecturerTrainer.ViewModel
             else
             {
                 SpeedOpacity = minOpacity;
-                SpeedSource = "Icons/speedEmpty.png";
+                SpeedSource = "Icons/speed_empty.png";
             }
             if (TrainingSideToolViewModel.Get().State == IRecordingState.Recording)
                 TrainingSideToolViewModel.Get().storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(f, "speedEvent"));

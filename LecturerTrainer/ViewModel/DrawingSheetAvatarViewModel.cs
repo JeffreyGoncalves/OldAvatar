@@ -969,73 +969,141 @@ namespace LecturerTrainer.Model
 
             //Test for 3D feedback by ASu 25 March 2016 ad modified by F Bechu June 2016
             /*The second part of the if (after the ||) is used to display the feedbacks when replaying an avatar, it's the same for all the feedbacks below*/
-            /*OpenGL feedback of the hands crossed*/
-            if (!isTraining)
-            {
-                if (Model.HandsJoined.hands ||
-                    (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Hands are joined")) && ReplayViewModel.Get().isReplaying))
+            /*OpenGL feedback of the hands crossed*/           
+            
+            if(!isTraining)
+			{
+                /*The way feedback is displayed changes wether we are in normal mode or replay mode*/
+
+                /* Normal mode feedback display */
+                if(!ReplayViewModel.Get().isReplaying)
                 {
-                    HudDrawImage("Hand_Joined", 0.15f, 0.15f,
-                        avatar.Joints[JointType.HandLeft].Position.X,
-                        avatar.Joints[JointType.HandLeft].Position.Y);
+                    /*OpenGL feedback of the hands crossed*/
+                    if(Model.HandsJoined.hands)
+                    {
+                        HudDrawImage("Hand_Joined", 0.15f, 0.15f,
+                            avatar.Joints[JointType.HandLeft].Position.X,
+                            avatar.Joints[JointType.HandLeft].Position.Y);
+                    }
+
+                    /*OpenGL feedback of the look at the center*/
+                    if(Model.EmotionRecognizer.lookingDirection.feedC)
+                    {
+                        HudDrawImage("Center_Arrow", 0.2f, 0.2f,
+                            headX,
+                            headY + 0.5f);
+                    }
+
+                    /*OpenGL feedback of the look at the left*/
+                    if(Model.EmotionRecognizer.lookingDirection.feedL)
+                    {
+                        HudDrawImage("Left_Arrow", 0.2f, 0.2f,
+                            headX - 0.5f,
+                            headY);
+                    }
+
+                    /*OpenGL feedback of the look at the right*/
+                    if(Model.EmotionRecognizer.lookingDirection.feedR)
+                    {
+                        HudDrawImage("Right_Arrow", 0.2f, 0.2f,
+                            headX + 0.5f,
+                            headY);
+                    }
+
+                    /*OpenGL feedback of the happy emotion*/
+                    if(Model.EmotionRecognizer.EmotionRecognition.happy)
+                    {
+                        HudDrawImage("Happy", 0.2f, 0.2f,
+                            0.75f,
+                            0.5f);
+                    }
+
+                    /*OpenGL feedback of the surprised emotion*/
+                    if(Model.EmotionRecognizer.EmotionRecognition.surprised)
+                    {
+                        HudDrawImage("Surprised", 0.2f, 0.2f,
+                            0.75f,
+                            0.5f);
+                    }
+
+                    /*OpenGL feedback of agitation*/
+                    if(Model.Agitation.feedAg)
+                    {
+                        HudDrawImage("Agitation", 0.2f, 0.2f,
+                            -1f,
+                            0);
+                    }
+
+                    /*OpenGL feedback of the arms crossed*/
+                    if(Model.BodyAnalysis.ArmsCrossed.feedArmsCrossed)
+                    {
+                        HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
+                            0.75f,
+                            0);
+                    }
                 }
-                /*OpenGL feedback of the look at the center*/
-                if (Model.EmotionRecognizer.lookingDirection.feedC ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the center")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Center_Arrow", 0.2f, 0.2f,
-                        headX,
-                        headY + 0.5f);
-                }
-                /*OpenGL feedback of the look at the left*/
-                if (Model.EmotionRecognizer.lookingDirection.feedL ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the left")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Left_Arrow", 0.2f, 0.2f,
-                        headX - 0.5f,
-                        headY);
-                }
-                /*OpenGL feedback of the look at the right*/
-                if (Model.EmotionRecognizer.lookingDirection.feedR ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the right")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Right_Arrow", 0.2f, 0.2f,
-                        headX + 0.5f,
-                        headY);
-                }
-                /*OpenGL feedback of the happy emotion*/
-                if (Model.EmotionRecognizer.EmotionRecognition.happy ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Happy")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Happy", 0.2f, 0.2f,
-                        0.75f,
-                        0.5f);
-                }
-                /*OpenGL feedback of the surprised emotion*/
-                if (Model.EmotionRecognizer.EmotionRecognition.surprised ||
-                    (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Surprised")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Surprised", 0.2f, 0.2f,
-                        0.75f,
-                        0.5f);
-                }
-                /*OpenGL feedback of agitation*/
-                if (Model.Agitation.feedAg ||
-                    (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Too agitated!")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Agitation", 0.2f, 0.2f,
-                        -1f,
-                        0);
-                }
-                /*OpenGL feedback of the arms crossed*/
-                if (Model.BodyAnalysis.ArmsCrossed.feedArmsCrossed ||
-                    (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Arms Crossed")) && ReplayViewModel.Get().isReplaying))
-                {
-                    HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
-                        0.75f,
-                        0);
-                }
-            }
+                /* Replay Mode feedback display */
+                else{
+                    /* List containing all the feedbacks that must be displayed during the current frame */
+                    List<String> feedbacksToDisplay = ReplayViewModel.Get().feedbacksAtTime();
+                    
+                    /* Iterating through the list to see which feedback to display */
+                    foreach (String message in feedbacksToDisplay)
+                    {
+                        switch(message)
+                        {
+                            /*OpenGL feedback of the hands crossed*/
+                            case("Hands are joined"):
+                                HudDrawImage("Hand_Joined", 0.15f, 0.15f,
+                                    avatar.Joints[JointType.HandLeft].Position.X,
+                                    avatar.Joints[JointType.HandLeft].Position.Y);
+                                break;
+
+                            /*OpenGL feedback of the look at the center*/
+                            case("Look to the center"):
+                                HudDrawImage("Center_Arrow", 0.2f, 0.2f,
+                                    headX,
+                                    headY + 0.5f);
+                                break;
+                            
+                            /*OpenGL feedback of the look at the left*/
+                            case("Look to the left"):
+                                HudDrawImage("Left_Arrow", 0.2f, 0.2f,
+                                    headX - 0.5f,
+                                    headY);
+                                break;
+                            
+                            /*OpenGL feedback of the look at the right*/
+                            case("Look to the right"):
+                                HudDrawImage("Right_Arrow", 0.2f, 0.2f,
+                                    headX + 0.5f,
+                                    headY);
+                                break;
+                            
+                            /*OpenGL feedback of the happy emotion*/
+                            case("Happy"):
+                                HudDrawImage("Happy", 0.2f, 0.2f,
+                                    0.75f,
+                                    0.5f);
+                                break;
+                            
+                            /*OpenGL feedback of agitation*/
+                            case("Too agitated!"):
+                                HudDrawImage("Agitation", 0.2f, 0.2f,
+                                    -1f,
+                                    0);
+                                break;
+                            
+                            /*OpenGL feedback of the arms crossed*/
+                            case("Arms Crossed"):
+                                HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
+                                    0.75f,
+                                    0);
+                                break;
+                        }
+                    }
+				}
+			}
             else // Training mode
             {
                 if (TrainingWithAvatarViewModel.Get().PlayMode & mentor)
@@ -1190,7 +1258,6 @@ namespace LecturerTrainer.Model
         /// </summary>
         private void drawInitialAvatar()
         {
-            //GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             // Bones drawing
             // Head and Shoulders
             this.DrawHead(initialHead, initialShoulderCenter, trackedBoneColor);
@@ -1510,7 +1577,6 @@ namespace LecturerTrainer.Model
                         else
                             DrawFoot(point0, point1, drawColor, false);
 
-
                         // Drawing of the second joint (foot is an extremity)
                         drawJoint(joint1, point1);
                     }
@@ -1718,7 +1784,7 @@ namespace LecturerTrainer.Model
                 spine.X, spine.Y - 0.05f, spine.Z, upperTorsoRadius - 0.031f, upperTorsoRadius - 0.031f, color);
 
         }
-    
+
         /// <summary>
         /// Function drawing the lower part of the torso.
         /// </summary>
@@ -2064,7 +2130,7 @@ namespace LecturerTrainer.Model
                 // thoses lines represent the base of the hand (link with forearm)
                 Gl.glBegin(Gl.GL_QUAD_STRIP);
                 {
-                    Gl.glNormal3f(-1.0f, 1.0f, 0.0f);// GL.Color4(Color.Purple);
+                    Gl.glNormal3f(0.0f, -1.0f, 0.0f);
                     Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
                     Gl.glVertex3f(-0.025f, 0.01f, 0);
                     Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
@@ -2086,7 +2152,6 @@ namespace LecturerTrainer.Model
 
                 }
                 Gl.glEnd();
-                // thoses lines represent the palm
                 Gl.glBegin(Gl.GL_QUAD_STRIP);
                 {
                     /*if (left)

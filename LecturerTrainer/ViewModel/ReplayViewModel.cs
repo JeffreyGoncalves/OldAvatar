@@ -300,6 +300,49 @@ namespace LecturerTrainer.ViewModel
             return queue;
         }
 
+		        /// <summary>
+        /// Checks if a feedback of the queue must be displayed at the current time
+        /// </summary>
+        /// <param name="fileName">message of the feedback we want to check</param>
+        /// <returns>True if the feedback must be displayed</returns>
+        public bool checkQueueAtTime(string feedbackMsg)
+        {
+            if(feedbackMsg == null)
+                return false;
+
+            Queue<ServerFeedback> tempQueue = new Queue<ServerFeedback>(feedbacksQueue);
+            foreach (ServerFeedback fb in tempQueue)
+            {
+                if(fb.feedbackHappeningFrame == timeRecord)
+                {
+                    if (String.Compare(fb.feedbackMessage, feedbackMsg) == 0)
+                        return true;
+                }
+                else
+                    return false;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Gets all the feedbacks of the queue that must be displayed at the current time
+        /// </summary>
+        /// <returns>A list containing the 'feedbackMessage' value of all the feedbacks that must be displayed</returns>
+        public List<String> feedbacksAtTime()
+        {
+            List<String> feedbacksList = new List<String>();
+
+            Queue<ServerFeedback> tempQueue = new Queue<ServerFeedback>(feedbacksQueue);
+            foreach (ServerFeedback fb in tempQueue)
+            {
+                if(fb.feedbackHappeningFrame == timeRecord)
+                    feedbacksList.Add(fb.feedbackMessage);
+                else
+                    return feedbacksList;
+            }
+            return feedbacksList;
+        }
+		
         /// <summary>
         /// Manage the replay feedbacks
         /// </summary>

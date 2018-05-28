@@ -186,7 +186,7 @@ namespace LecturerTrainer.ViewModel
                             this.removeFb(i);
                         }
                     }
-                    if (startTimeLabel[i].AddMilliseconds(timeOut) <= DateTime.Now)
+                    else if (startTimeLabel[i].AddMilliseconds(timeOut) <= DateTime.Now)
                     {
                         this.removeFb(i);
                     }
