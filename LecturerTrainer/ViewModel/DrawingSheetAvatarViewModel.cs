@@ -25,8 +25,9 @@ namespace LecturerTrainer.Model
 {
     class DrawingSheetAvatarViewModel : DrawingSheetViewModel
     {
-
+        private static int count = 0;
         #region fields
+
         /// <summary>
         /// the instance of the singleton class 
         /// </summary>
@@ -776,7 +777,7 @@ namespace LecturerTrainer.Model
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
-            if (faceT)
+            if (faceT )
             {
                 GL.PushMatrix();
                 {

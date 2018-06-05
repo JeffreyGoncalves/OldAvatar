@@ -458,9 +458,19 @@ namespace LecturerTrainer.ViewModel
                     activate(ReplayView.Get().Avatar, GeneralSideTool.Get().Avatar);
                     deactivateOther(ReplayView.Get().Stream, ReplayView.Get().VideoAvatar);
 
-                    skeletonScrolling = new ReplayAvatar(filePathAvatar, this,0);
-                    tryAddOtherSources("skeletonData.skd");
-                    isReplaying = true;
+                    var faceData = filePath.Replace("skeletonData.skd", "faceData.xml");
+                    if(File.Exists(faceData))
+                    {
+                        skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, this, 0);
+                        tryAddOtherSources("skeletonData.skd");
+                        isReplaying = true;
+                    }
+                    else
+                    {
+                        skeletonScrolling = new ReplayAvatar(filePathAvatar, this, 0);
+                        tryAddOtherSources("skeletonData.skd");
+                        isReplaying = true;
+                    }
                 }
                 if (isReplaying)
                     ReplayView.Get().TitleReplay.Content = Path.GetFileName((Path.GetDirectoryName(filePath)));
