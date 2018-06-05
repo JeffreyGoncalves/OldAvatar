@@ -803,35 +803,40 @@ namespace LecturerTrainer.Model
                     //                    GL.LineWidth(2.0f);
                     // Drawing of the right eye
                     Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
-                    float alpha;
-                    float beta;
-                    float alphaStep = (float)(Math.PI) / (float)generalSlices;
-                    float betaStep = (float)(Math.PI) / (float)generalStacks;
-
-                    Gl.glVertex3f(face23.X, face23.Y, face23.Z);
-
-                    float RVert = (float)Math.Sqrt(Math.Pow((face21.X - face22.X), 2) + Math.Pow((face21.Y - face22.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
-                    float RHori = (float)Math.Sqrt(Math.Pow((face23.X - face20.X), 2) + Math.Pow((face23.Y - face20.Y), 2)) / 2; //Vertical semi-axis of the ellipse
-
-
-
-                    for (alpha = -(float)Math.PI / 2; alpha < (float)Math.PI / 2; alpha += alphaStep)
                     {
-                        for (beta = -(float)Math.PI; beta < (float)Math.PI; beta += betaStep)
-                        {
-                            Gl.glVertex3f(face23.X + (float)Math.Cos(alpha) * (float)Math.Cos(beta) * RHori,
-                                face23.Y + (float)Math.Sin(beta) * (float)Math.Cos(alpha) * RVert, face23.Z);
+                        float alpha;
+                        float beta;
+                        float alphaStep = (float)(Math.PI) / (float)generalSlices;
+                        float betaStep = (float)(Math.PI) / (float)generalStacks;
 
-                            Gl.glVertex3f(face23.X + RHori * (float)Math.Cos(alpha + alphaStep) * (float)Math.Cos(beta),
-                                face23.Y + RVert * (float)Math.Cos(alpha + alphaStep) * (float)Math.Sin(beta), face23.Z);
+
+                        
+                        
+                        float RVert = (float)Math.Sqrt(Math.Pow((face21.X - face22.X), 2) + Math.Pow((face21.Y - face22.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
+                        float RHori = (float)Math.Sqrt(Math.Pow((face23.X - face20.X), 2) + Math.Pow((face23.Y - face20.Y), 2)) / 2; //Vertical semi-axis of the ellipse
+
+                        Gl.glVertex3f(face23.X, face23.Y, face23.Z);
+                        for (alpha = -(float)Math.PI / 2; alpha < (float)Math.PI / 2; alpha += alphaStep)
+                        {
+                            for (beta = 0 ; beta < (float)2*Math.PI; beta += alphaStep)
+                            {
+
+                                Gl.glVertex3f(face23.X + (float)Math.Cos(alpha) * (float)Math.Cos(beta) * RHori - RHori,
+                                    face21.Y + (float)Math.Sin(beta) * (float)Math.Cos(alpha) * RVert-RVert, face22.Z);
+
+                                Gl.glVertex3f(face23.X + RHori * (float)Math.Cos(alpha + alphaStep) * (float)Math.Cos(beta) - RHori,
+                                    face21.Y + RVert * (float)Math.Cos(alpha + alphaStep) * (float)Math.Sin(beta) - RVert, face22.Z);
+   
+                                
+                            }
                         }
+                         Gl.glVertex3f(face23.X, face23.Y, face23.Z);
+
+                        //Gl.glVertex3f(face22.X, face22.Y, face22.Z);
+                        //Gl.glVertex3f(face20.X, face20.Y, face20.Z);
+                        //Gl.glVertex3f(face21.X, face21.Y, face21.Z);
 
                     }
-
-                    //Gl.glVertex3f(face21.X, face21.Y, face21.Z);
-                    //Gl.glVertex3f(face20.X, face20.Y, face20.Z);
-                    //Gl.glVertex3f(face22.X, face22.Y, face22.Z);
-
                     Gl.glEnd();
 
                     // Drawing of the right eyebrow
@@ -866,6 +871,7 @@ namespace LecturerTrainer.Model
 
                     }
 
+                    
                     Gl.glEnd();
 
                     // Drawing of the left eyebrow
