@@ -25,8 +25,9 @@ namespace LecturerTrainer.Model
 {
     class DrawingSheetAvatarViewModel : DrawingSheetViewModel
     {
-
+        private static int count = 0;
         #region fields
+
         /// <summary>
         /// the instance of the singleton class 
         /// </summary>
@@ -781,7 +782,7 @@ namespace LecturerTrainer.Model
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
-            if (faceT)
+            if (faceT )
             {
                 GL.PushMatrix();
                 {
@@ -807,12 +808,37 @@ namespace LecturerTrainer.Model
 
                     //                    GL.LineWidth(2.0f);
                     // Drawing of the right eye
-                    GL.Begin(PrimitiveType.Polygon);
-                    GL.Vertex3(face20);
-                    GL.Vertex3(face21);
-                    GL.Vertex3(face23);
-                    GL.Vertex3(face22);
-                    GL.End();
+                    Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
+                    float alpha;
+                    float beta;
+                    float alphaStep = (float)(Math.PI) / (float)generalSlices;
+                    float betaStep = (float)(Math.PI) / (float)generalStacks;
+
+                    Gl.glVertex3f(face23.X, face23.Y, face23.Z);
+
+                    float RVert = (float)Math.Sqrt(Math.Pow((face21.X - face22.X), 2) + Math.Pow((face21.Y - face22.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
+                    float RHori = (float)Math.Sqrt(Math.Pow((face23.X - face20.X), 2) + Math.Pow((face23.Y - face20.Y), 2)) / 2; //Vertical semi-axis of the ellipse
+
+
+
+                    for (alpha = -(float)Math.PI / 2; alpha < (float)Math.PI / 2; alpha += alphaStep)
+                    {
+                        for (beta = -(float)Math.PI; beta < (float)Math.PI; beta += betaStep)
+                        {
+                            Gl.glVertex3f(face23.X + (float)Math.Cos(alpha) * (float)Math.Cos(beta) * RHori,
+                                face23.Y + (float)Math.Sin(beta) * (float)Math.Cos(alpha) * RVert, face23.Z);
+
+                            Gl.glVertex3f(face23.X + RHori * (float)Math.Cos(alpha + alphaStep) * (float)Math.Cos(beta),
+                                face23.Y + RVert * (float)Math.Cos(alpha + alphaStep) * (float)Math.Sin(beta), face23.Z);
+                        }
+
+                    }
+
+                    //Gl.glVertex3f(face21.X, face21.Y, face21.Z);
+                    //Gl.glVertex3f(face20.X, face20.Y, face20.Z);
+                    //Gl.glVertex3f(face22.X, face22.Y, face22.Z);
+
+                    Gl.glEnd();
 
                     // Drawing of the right eyebrow
                     GL.Begin(PrimitiveType.Polygon);
@@ -823,12 +849,30 @@ namespace LecturerTrainer.Model
                     GL.End();
 
                     // Drawing of the left eye
-                    GL.Begin(PrimitiveType.Polygon);
-                    GL.Vertex3(face53);
-                    GL.Vertex3(face54);
-                    GL.Vertex3(face56);
-                    GL.Vertex3(face55);
-                    GL.End();
+                    Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
+
+                    float LVert = (float)Math.Sqrt(Math.Pow((face54.X - face55.X), 2) + Math.Pow((face54.Y - face55.Y), 2)) / 2;
+                    float LHori = (float)Math.Sqrt(Math.Pow((face56.X - face53.X), 2) + Math.Pow((face56.Y - face53.Y), 2)) / 2;
+
+                    float theta;
+                    float phi;
+                    float thetaStep = (float)(Math.PI) / (float)generalSlices;
+                    float phiStep = (float)(Math.PI) / (float)generalStacks;
+                    for (theta = -(float)Math.PI / 2; theta < (float)Math.PI / 2; theta += thetaStep)
+                    {
+                        for (phi = -(float)Math.PI; phi < (float)Math.PI; phi += phiStep)
+                        {
+
+                            Gl.glVertex3f(face56.X + (float)Math.Cos(theta) * (float)Math.Cos(phi) * LHori + LHori,
+                                face56.Y + (float)Math.Sin(phi) * (float)Math.Cos(theta) * LVert, face56.Z);
+
+                            Gl.glVertex3f(face56.X + LHori + LHori * (float)Math.Cos(theta + thetaStep) * (float)Math.Cos(phi),
+                                face56.Y + LVert * (float)Math.Cos(theta + thetaStep) * (float)Math.Sin(phi), face56.Z);
+                        }
+
+                    }
+
+                    Gl.glEnd();
 
                     // Drawing of the left eyebrow
                     GL.Begin(PrimitiveType.Polygon);

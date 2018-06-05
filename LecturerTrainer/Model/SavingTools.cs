@@ -362,6 +362,80 @@ namespace LecturerTrainer.Model
         }
         #endregion
 
+        public static void StartSavingBinaryFace()
+        {
+            string fileName = SavingTools.pathFolder + "/" + "faceData.dat";
+
+            using (BinaryWriter writer = new BinaryWriter(File.Open(fileName, FileMode.Create)))
+            {
+                PCQueue<FaceDataWrapper> binaryFaceQueue = new PCQueue<FaceDataWrapper>(fdw =>
+                {
+                    //writer.Write("Face_" + nbFaceFrame++);
+                    //writer.Write("FacePoints3D");
+                    for (int i = 0; i < fdw.depthPointsList.Count; ++i)
+                    {
+                        switch (i)
+                        {
+                            case 7:
+                            case 8:
+                            case 15:
+                            case 16:
+                            case 17:
+                            case 18:
+                            case 19:
+                            case 20:
+                            case 21:
+                            case 22:
+                            case 23:
+                            case 24:
+                            case 31:
+                            case 40:
+                            case 41:
+                            case 48:
+                            case 49:
+                            case 50:
+                            case 51:
+                            case 52:
+                            case 53:
+                            case 54:
+                            case 55:
+                            case 56:
+                            case 57:
+                            case 64:
+                            case 87:
+                                {
+                                    writer.Write(i);
+                                    writer.Write(fdw.depthPointsList.ElementAt(i).X);
+                                    writer.Write(fdw.depthPointsList.ElementAt(i).Y);
+                                    writer.Write(fdw.depthPointsList.ElementAt(i).Z);
+                                }
+                                break;
+                        }
+                    }
+
+                    //writer.Write("FacePoints");
+
+                    for (int i = 0; i < fdw.colorPointsList.Count; ++i)
+                    {
+                        writer.Write(i);
+                        writer.Write(fdw.colorPointsList.ElementAt(i).X);
+                        writer.Write(fdw.colorPointsList.ElementAt(i).Y);
+                    }
+
+                    //writer.Write("FaceTriangles");
+
+                    for (int i = 0; i < fdw.faceTriangles.Count(); ++i)
+                    {
+                        writer.Write(i);
+                        writer.Write(fdw.faceTriangles.ElementAt(i).First);
+                        writer.Write(fdw.faceTriangles.ElementAt(i).Second);
+                        writer.Write(fdw.faceTriangles.ElementAt(i).Third);
+                    }
+
+                }, "BinaryFaceRecordingTask");
+            }
+        }
+
         /// <summary>
         /// Functions disposing the different queue when their recordings ended 
         /// </summary>

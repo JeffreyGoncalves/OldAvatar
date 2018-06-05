@@ -28,6 +28,8 @@ namespace LecturerTrainer.Model
         /// </summary>
         public bool isStarted;
 
+        private static int count = 0;
+
         /// <summary>
         /// The timer used for the scrolling
         /// </summary>
@@ -304,9 +306,7 @@ namespace LecturerTrainer.Model
             else
                 currentSkeleton = null;
 
-            if (currentSkeleton != null)
-            {
-                if (faceDir != "")
+                if (currentSkeleton != null)
                 {
                     try
                     {
@@ -318,6 +318,10 @@ namespace LecturerTrainer.Model
                     {
                         Console.WriteLine(e);
                     }
+                }
+                else
+                {
+                    replayViewModel.stopButtonCommand();
                 }
 
                 // We only draw the last skeleton
@@ -334,6 +338,10 @@ namespace LecturerTrainer.Model
             }
             currentSkeletonNumber += nbSkeletonsPerFrame;
             //Console.Out.WriteLine(" -- " + Tools.getStopWatch().ToString() + " -- ");
+        }
+
+            // We only draw the last skeleton
+            DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
         }
 
         /// <summary>
@@ -750,6 +758,60 @@ namespace LecturerTrainer.Model
                                         "The savefile is wrongly written");
         }
         #endregion
+
+        public FaceDataWrapper LoadBinaryFaceFrame(string fileName, int frame)
+        {
+            if (File.Exists(fileName))
+            {
+                var depthPointsList = new List<Vector3DF>(121);
+                var colorPointsList = new List<Microsoft.Kinect.Toolkit.FaceTracking.PointF>(121);
+                var faceTrianglesList = new List<FaceTriangle>(206);
+
+                int nbPoint;
+
+                using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
+                {
+                    for(int i = 0; i < 121; ++i)
+                    {
+                        nbPoint = reader.ReadInt32();
+
+                        Vector3DF vector3df = new Vector3DF();
+                        vector3df.X = reader.ReadSingle();
+                        vector3df.Y = reader.ReadSingle();
+                        vector3df.Z = reader.ReadSingle();
+
+                        depthPointsList[nbPoint] = vector3df;
+                    }
+
+                    for(int i = 0; i < 121; ++i)
+                    {
+                        nbPoint = reader.ReadInt32();
+
+                        var buffer = new Microsoft.Kinect.Toolkit.FaceTracking.PointF(reader.ReadSingle(), reader.ReadSingle());
+
+                        colorPointsList[nbPoint] = buffer;
+                    }
+
+                    while(reader.PeekChar() != -1)
+                    {
+                        FaceTriangle ft = new FaceTriangle
+                        {
+                            First = reader.ReadInt32(),
+                            Second = reader.ReadInt32(),
+                            Third = reader.ReadInt32()
+                        };
+
+                        faceTrianglesList.Add(ft);
+                    }
+
+                    return new FaceDataWrapper(depthPointsList, colorPointsList, faceTrianglesList.ToArray());
+                }
+            }         
+            else
+            {
+                throw new Exception("Error while loading the file");
+            }
+        }
 
         //These uses in the end too much memory to be used
         #region SlowerAlternateVersionsOfFaceLoading

@@ -40,6 +40,8 @@ namespace LecturerTrainer.Model
         public static bool useAutoElevation = false;
         public static int nFrame = 0;
         public static bool SwitchDraw = true;
+
+        public static int currentFrames = 0;
         
         public static SkeletonFaceTracker skeletonFaceTracker;
         public static bool faceTracking = false;
@@ -236,10 +238,17 @@ namespace LecturerTrainer.Model
             if (faceTracking)
             {
                 // Amirali Problem with multithreading?
-                SwitchDraw = true;
-                skeletonOperations(e);
-                SwitchDraw = false;
-                faceOperations(e);
+                currentFrames++;
+                if(currentFrames % 2 == 0)
+                {
+                    SwitchDraw = true;
+                    skeletonOperations(e);
+                }
+                else
+                {
+                    SwitchDraw = false;
+                    faceOperations(e);
+                }
             }
             else
             {
