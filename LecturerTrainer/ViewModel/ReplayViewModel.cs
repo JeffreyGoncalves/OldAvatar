@@ -12,6 +12,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using System.Threading;
+using Microsoft.Kinect;
+using System.Windows.Threading;
 
 namespace LecturerTrainer.ViewModel
 {
@@ -43,10 +46,15 @@ namespace LecturerTrainer.ViewModel
         private bool stopped = true;
         // Indicates if the video is paused
         private bool paused = true;
+        // Indicates if the video is played
+        private static bool played = false;
         // Indicates if the statistics source is detected
         private string statisticsPath = "";
 
         private ReplayAvatar skeletonScrolling;
+
+        private Skeleton nextSkeleton;
+        private long nextSkeletonTime;
 
         /// <summary>
         /// Time elapsed in the video, textual version
@@ -93,6 +101,38 @@ namespace LecturerTrainer.ViewModel
 
         private ICommand resultsCommand;
         private ChoiceResultView resultsPerformance = null;
+
+        private static int currentAvatarNumber = 0;
+        public static int CurrentAvatarNumber
+        {
+            get
+            {
+                return currentAvatarNumber;
+            }
+            set
+            {
+                currentAvatarNumber = value;
+            }
+        }
+
+        private static Tuple<int, Skeleton> currentAvatar;
+        public static Tuple<int, Skeleton> CurrentAvatar
+        {
+            get
+            {
+                return currentAvatar;
+            }
+            set
+            {
+                currentAvatar = value;
+            }
+        }
+
+        private static int _oldTime = 0;
+        private static int _time;
+
+        private Thread replayThread;
+
         #endregion
 
         #region commands
@@ -131,9 +171,16 @@ namespace LecturerTrainer.ViewModel
             get { return elapsedTime; }
             set
             {
-                elapsedTime = value;
-                ReplayView.Get().ReplayTimeLabel.Text = value;
-                OnPropertyChanged("ElapsedTime");
+                try
+                {
+                    elapsedTime = value;
+                    ReplayView.Get().ReplayTimeLabel.Text = value;
+                    OnPropertyChanged("ElapsedTime");
+                }
+                catch (Exception e)
+                {
+                    Console.Out.WriteLine(e.ToString());
+                }
             }
         }
 
@@ -165,13 +212,13 @@ namespace LecturerTrainer.ViewModel
             slowDownPerformanceCommand = new RelayCommand(SlowDown);
             pausePerformanceCommand = new RelayCommand(Pause);
             stopPerformanceCommand = new RelayCommand(Stop);
-            videoAvatarDisplayCommand = new RelayCommand(videoAvatarDisplay);
+            //videoAvatarDisplayCommand = new RelayCommand(videoAvatarDisplay);
             avatarDisplayCommand = new RelayCommand(avatarDisplay);
             streamDisplayCommand = new RelayCommand(videoStreamDisplay);
             quitCommand = new RelayCommand(quit);
             otherReplayCommand = new RelayCommand(otherReplay);
-
             Tools.initializeTimer();
+            Tools.initStopWatch();
             timeRecord = 0;
     
             DrawingSheetView.Get().ReplayVideo.MediaEnded += videoEnded;
@@ -181,7 +228,13 @@ namespace LecturerTrainer.ViewModel
             ManageSpeedElements();
             Mute();
             pauseButtonCommand();
+
+            // ALBAN
+            //InitThreadReplay();
+            Console.Out.WriteLine("end constr");
         }
+
+
 
         public static ReplayViewModel Get()
         {
@@ -205,6 +258,43 @@ namespace LecturerTrainer.ViewModel
         #endregion
 
         #region methods
+
+
+        // USELESS
+       /* public void InitThreadReplay()
+        {
+            replayThread = new Thread(() => displayAvatarRecord(0));
+            // TODO
+            // clock to zero
+            //
+
+        }*/
+
+        public void displayAvatarRecord() /*(int time) */
+        {
+            //int _time = (int)time;
+            _oldTime = CurrentAvatar.Item1;
+
+            //Tools.stopStopWatch();
+            DrawingSheetAvatarViewModel.Get().skToDrawInReplay = CurrentAvatar.Item2;
+            //DrawingSheetAvatarViewModel.Get().forceDraw(CurrentAvatar.Item2, false);
+            //DrawingSheetAvatarViewModel.Get().forceDraw(CurrentAvatar.Item2, false);
+            //Thread.Sleep(_time);
+            //CurrentAvatar = skeletonScrolling.nextSkeleton(currentAvatarNumber++);
+            Console.Out.WriteLine("--end thread-- " + Tools.getStopWatch());
+            /*if (played)
+            {
+                Console.Out.WriteLine(" -- " + Tools.getStopWatch() + " -- ");
+                //Console.Out.WriteLine("displayAvatarRecord");
+            }*/
+
+            // if play
+            // then look time is matching with current time
+            // then play skeleton
+            // and go to next skeleton
+        }
+
+        // TODO stop, pause
 
         #region feedback management methods
         /// <summary>
@@ -243,7 +333,9 @@ namespace LecturerTrainer.ViewModel
                     }
                 }
             }
+            //Console.Out.Write(" -- ");
             timeRecord += 200 * speedRatios[speedRatioIndex];
+            //Console.Out.WriteLine(timeRecord);
 
         }
 
@@ -536,6 +628,9 @@ namespace LecturerTrainer.ViewModel
                     }
                     else if (fileName == "skeletonData.skd")
                     {
+                        //Console.Out.WriteLine("-- TAOS : " + s);
+                        //We create the replayAvatar field at the start
+                        skeletonScrolling = new ReplayAvatar(s, this, 0);
                         addOtherVideoSources(ReplayView.Get().Avatar);
                         filePathAvatar = s;
                     }
@@ -552,6 +647,7 @@ namespace LecturerTrainer.ViewModel
                 audioSource = false;
             }
         }
+
         /// <summary>
         /// Adding other video replay
         /// Added by Baptiste Germond
@@ -600,6 +696,9 @@ namespace LecturerTrainer.ViewModel
         /// <param name="e"></param>
         public void videoEnded(object sender, RoutedEventArgs e)
         {
+           // Console.Out.WriteLine("here");
+           // Tools.stopStopWatch();
+           // Tools.restartStopWatch();
             stopButtonCommand();
         }
         #endregion
@@ -635,7 +734,7 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// Displays the skeleton view
         /// </summary>
-        public void videoAvatarDisplay()
+        /*public void videoAvatarDisplay()
         {
             if (filePathVideoAvatar != null)
             {
@@ -659,18 +758,34 @@ namespace LecturerTrainer.ViewModel
                 skeletonScrolling = null;
                 startButtonCommand();
             }
-        }
+        }*/
 
         /// <summary>
         /// Displays the avatar view
         /// </summary>
         public void avatarDisplay()
         {
+            //stopButtonCommand();
+
             if (filePathAvatar != null)
             {
-                skeletonScrolling = new ReplayAvatar(filePathAvatar, this,(int)(Tools.getTimer()/1000)*30);
+                //skeletonScrolling = new ReplayAvatar(filePathAvatar, this,(int)(Tools.getTimer()/1000)*30);
+                //skeletonScrolling.FindCorrectAvatar((int)(Tools.getTimer()));
                 filePath = filePathVideoAvatar;
                 DrawingSheetView.Get().Show3DSheet();
+                PlayOrStop();
+            }
+        }
+
+        private void PlayOrStop()
+        {
+            if (!played)
+            {
+                startButtonCommand();
+                pauseButtonCommand();
+            }
+            else
+            {
                 startButtonCommand();
             }
         }
@@ -680,6 +795,7 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void videoStreamDisplay()
         {
+            //pauseButtonCommand();
             if (filePathVideoStream != null)
             {
                 TimeSpan tempV = DrawingSheetView.Get().ReplayVideo.Position;
@@ -692,16 +808,18 @@ namespace LecturerTrainer.ViewModel
                 }
                 else
                 {
-                    DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, (int)(Tools.getTimer() / 1000));
-                    DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, (int)(Tools.getTimer() / 1000));
+                    DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch());
+                    DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch());
+                    //DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, (int)(Tools.getTimer() / 1000));
+                    //DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, (int)(Tools.getTimer() / 1000));
                 }
-                if (skeletonScrolling != null)
-                    skeletonScrolling.Stop();
-                skeletonScrolling = null;
+               // if (skeletonScrolling != null)
+               //     skeletonScrolling.Stop();
+                //skeletonScrolling = null;
                 filePath = filePathVideoStream;
                 DrawingSheetView.Get().ShowReplayVideoSheet();
-                
-                startButtonCommand();
+                // ReplayAvatar.setDisplayedTime();
+                PlayOrStop();
             }
         }
 
@@ -711,12 +829,17 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void Play()
         {
-            Tools.startTimer();
-            raiseFeedbacksOnTime();
+            //Console.Out.WriteLine("here");
+            played = true;
             stopped = false;
             paused = false;
+
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
+            {
+                Console.Out.WriteLine(" -PLA- " + Tools.getStopWatch() + " -PLA- ");
                 skeletonScrolling.Start();
+            }
+
             if (DrawingSheetView.Get().ReplayVideo.Source != null)
             {
                 DrawingSheetView.Get().ReplayVideo.Play();
@@ -729,6 +852,13 @@ namespace LecturerTrainer.ViewModel
             ReplayView.Get().SlowButton.IsEnabled = true;
             ReplayView.Get().PauseButton.IsEnabled = true;
             ManageSpeedElements();
+            
+            /*
+            Tools.startTimer();
+            */
+            //raiseFeedbacksOnTime();
+
+            
         }
 
         /// <summary>
@@ -736,10 +866,18 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void Pause()
         {
-            Tools.stopTimer();
             paused = true;
+            played = false;
+            stopped = false;
+
+            //Tools.stopStopWatch();
+
+            //Tools.stopTimer();
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
+            {
+                Console.Out.WriteLine(" -PAU- " + Tools.getStopWatch() + " -PAU- ");
                 skeletonScrolling.Pause();
+            }
             if (DrawingSheetView.Get().ReplayVideo.Source != null)
             {
                 DrawingSheetView.Get().ReplayVideo.Visibility = Visibility.Visible;
@@ -762,11 +900,15 @@ namespace LecturerTrainer.ViewModel
         public void Stop()
         {
             Tools.stopTimer();
-            Tools.initializeTimer();
             timeRecord = 0;
             stopped = true;
+            paused = false;
+            played = false;
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
+            {
+                Console.Out.WriteLine(" -STP- " + Tools.getStopWatch() + " -STP- ");
                 skeletonScrolling.Stop();
+            }
             if (DrawingSheetView.Get().ReplayVideo.Source != null)
             {
                 DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0,0,0,0,5);
@@ -776,6 +918,8 @@ namespace LecturerTrainer.ViewModel
             {
                 DrawingSheetView.Get().ReplayAudio.Stop();
             }
+            Tools.initializeTimer();
+            Tools.restartStopWatch();
 
             ReplayView.Get().FastButton.IsEnabled = false;
             ReplayView.Get().SlowButton.IsEnabled = false;
@@ -783,8 +927,8 @@ namespace LecturerTrainer.ViewModel
             speedRatioIndex = 2;
             DrawingSheetView.Get().ReplayAudio.SpeedRatio = speedRatios[speedRatioIndex];
             DrawingSheetView.Get().ReplayVideo.SpeedRatio = speedRatios[speedRatioIndex];
-            if(skeletonScrolling != null)
-                skeletonScrolling.Speed = speedRatios[speedRatioIndex];
+            //if(skeletonScrolling != null)
+            //    skeletonScrolling.Speed = speedRatios[speedRatioIndex];
             ManageSpeedElements();
   
             // Icons cleaning and initialization of the feedback queue thanks to the save
@@ -874,7 +1018,7 @@ namespace LecturerTrainer.ViewModel
             statisticsPath = "";
             if (skeletonScrolling != null)
             {
-                skeletonScrolling.Stop();
+               // skeletonScrolling.Stop();
                 skeletonScrolling = null;
             }
             (TrainingSideTool.Get().FindResource("StopReplayButtonAction") as Storyboard).Begin();

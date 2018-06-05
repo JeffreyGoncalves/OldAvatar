@@ -661,6 +661,11 @@ namespace LecturerTrainer.Model
             drawAvatar(avatar, faceT);
         }
 
+        public void drawAvatarReplay(Skeleton sk)
+        {
+            display();
+        }
+
 
         private void drawAvatar(Skeleton avatar, bool faceT)
         {

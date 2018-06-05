@@ -13,6 +13,8 @@ using System.Text.RegularExpressions;
 using LecturerTrainer.Model.Exceptions;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 using LecturerTrainer.Model.EmotionRecognizer;
+using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace LecturerTrainer.Model
 {
@@ -24,6 +26,7 @@ namespace LecturerTrainer.Model
     {
         private static DateTime localDate = DateTime.Now;
         public static string pathFolder ="";
+        private static int time;
 
         #region PCQueueFields
         /// <summary>
@@ -225,8 +228,11 @@ namespace LecturerTrainer.Model
             }
         }
         
+
         public static void StartSavingXMLSkeleton()
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             int nbSkFrame = 0;
             int count = 0;
             try
@@ -245,6 +251,7 @@ namespace LecturerTrainer.Model
                     if(nbSkFrame % 2 == 1 || nbSkFrame == 0)
                     {
                         xmlSkeletonWriter.WriteStartElement("Skeleton_" + count++);
+                        xmlSkeletonWriter.WriteAttributeString("TimeElapse", stopWatch.ElapsedMilliseconds.ToString());
                         xmlSkeletonWriter.WriteAttributeString("TrackingState", sk.TrackingState.ToString());
                         List<Joint> lJoints = sk.Joints.ToList();
                         lJoints.ForEach(joint =>
@@ -262,6 +269,7 @@ namespace LecturerTrainer.Model
 
                 }, () =>
                 {
+                    //Console.Out.WriteLine("-end- " + getTimer() + " -end-");
                     xmlSkeletonWriter.WriteEndElement();
                     xmlSkeletonWriter.WriteEndDocument();
                     xmlSkeletonWriter.Flush();
@@ -270,8 +278,12 @@ namespace LecturerTrainer.Model
             }
             catch (Exception ex)
             {
+                if (stopWatch.IsRunning)
+                    stopWatch.Stop();
                 Console.WriteLine(ex.ToString());
             }
+            
+            //stopWatch.Stop();
         }
 
         public static void StartSavingXMLFace()
