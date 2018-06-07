@@ -1015,7 +1015,7 @@ namespace LecturerTrainer.ViewModel
         private void BeginRecording()
         {
             isRecording = true;
-            Tools.createAndStartTimer();
+            //Tools.createAndStartTimer();
             startStopwatch();
             DrawingSheetAvatarViewModel.Get().nbFrames = 0;
             Agitation.record = true;
@@ -1059,7 +1059,7 @@ namespace LecturerTrainer.ViewModel
                 lookingDirection.record = false;
                 EmotionRecognition.record = false;
             }
-            Tools.stopTimer();
+            //Tools.stopTimer();
             StopVideoAndAudioRecording();
         }
 
