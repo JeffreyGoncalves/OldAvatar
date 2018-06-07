@@ -234,6 +234,10 @@ namespace LecturerTrainer.Model
             return stopWatch.ElapsedMilliseconds;
         }
 
+        public static bool getStateStopWatch()
+        {
+            return stopWatch.IsRunning;
+        }
 
         #endregion
 

@@ -1334,13 +1334,13 @@ namespace LecturerTrainer.ViewModel
             if (fb is ValuedFeedback)
             {
                 ValuedFeedback tmp = (ValuedFeedback)fb;
-                toRet = tmp.value.ToString() + '@' + feedbackName + '@' + Tools.getTimer() + '@' + tmp.display;
+                toRet = tmp.value.ToString() + '@' + feedbackName + '@' + Tools.getStopWatch().ToString() + '@' + tmp.display;
 
             }
             else if (fb is LongFeedback)
             {
                 LongFeedback tmp = (LongFeedback)fb;
-                toRet = tmp.feedback + '@' + feedbackName + '@' + Tools.getTimer() + '@' + tmp.display;
+                toRet = tmp.feedback + '@' + feedbackName + '@' + Tools.getStopWatch().ToString() + '@' + tmp.display;
             }
             else
             {
@@ -1350,12 +1350,12 @@ namespace LecturerTrainer.ViewModel
                 {
                     if (previousFrame != (int)Tools.getTimer())
                     {
-                        toRet = fb.feedback + '@' + feedbackName + '@' + Tools.getTimer() + "@True";
+                        toRet = fb.feedback + '@' + feedbackName + '@' + Tools.getStopWatch().ToString() + "@True";
                         previousFrame = (int)Tools.getTimer();
                     }
                 }
                 else
-                    toRet = fb.feedback + '@' + feedbackName + '@' + Tools.getTimer() + "@True";
+                    toRet = fb.feedback + '@' + feedbackName + '@' + Tools.getStopWatch().ToString() + "@True";
             }
             return toRet;
         }

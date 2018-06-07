@@ -231,8 +231,8 @@ namespace LecturerTrainer.Model
 
         public static void StartSavingXMLSkeleton()
         {
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
+            Tools.initStopWatch();
+            Tools.startStopWatch();
             int nbSkFrame = 0;
             int count = 0;
             try
@@ -251,7 +251,7 @@ namespace LecturerTrainer.Model
                     if(nbSkFrame % 2 == 1 || nbSkFrame == 0)
                     {
                         xmlSkeletonWriter.WriteStartElement("Skeleton_" + count++);
-                        xmlSkeletonWriter.WriteAttributeString("TimeElapse", stopWatch.ElapsedMilliseconds.ToString());
+                    xmlSkeletonWriter.WriteAttributeString("TimeElapse", Tools.getStopWatch().ToString());
                         xmlSkeletonWriter.WriteAttributeString("TrackingState", sk.TrackingState.ToString());
                         List<Joint> lJoints = sk.Joints.ToList();
                         lJoints.ForEach(joint =>
@@ -278,8 +278,8 @@ namespace LecturerTrainer.Model
             }
             catch (Exception ex)
             {
-                if (stopWatch.IsRunning)
-                    stopWatch.Stop();
+                if (Tools.getStateStopWatch())
+                    Tools.getStopWatch();
                 Console.WriteLine(ex.ToString());
             }
             

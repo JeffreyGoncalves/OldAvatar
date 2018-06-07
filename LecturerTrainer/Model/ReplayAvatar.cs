@@ -181,43 +181,17 @@ namespace LecturerTrainer.Model
             // replayViewModel.TimeRecord = 0;
 
             //Time of the video replayed
-            /*timeToUpdate = new DispatcherTimer();
-            timeToUpdate.Interval = TimeSpan.FromMilliseconds(ReplayViewModel.normalSpeed);
-            timeToUpdate.IsEnabled = true;
-            timeToUpdate.Stop();
-            timeToUpdate.Tick += nextSkeleton;
-            timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
-            */
+            Console.Out.WriteLine(" -- total ske : " + skeletonsList.Count);
             Tools.initStopWatch();
             timeToUpdate = new DispatcherTimer();
             timeToUpdate.Interval = TimeSpan.FromMilliseconds(31.2);
             timeToUpdate.IsEnabled = true;
-            //timeToUpdate.Tick += changeInterval;
             timeToUpdate.Stop();
             timeToUpdate.Tick += nextSkeleton;
+            timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
             //timeToUpdate.Tick += updateDisplay;
             timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
         }
-        private static bool vrai = true;
-
-        public void changeInterval(object sender, EventArgs evt)
-        {
-            if(vrai)
-            {
-                timeToUpdate.Interval = TimeSpan.FromMilliseconds(40);
-                vrai = false;
-                Console.Out.WriteLine(swTime.ElapsedMilliseconds);
-            }
-            else
-            {
-                timeToUpdate.Interval = TimeSpan.FromMilliseconds(30); vrai = true;
-                vrai = true;
-                Console.Out.WriteLine(swTime.ElapsedMilliseconds);
-
-            }
-
-        }
-
         /// <summary>
         /// Constructor for skeleton scrolling without face elements
         /// </summary>
@@ -284,7 +258,7 @@ namespace LecturerTrainer.Model
 
            // return skeletonsList[occur];
         }
-                
+
 
         /// <summary>
         /// update the current skeleton in the folder
@@ -298,15 +272,17 @@ namespace LecturerTrainer.Model
             {
                 currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
                 _time = skeletonsList[(int)currentSkeletonNumber].Item1 - _oldTime;
-                Console.Out.WriteLine(" -- objectif : " + _time + " // " + ((Tools.getStopWatch() - _generalTime ) - _time) + " -- ");
+                //Console.Out.WriteLine(" -- objectif : " + _time + " // " + ((Tools.getStopWatch() - _generalTime) - _time) + " -- ");
                 _generalTime = (int)Tools.getStopWatch();
-              //  timeToUpdate.Interval = TimeSpan.FromMilliseconds(_time);
+                //  timeToUpdate.Interval = TimeSpan.FromMilliseconds(_time);
                 _oldTime = skeletonsList[(int)currentSkeletonNumber].Item1;
             }
             else
                 currentSkeleton = null;
 
-                if (currentSkeleton != null)
+            if (currentSkeleton != null)
+            {
+                if (faceDir != "")
                 {
                     try
                     {
@@ -319,17 +295,13 @@ namespace LecturerTrainer.Model
                         Console.WriteLine(e);
                     }
                 }
-                else
-                {
-                    replayViewModel.stopButtonCommand();
-                }
 
                 // We only draw the last skeleton
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
-                
+                //Console.Out.WriteLine(" -- ske -- " + Tools.getStopWatch().ToString());
                 //elapsedVideoTime += (ReplayViewModel.normalSpeed);
                 setDisplayedTime();
-                
+
 
             }
             else
@@ -338,10 +310,6 @@ namespace LecturerTrainer.Model
             }
             currentSkeletonNumber += nbSkeletonsPerFrame;
             //Console.Out.WriteLine(" -- " + Tools.getStopWatch().ToString() + " -- ");
-        }
-
-            // We only draw the last skeleton
-            DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
         }
 
         /// <summary>

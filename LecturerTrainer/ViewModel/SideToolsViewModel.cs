@@ -228,12 +228,18 @@ namespace LecturerTrainer.ViewModel
         public void disableTrackingAndTrainingTab()
         {
             if (this.sideToolV != null)
+            {
+                Console.Out.WriteLine("here disable");
                 (this.sideToolV.FindResource("DisableTrackingAndTraining") as Storyboard).Begin();
+            }
         }
         public void enableTrackingAndTrainingTab()
         {
             if (this.sideToolV != null)
+            {
+                Console.Out.WriteLine("here enable");
                 (this.sideToolV.FindResource("EnableTrackingAndTraining") as Storyboard).Begin();
+            }
         }
 
         public void allTabsSelectable()
