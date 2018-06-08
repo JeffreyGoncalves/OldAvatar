@@ -223,7 +223,7 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// All feedbacks in the canvas are hidden.
         /// </summary>
-        public void hideFeedbacks()
+        public void hideFeedbacks(object sender, EventArgs e)
         {
             foreach (UIElement d in dsv.CanvasFeedback.Children)
             {
@@ -231,16 +231,31 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+		public void feedbackDisplay_Agitation(){
+			((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
+            dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]].Visibility = Visibility.Visible;
+		}
+
+		public void feedbackDisplay_HandsJoined(){
+			avatarJointsPosition("Hand_Joined", skt.skeleton, true, 2.5, 0, -1, 0, 6);
+            dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]].Visibility = Visibility.Visible;
+		}
+
+		public void feedbackDisplay_ArmsCrossed(){
+			avatarJointsPosition("Arms_Crossed", skt.skeleton, true, 2.5, 50, -1, -50, 5);
+            dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]].Visibility = Visibility.Visible;
+		}
+
         /// <summary>
         /// Show and place feedbacks in the canvas for the live videostream and the replay videostream
         /// </summary>
         /// <param name="avatar">use only in the live videostream</param>
         public void ShowFeedbacksOnVideoStream(Skeleton avatar = null)
         {
-            hideFeedbacks();
+            //hideFeedbacks();
             if (!ReplayViewModel.isReplaying)
             {
-                if (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Too agitated!")))
+                /*if (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Too agitated!")))
                 {
                     ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
                     dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]].Visibility = Visibility.Visible;
@@ -256,7 +271,7 @@ namespace LecturerTrainer.ViewModel
                 {
                     avatarJointsPosition("Arms_Crossed", avatar, true, 2.5, 50, -1, -50, 5);
                     dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]].Visibility = Visibility.Visible;
-                }
+                }*/
 
                 if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the center")))
                 {
