@@ -132,12 +132,7 @@ namespace LecturerTrainer.ViewModel
                 currentAvatar = value;
             }
         }
-
-        private static int _oldTime = 0;
-        private static int _time;
-
-        private Thread replayThread;
-
+        
         #endregion
 
         #region commands
@@ -222,7 +217,6 @@ namespace LecturerTrainer.ViewModel
             streamDisplayCommand = new RelayCommand(videoStreamDisplay);
             quitCommand = new RelayCommand(quit);
             otherReplayCommand = new RelayCommand(otherReplay);
-            Tools.initializeTimer();
             Tools.initStopWatch();
             timeRecord = 0;
     
@@ -264,219 +258,37 @@ namespace LecturerTrainer.ViewModel
 
         #region methods
 
-
-        // USELESS
-       /* public void InitThreadReplay()
-        {
-            replayThread = new Thread(() => displayAvatarRecord(0));
-            // TODO
-            // clock to zero
-            //
-
-        }*/
-
-        public void displayAvatarRecord() /*(int time) */
-        {
-            //int _time = (int)time;
-            _oldTime = CurrentAvatar.Item1;
-
-            //Tools.stopStopWatch();
-            DrawingSheetAvatarViewModel.Get().skToDrawInReplay = CurrentAvatar.Item2;
-            //DrawingSheetAvatarViewModel.Get().forceDraw(CurrentAvatar.Item2, false);
-            //DrawingSheetAvatarViewModel.Get().forceDraw(CurrentAvatar.Item2, false);
-            //Thread.Sleep(_time);
-            //CurrentAvatar = skeletonScrolling.nextSkeleton(currentAvatarNumber++);
-            Console.Out.WriteLine("--end thread-- " + Tools.getStopWatch());
-            /*if (played)
-            {
-                Console.Out.WriteLine(" -- " + Tools.getStopWatch() + " -- ");
-                //Console.Out.WriteLine("displayAvatarRecord");
-            }*/
-
-            // if play
-            // then look time is matching with current time
-            // then play skeleton
-            // and go to next skeleton
-        }
-
-        // TODO stop, pause
-
         #region feedback management methods
+
         /// <summary>
-        /// Create and fill the feedbacks queue
+        /// Create and fill the list of feedbacks
         /// </summary>
         private void initialiseFeedbacksQueue(string fileName)
         {
-            listlistString = feedocaine(fileName);
-            Console.Out.WriteLine(" -- total fed : " +listlistString.Count);
-           // printLLS(listlistString);
+            listlistString = FeedbacksInList(fileName);
             currentFeedbackList = listlistString.ElementAt(currentListNumber);
-            //savedFeedbacksQueue = getFeedbacksInAQueue(fileName);
-            //feedbacksQueue = new Queue<ServerFeedback>(savedFeedbacksQueue);
-        }
-
-        public void printLLS(List<List<String>> lls)
-        {
-            var count = 0;
-            foreach(List<String> s in lls)
-            {
-                Console.Out.WriteLine(" -- " + count*30);
-                foreach (String str in s)
-                {
-                    Console.Out.Write(" -- " + str);
-                }
-                count++;
-                Console.Out.WriteLine(" -- ");
-            }
-        }
-
-
-        /// <summary>
-        /// Called in the dispatcherTimerTicks in Tools.cs where the timer is implemented
-        /// It is called in the eventHandler of the Timer to update the feedbacks every 200ms
-        /// Added by Baptiste Germond
-        /// </summary>
-        public void raiseFeedbacksOnTime()
-        {      
-            if (feedbacksQueue != null)
-            {
-                bool stop = false;
-                while (!stop)
-                {
-                    if (feedbacksQueue.Count > 0 && feedbacksQueue.Peek().feedbackHappeningFrame == timeRecord && speedRatios[speedRatioIndex] == 1)
-                    {
-                        ServerFeedback tempFeedback = feedbacksQueue.Dequeue();
-                        //manageFeedback(tempFeedback);
-                    }
-                    else
-                    {
-                        if (speedRatios[speedRatioIndex] != 1)
-                        {
-                            EmptyFeedBackQueueBeforeTime();
-                        }
-                        stop = true;
-                    }
-                }
-            }
-            //Console.Out.Write(" -- ");
-            timeRecord += 200 * speedRatios[speedRatioIndex];
-            //Console.Out.WriteLine(timeRecord);
-
         }
 
         /// <summary>
-        /// If the time as been speed up, the feedback had not been displayed sowe have to delete it from the feedback queue
-        /// Added by Baptiste Germond
+        /// This method needs the feedback.txt file input
+        /// And it returns a list of feedbacks of the same size of the list of skeleton
         /// </summary>
-        public void EmptyFeedBackQueueBeforeTime()
-        {
-            bool stop = false;
-            while (!stop)
-            {
-                
-                if (feedbacksQueue.Count > 0 && feedbacksQueue.Peek().feedbackHappeningFrame < timeRecord)
-                {
-                    
-                    ServerFeedback tempFeedback = feedbacksQueue.Dequeue();
-                }
-                else
-                    stop = true;
-            }
-        }   
-
-        /// <summary>
-        /// Get all the feedbacks from a file and return a queue containing them
-        /// </summary>
+        /// <author>Alban Descottes 2018</author>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public Queue<ServerFeedback> getFeedbacksInAQueue(String fileName)
-        {
-            string tempLine;
-            Queue<ServerFeedback> queue = new Queue<ServerFeedback>();
-
-            // Read the file line by line.
-            if (File.Exists(fileName))
-            {
-                System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-                while ((tempLine = file.ReadLine()) != null)
-                {
-                    if (tempLine.Equals(""))
-                        break;
-                    string[] splitedLine = tempLine.Split('@');
-                    int fhf;
-                    bool display;
-                    Int32.TryParse(splitedLine[2], out fhf);
-                    Boolean.TryParse(splitedLine[3], out display);
-                    ServerFeedback tempFeedback = new ServerFeedback(splitedLine[0], splitedLine[1], fhf, display);
-
-                    // the feedback is added in queue
-                    queue.Enqueue(tempFeedback);
-                }
-                file.Close();
-            }
-            return queue;
-        }
-
-		        /// <summary>
-        /// Checks if a feedback of the queue must be displayed at the current time
-        /// </summary>
-        /// <param name="fileName">message of the feedback we want to check</param>
-        /// <returns>True if the feedback must be displayed</returns>
-        public bool checkQueueAtTime(string feedbackMsg)
-        {
-            if(feedbackMsg == null)
-                return false;
-
-            Queue<ServerFeedback> tempQueue = new Queue<ServerFeedback>(feedbacksQueue);
-            foreach (ServerFeedback fb in tempQueue)
-            {
-                if(fb.feedbackHappeningFrame == timeRecord)
-                {
-                    if (String.Compare(fb.feedbackMessage, feedbackMsg) == 0)
-                        return true;
-                }
-                else
-                    return false;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Gets all the feedbacks of the queue that must be displayed at the current time
-        /// </summary>
-        /// <returns>A list containing the 'feedbackMessage' value of all the feedbacks that must be displayed</returns>
-        public List<String> feedbacksAtTime()
-        {
-            List<String> feedbacksList = new List<String>();
-
-            Queue<ServerFeedback> tempQueue = new Queue<ServerFeedback>(feedbacksQueue);
-            foreach (ServerFeedback fb in tempQueue)
-            {
-                System.Diagnostics.Debug.WriteLine(fb.feedbackHappeningFrame + " - " + Tools.getStopWatch());
-                if (fb.feedbackHappeningFrame == Tools.getStopWatch())
-                {
-                    feedbacksList.Add(fb.feedbackMessage);
-                }
-                else
-                    return feedbacksList;
-            }
-            return feedbacksList;
-        }
-
-
-
-        public List<List<String>> feedocaine(String fileName)
+        public List<List<String>> FeedbacksInList(String fileName)
         {
             var listFeedback = new List<List<String>>();
             string tempLine;
+            // each list contains the feedbacks contain in an interval of time
+            // this interval is the time during two skeleton in the ReplayAvatar.SkeletonList
             int timeDown = 0;
             int count = 0;
             int timeUp = ReplayAvatar.SkeletonList[count].Item1;
-            //Console.Out.WriteLine("-- up -- " + timeUp);
-            // Read the file line by line.
             if (File.Exists(fileName))
             {
                 StreamReader file = new StreamReader(fileName);
+                // we create the first sub-list and read the first line of feedback.txt
                 var listTemp = new List<String>();
                 tempLine = file.ReadLine();
                 while (tempLine != null)
@@ -488,23 +300,26 @@ namespace LecturerTrainer.ViewModel
                     bool display;
                     Int32.TryParse(splitedLine[2], out fhf);
                     Boolean.TryParse(splitedLine[3], out display);
+                    // if the feedback is in the inteval we check if it is already in the list
+                    // and we read the next line of feedback.txt
                     if(fhf > timeDown && fhf <= timeUp)
                     {
-                       // Console.Out.WriteLine("it -- " + fhf);
                         if(!listTemp.Contains(splitedLine[0]))
                             listTemp.Add(splitedLine[0]);
                         tempLine = file.ReadLine();
                     }
+                    // else we change the two bounds of the interval 
+                    // and we add the list in the ;other list and create a new one
                     else
                     {
                         listFeedback.Add(listTemp);
                         timeDown = timeUp;
                         timeUp = ReplayAvatar.SkeletonList[count++].Item1;
-                        //Console.Out.WriteLine("-- up -- " + timeUp);
                         listTemp = new List<String>();
                     }
                 }
                 file.Close();
+                // if the number of list is less than the number of skeleton we fill with empty lists
                 if(listFeedback.Count != ReplayAvatar.SkeletonList.Count)
                 {
                     int diff = ReplayAvatar.SkeletonList.Count - listFeedback.Count;
@@ -515,166 +330,23 @@ namespace LecturerTrainer.ViewModel
             return listFeedback;
         }
 
+
+        /// <summary>
+        /// this method is used in the ReplayAvatar class in the DispatcherTimer 
+        /// </summary>
+        /// <author>Alban Descottes 2018</author>
+        /// <param name="sender"></param>
+        /// <param name="evt"></param>
         public void nextFeedbackList(object sender, EventArgs evt)
         {
             currentListNumber ++;
             if(currentListNumber != listlistString.Count)
             {
                 currentFeedbackList = listlistString.ElementAt(currentListNumber);
-                //Console.Out.WriteLine(ReplayAvatar.SkeletonList[currentListNumber].Item1);
             }
         }
 
-        /// <summary>
-        /// Manage the replay feedbacks
-        /// </summary>
-        /// <param name="feedback"></param>
-        public void manageFeedback(string feedbackName)
-        {
-            switch (feedbackName)
-            {
-                case "tooFastEvent":
-                    AudioProvider.raiseTooFastEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "speedEvent":
-                    AudioProvider.raiseSpeedEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "boringEvent":
-                    Pitch.raiseBoringEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "reflexEvent":
-                    FFT.raiseReflexEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "FFTEvent":
-                    break;
-                case "agitationEvent":
-                    Agitation.raiseAgitationEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "gestureEvent":
-                    Gesture.raiseGestureEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "handsJoinedEvent":
-                    Console.Out.WriteLine("cc");
-                    HandsJoined.raiseHandsJoinedEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "postureEvent":
-                    Posture.raisePostureEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "emotionEvent":
-                    EmotionRecognition.raiseEmotionEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "lookEvent":
-                    lookingDirection.raiseLookEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "mouthEvent":
-                    mouthOpened.raiseMouthEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "mouth2Event":
-                    mouthShut.raiseShutEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "pupilREvent":
-                    pupilRight.raisePupilREvent(new ServerFeedback(feedbackName));
-                    break;
-                case "handsRaisedEvent":
-                    HandsRaised.raiseHandsRaisedEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "ticEvent":
-                    AudioProvider.raiseTicEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "armsWideEvent":
-                    ArmsWide.raiseArmsWideEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "armsCrossedEvent":
-                    ArmsCrossed.raiseArmsCrossedEvent(new ServerFeedback(feedbackName));                  
-                    break;
-                case "enthusiasmEvent":
-                    Enthusiasm.raiseEnthusiasmEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "keyWordEvent":
-                    AudioProvider.raiseKeyWordEvent(new ServerFeedback(feedbackName));
-                    break;
-                case "epicnessEvent":
-                    Epicness.raisEpicnessEvent(new ServerFeedback(feedbackName));
-                    break;
-                default:
-                    break; 
-            }
-        }
-        
-        /*/// <summary>
-        /// Manage the replay feedbacks
-        /// </summary>
-        /// <param name="feedback"></param>
-        public void manageFeedback(ServerFeedback feedback)
-        {
-            switch (feedback.eventName)
-            {
-                case "tooFastEvent":
-                    AudioProvider.raiseTooFastEvent(feedback);
-                    break;
-                case "speedEvent":
-                    AudioProvider.raiseSpeedEvent(feedback);
-                    break;
-                case "boringEvent":
-                    Pitch.raiseBoringEvent(feedback);
-                    break;
-                case "reflexEvent":
-                    FFT.raiseReflexEvent(feedback);
-                    break;
-                case "FFTEvent":
-                    break;
-                case "agitationEvent":
-                    Agitation.raiseAgitationEvent(feedback);
-                    break;
-                case "gestureEvent":
-                    Gesture.raiseGestureEvent(feedback);
-                    break;
-                case "handsJoinedEvent":
-                    HandsJoined.raiseHandsJoinedEvent(feedback);
-                    break;
-                case "postureEvent":
-                    Posture.raisePostureEvent(feedback);
-                    break;
-                case "emotionEvent":
-                    EmotionRecognition.raiseEmotionEvent(feedback);
-                    break;
-                case "lookEvent":
-                    lookingDirection.raiseLookEvent(feedback);
-                    break;
-                case "mouthEvent":
-                    mouthOpened.raiseMouthEvent(feedback);
-                    break;
-                case "mouth2Event":
-                    mouthShut.raiseShutEvent(feedback);
-                    break;
-                case "pupilREvent":
-                    pupilRight.raisePupilREvent(feedback);
-                    break;
-                case "handsRaisedEvent":
-                    HandsRaised.raiseHandsRaisedEvent(feedback);
-                    break;
-                case "ticEvent":
-                    AudioProvider.raiseTicEvent(feedback);
-                    break;
-                case "armsWideEvent":
-                    ArmsWide.raiseArmsWideEvent(feedback);
-                    break;
-                case "armsCrossedEvent":
-                    ArmsCrossed.raiseArmsCrossedEvent(feedback);                  
-                    break;
-                case "enthusiasmEvent":
-                    Enthusiasm.raiseEnthusiasmEvent(feedback);
-                    break;
-                case "keyWordEvent":
-                    AudioProvider.raiseKeyWordEvent(feedback);
-                    break;
-                case "epicnessEvent":
-                    Epicness.raisEpicnessEvent(feedback);
-                    break;
-                default:
-                    break; 
-            }
-        }*/
+       
         #endregion
 
         #region view management methods
@@ -804,8 +476,8 @@ namespace LecturerTrainer.ViewModel
                     }
                     else if (fileName == "skeletonData.skd")
                     {
-                        //Console.Out.WriteLine("-- TAOS : " + s);
-                        //We create the replayAvatar field at the start
+                        // the replay needs an instance of ReplayAvatar, so if the first file chose is not the .skd
+                        // we have to create one
                         skeletonScrolling = new ReplayAvatar(s, this, 0);
                         addOtherVideoSources(ReplayView.Get().Avatar);
                         filePathAvatar = s;
@@ -865,6 +537,7 @@ namespace LecturerTrainer.ViewModel
                 // Finally, the speed can be displayed
                 ReplayView.Get().SpeedLabel.Text = "Speed : " + speedRatios[speedRatioIndex];
         }
+
         /// <summary>
         /// Detect when the video ended to change the button to stop
         /// </summary>
@@ -872,9 +545,6 @@ namespace LecturerTrainer.ViewModel
         /// <param name="e"></param>
         public void videoEnded(object sender, RoutedEventArgs e)
         {
-           // Console.Out.WriteLine("here");
-           // Tools.stopStopWatch();
-           // Tools.restartStopWatch();
             stopButtonCommand();
         }
         #endregion
@@ -941,18 +611,17 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void avatarDisplay()
         {
-            //stopButtonCommand();
-
             if (filePathAvatar != null)
             {
-                //skeletonScrolling = new ReplayAvatar(filePathAvatar, this,(int)(Tools.getTimer()/1000)*30);
-                //skeletonScrolling.FindCorrectAvatar((int)(Tools.getTimer()));
                 filePath = filePathVideoAvatar;
                 DrawingSheetView.Get().Show3DSheet();
                 PlayOrStop();
             }
         }
 
+        /// <summary>
+        /// this method is required when the user change the display mode (avatar/stream)
+        /// </summary>
         private void PlayOrStop()
         {
             if (!played)
@@ -986,15 +655,9 @@ namespace LecturerTrainer.ViewModel
                 {
                     DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch());
                     DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch());
-                    //DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, (int)(Tools.getTimer() / 1000));
-                    //DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, (int)(Tools.getTimer() / 1000));
                 }
-               // if (skeletonScrolling != null)
-               //     skeletonScrolling.Stop();
-                //skeletonScrolling = null;
                 filePath = filePathVideoStream;
                 DrawingSheetView.Get().ShowReplayVideoSheet();
-                // ReplayAvatar.setDisplayedTime();
                 PlayOrStop();
             }
         }
@@ -1005,14 +668,13 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void Play()
         {
-            //Console.Out.WriteLine("here");
             played = true;
             stopped = false;
             paused = false;
 
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {
-                Console.Out.WriteLine(" -PLA- " + Tools.getStopWatch() + " -PLA- ");
+                //Console.Out.WriteLine(" -PLA- " + Tools.getStopWatch() + " -PLA- ");
                 skeletonScrolling.Start();
             }
 
@@ -1028,13 +690,6 @@ namespace LecturerTrainer.ViewModel
             ReplayView.Get().SlowButton.IsEnabled = true;
             ReplayView.Get().PauseButton.IsEnabled = true;
             ManageSpeedElements();
-            
-            /*
-            Tools.startTimer();
-            */
-            //raiseFeedbacksOnTime();
-
-            
         }
 
         /// <summary>
@@ -1045,13 +700,9 @@ namespace LecturerTrainer.ViewModel
             paused = true;
             played = false;
             stopped = false;
-
-            //Tools.stopStopWatch();
-
-            //Tools.stopTimer();
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {
-                Console.Out.WriteLine(" -PAU- " + Tools.getStopWatch() + " -PAU- ");
+                //Console.Out.WriteLine(" -PAU- " + Tools.getStopWatch() + " -PAU- ");
                 skeletonScrolling.Pause();
             }
             if (DrawingSheetView.Get().ReplayVideo.Source != null)
@@ -1075,14 +726,13 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void Stop()
         {
-            Tools.stopTimer();
             timeRecord = 0;
             stopped = true;
             paused = false;
             played = false;
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {
-                Console.Out.WriteLine(" -STP- " + Tools.getStopWatch() + " -STP- ");
+                //Console.Out.WriteLine(" -STP- " + Tools.getStopWatch() + " -STP- ");
                 skeletonScrolling.Stop();
             }
             if (DrawingSheetView.Get().ReplayVideo.Source != null)
@@ -1094,7 +744,6 @@ namespace LecturerTrainer.ViewModel
             {
                 DrawingSheetView.Get().ReplayAudio.Stop();
             }
-            Tools.initializeTimer();
             Tools.restartStopWatch();
             currentListNumber = 0;
             ReplayView.Get().FastButton.IsEnabled = false;
@@ -1187,7 +836,6 @@ namespace LecturerTrainer.ViewModel
         ///Switch to recording mode
         ///Written by Baptiste Germond
         ///</summary>
-
         private void quit()
         {
             isReplaying = false;

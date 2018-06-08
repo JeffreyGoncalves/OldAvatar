@@ -197,14 +197,17 @@ namespace LecturerTrainer.Model
             time++;
             if (TrainingSideToolViewModel.Get().IsReplayingMode == true) //used only in the replay mode
             {
-                ReplayViewModel.Get().raiseFeedbacksOnTime();
                 DrawingSheetStreamViewModel.Get(View.DrawingSheetView.Get()).ShowFeedbacksOnVideoStream();
             }
         }
         #endregion
 
         #region stopwatch
-
+        /// <summary>
+        /// StopWatch is more accurate than other Timer, so we use that when we're recording the avatar
+        /// It's also used for test in the replay mode
+        /// </summary>
+        /// <author>Alban Descottes 2018</author>
         private static Stopwatch stopWatch;
 
         public static void startStopWatch()
