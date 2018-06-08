@@ -230,28 +230,93 @@ namespace LecturerTrainer.ViewModel
                 d.Visibility = Visibility.Hidden;
             }
         }
-
-		public void feedbackDisplay_Agitation(){
+		
+		// The following methods display the different feedback HUD
+		public void feedbackDisplay_Agitation()
+		{
 			((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
             dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]].Visibility = Visibility.Visible;
 		}
 
-		public void feedbackDisplay_HandsJoined(){
+		public void feedbackDisplay_HandsJoined()
+		{
 			avatarJointsPosition("Hand_Joined", skt.skeleton, true, 2.5, 0, -1, 0, 6);
             dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]].Visibility = Visibility.Visible;
 		}
 
-		public void feedbackDisplay_ArmsCrossed(){
+		public void feedbackDisplay_ArmsCrossed()
+		{
 			avatarJointsPosition("Arms_Crossed", skt.skeleton, true, 2.5, 50, -1, -50, 5);
             dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]].Visibility = Visibility.Visible;
 		}
 
+		public void feedbackDisplay_LookCenter()
+		{
+			avatarJointsPosition("Center_Arrow", skt.skeleton, false, 2.3, 0, -0.3, 0, 5);
+            dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]].Visibility = Visibility.Visible;
+		}
+
+		public void feedbackDisplay_LookLeft()
+		{
+            avatarJointsPosition("Left_Arrow", skt.skeleton, false, 1.8, 0, -1, -50, 5);
+            dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]].Visibility = Visibility.Visible;
+		}
+
+		public void feedbackDisplay_LookRight()
+		{
+            avatarJointsPosition("Right_Arrow", skt.skeleton, false, 2.9, 0, -1, -50, 5);
+            dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]].Visibility = Visibility.Visible;
+		}
+
+		public void feedbackDisplay_Happy()
+		{
+            avatarJointsPosition("Happy", skt.skeleton, false, 1.8, 0, -1, -50, 5);
+            dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]].Visibility = Visibility.Visible;
+		}
+
+		public void feedbackDisplay_Surprised()
+		{
+            avatarJointsPosition("Surprised", skt.skeleton, false, 1.8, 0, -1, -50, 5);
+            dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]].Visibility = Visibility.Visible;
+		}
+
+		// The following functions are for when a feedback must be treated differently depending on its 'feedback' value
+		public void feedbackEventDisplay_LookingDirection(InstantFeedback lookingFb){
+			switch(lookingFb.feedback){
+                case "Look to the left":
+					feedbackDisplay_LookLeft();
+                    break;
+				case "Look to the center":
+					feedbackDisplay_LookCenter();
+					break;
+				case "Look to the right":
+					feedbackDisplay_LookRight();
+					break;
+                default :
+                    break;
+            }
+		}
+
+		public void feedbackEventDisplay_Emotion(LongFeedback emotionFb){
+			switch(emotionFb.feedback){
+                case "Happy":
+					feedbackDisplay_Happy();
+                    break;
+				case "Surprised":
+					feedbackDisplay_Surprised();
+					break;
+                default :
+                    break;
+            }
+		}
+
         /// <summary>
-        /// Show and place feedbacks in the canvas for the live videostream and the replay videostream
+        /// Show and place feedbacks in the canvas for the replay videostream
         /// </summary>
         /// <param name="avatar">use only in the live videostream</param>
         public void ShowFeedbacksOnVideoStream(Skeleton avatar = null)
         {
+			#region oldNonReplayDisplay
             //hideFeedbacks();
             if (!ReplayViewModel.isReplaying)
             {
@@ -271,7 +336,7 @@ namespace LecturerTrainer.ViewModel
                 {
                     avatarJointsPosition("Arms_Crossed", avatar, true, 2.5, 50, -1, -50, 5);
                     dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]].Visibility = Visibility.Visible;
-                }*/
+                }
 
                 if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the center")))
                 {
@@ -301,9 +366,10 @@ namespace LecturerTrainer.ViewModel
                 {
                     avatarJointsPosition("Surprised", avatar, false, 1.8, 0, -1, -50, 5);
                     dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]].Visibility = Visibility.Visible;
-                }
+                }*/
             }
-            else {
+            #endregion
+			if(ReplayViewModel.isReplaying){
                 List<String> feedbacksToDisplay = ReplayViewModel.Get().currentFeedbackList;
                 
 
