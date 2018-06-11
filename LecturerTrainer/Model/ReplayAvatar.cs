@@ -6,6 +6,7 @@ using Microsoft.Kinect.Toolkit.FaceTracking;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -22,13 +23,6 @@ namespace LecturerTrainer.Model
     class ReplayAvatar
     {
         #region fields
-        /// <summary>
-        /// Indicates if the scrolling is started or not
-        /// </summary>
-        public bool isStarted;
-
-        private static int count = 0;
-
         /// <summary>
         /// The timer used for the scrolling
         /// </summary>
@@ -94,16 +88,16 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// The sorted list (the key being the frame number) of loaded skeletons
         /// </summary>
-        private static SortedList<int, Skeleton> skeletonsList;
+        private static SortedList<int, Tuple<int, Skeleton>> skeletonsList;
 
-        public static SortedList<int, Skeleton> SkeletonList
+        public static SortedList<int, Tuple<int, Skeleton>> SkeletonList
         {
             get
             {
                 return skeletonsList;
             }
         }
-
+      
         #endregion
 
         #region properties
@@ -125,42 +119,43 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// Time ellapsed in ms. It is not the real elapsed time, it depends on the speed
         /// </summary>
-        private double elapsedVideoTime = 0;
 
         public ReplayAvatar(string avDir, string fDir, ReplayViewModel rvm, int num)
         {
+            //Console.Out.WriteLine("replayavatar constructor");
             avatarDir = avDir;
             faceDir = fDir;
             replayViewModel = rvm;
             faceTracking = false;
             DrawingSheetAvatarViewModel.Get().drawFaceInReplay = false;
-            //}
 
             //Load the list of the skeletons
+            // TODO fix this
             currentSkeletonNumber = num;
-            skeletonsList = new SortedList<int, Skeleton>();
+
+            skeletonsList = new SortedList<int, Tuple<int, Skeleton>>();
             skeletonsList = LoadSkeletonsFromXML(avatarDir);
+            
             //Initilise the first skeleton to be displayed, depending if the replay is on play or stop
             if (currentSkeletonNumber > skeletonsList.Count)
-                currentSkeleton = skeletonsList[(int)skeletonsList.Count - 1];
+                currentSkeleton = skeletonsList[(int)skeletonsList.Count - 1].Item2;
             else
-                currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
+                currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
 
-            //Initialize the replay
+            // draw the first avatar
             DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
             DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
-            replayViewModel.raiseFeedbacksOnTime();
-            replayViewModel.TimeRecord = 0;
 
-            //Time of the video replayed
+            // init of the DispatcherTimer that is used for the replay
+            Tools.initStopWatch();
             timeToUpdate = new DispatcherTimer();
-            timeToUpdate.Interval = TimeSpan.FromMilliseconds(ReplayViewModel.normalSpeed);
+            timeToUpdate.Interval = TimeSpan.FromMilliseconds(31.2);
             timeToUpdate.IsEnabled = true;
             timeToUpdate.Stop();
             timeToUpdate.Tick += nextSkeleton;
+            timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
             timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
         }
-
         /// <summary>
         /// Constructor for skeleton scrolling without face elements
         /// </summary>
@@ -198,14 +193,14 @@ namespace LecturerTrainer.Model
         {
             return ReplayViewModel.normalSpeed / speed;
         }
-
+        
         /// <summary>
         /// Deserializes an object, can return null if an exception occured 
         /// </summary>
         /// <typeparam name="T">A serializable type</typeparam>
         /// <param name="fileName"></param>
         /// <returns>An object T that can be null</returns>
-        public static T DeserializeObject<T>(string fileName)
+        /*public static T DeserializeObject<T>(string fileName)
         {
             try
             {
@@ -220,7 +215,7 @@ namespace LecturerTrainer.Model
                 Console.WriteLine("Exception thrown :" + ex.Message);
                 return default(T);
             }
-        }
+        }*/
 
         /// <summary>
         /// update the current skeleton in the folder
@@ -228,19 +223,16 @@ namespace LecturerTrainer.Model
         /// <returns></returns>
         private void nextSkeleton(object sender, EventArgs evt)
         {
-            count++;
-
-            elapsedVideoTime += (ReplayViewModel.normalSpeed);
-            setDisplayedTime();
-
-            if (faceDir != "" && count % 2 == 0)
+            if (currentSkeletonNumber < skeletonsList.Count)
             {
-                if (currentSkeletonNumber < skeletonsList.Count)
-                    currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
-                else
-                    currentSkeleton = null;
+                currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
+            }
+            else
+                currentSkeleton = null;
 
-                if (currentSkeleton != null)
+            if (currentSkeleton != null)
+            {
+                if (faceDir != "")
                 {
                     try
                     {
@@ -253,88 +245,66 @@ namespace LecturerTrainer.Model
                         Console.WriteLine(e);
                     }
                 }
-                else
-                {
-                    replayViewModel.stopButtonCommand();
-                }
 
-                currentSkeletonNumber += nbSkeletonsPerFrame;
+                // We only draw the last skeleton
+                DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
+                setDisplayedTime();
+
+
             }
-            else if(faceDir == "") 
+            else
             {
-                if (currentSkeletonNumber < skeletonsList.Count)
-                    currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
-                else
-                    currentSkeleton = null;
-
-                if (currentSkeleton != null)
-                {
-                    try
-                    {
-                        FaceDataWrapper fdw = loadFaceWFrame(faceDir, (int)currentSkeletonNumber);
-                        DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
-                        DrawingSheetAvatarViewModel.Get().drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-                else
-                {
-                    replayViewModel.stopButtonCommand();
-                }
-
-                currentSkeletonNumber += nbSkeletonsPerFrame;
+                replayViewModel.stopButtonCommand();
             }
-
-            // We only draw the last skeleton
-            DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
+            currentSkeletonNumber += nbSkeletonsPerFrame;
         }
 
         /// <summary>
         /// Updates the displayed time
         /// </summary>
-        public void setDisplayedTime()
+        public static void setDisplayedTime()
         {
-            ReplayViewModel.Get().ElapsedTime = convertSInString((int)((elapsedVideoTime * nbSkeletonsPerFrame) / 1000));
+            ReplayViewModel.Get().ElapsedTime = FormatTime(Tools.getStopWatch());
         }
 
-
-        /// <summary>
-        /// Convert a time in second to string
-        /// </summary>
-        /// <param name="timeInS"></param>
-        /// <returns></returns>
-        public static String convertSInString(int timeInS)
+        private static  string FormatTime(long time)
         {
-            int h, m, s;
+            var _timeMS = (int)time;
+            int h, m, s, ms;
             string stringTime = "";
 
-            h = (int)timeInS / 3600;
+            h = _timeMS / 3600000;
             if (h < 10)
                 stringTime += "0";
             stringTime += h + ":";
-
-            m = (int)((timeInS % 3600) / 60);
+            
+            m = (_timeMS % 3600000) / 60000;
             if (m < 10)
                 stringTime += "0";
             stringTime += m + ":";
 
-            s = (int)((timeInS % 3600) % 60);
+            s = ((_timeMS % 3600000) % 60000) / 1000;
             if (s < 10)
                 stringTime += "0";
             stringTime += s;
-
+            // not very usefull to display on the UI
+            /*stringTime += ".";
+            ms = ((_timeMS % 3600000) % 60000) % 1000;
+            if (ms < 100)
+                stringTime += "0";
+            if (ms < 10)
+                stringTime += "0";
+            stringTime += ms;*/
             return stringTime;
         }
+        
 
         /// <summary>
         /// Starts the scrolling
         /// </summary>
         public void Start()
         {
-            isStarted = true;
+            Tools.startStopWatch();
             timeToUpdate.Start();
         }
 
@@ -343,6 +313,7 @@ namespace LecturerTrainer.Model
         /// </summary>
         public void Pause()
         {
+            Tools.stopStopWatch();
             timeToUpdate.Stop();
         }
 
@@ -351,14 +322,14 @@ namespace LecturerTrainer.Model
         /// </summary>
         public void Stop()
         {
-            isStarted = false;
+            Tools.stopStopWatch();
             timeToUpdate.Stop();
             currentSkeletonNumber = 0;
-            currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
+            currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
             DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
             DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
-            elapsedVideoTime = 0;
         }
+
         #endregion
 
         #region XmlSkeletonLoading
@@ -370,10 +341,11 @@ namespace LecturerTrainer.Model
         /// </summary>
         /// <param name="path">The path of the skeletonData</param>
         /// <returns>The sorted list of skeletons</returns>
-        /// <author>Amirali Ghazi</author>
-        public static SortedList<int, Skeleton> LoadSkeletonsFromXML(string path)
+        /// <author>Amirali Ghazi, modified by Alban Descottes</author>
+        public static SortedList<int, Tuple<int, Skeleton>> LoadSkeletonsFromXML(String path)
         {
             skCount = 0;
+            var skeletonSortedListWithTime = new SortedList<int, Tuple<int, Skeleton>>();
             SortedList<int, Skeleton> skeletonsSortedList = new SortedList<int, Skeleton>();
             XmlReaderSettings settings = new XmlReaderSettings { IgnoreWhitespace = true, CheckCharacters = true };
             xmlSkeletonReader = XmlReader.Create(path, settings);
@@ -387,10 +359,12 @@ namespace LecturerTrainer.Model
                     {
                         Skeleton sk = new Skeleton();
                         xmlSkeletonReader.MoveToAttribute(0);
+                        int timeElapsed = Convert.ToInt32(xmlSkeletonReader.Value);
+                        xmlSkeletonReader.MoveToAttribute(1);
                         SkeletonTrackingState skTrackingState = (SkeletonTrackingState)Enum.Parse(typeof(SkeletonTrackingState), xmlSkeletonReader.Value);
                         xmlSkeletonReader.MoveToContent();
                         sk.TrackingState = skTrackingState;
-
+                        
                         Joint currentJoint = new Joint();
                         XmlReader xmlSkeletonJointsReader = xmlSkeletonReader.ReadSubtree();
                         xmlSkeletonJointsReader.MoveToContent();
@@ -436,11 +410,12 @@ namespace LecturerTrainer.Model
                                 }
                             }
                         }
-                        skeletonsSortedList.Add(skCount++, sk);
+                        var tu = new Tuple<int, Skeleton>(timeElapsed , sk);
+                        skeletonSortedListWithTime.Add(skCount++, tu);
                     }
                 }
             }
-            return skeletonsSortedList;
+            return skeletonSortedListWithTime;
         }
 
         /// <summary>

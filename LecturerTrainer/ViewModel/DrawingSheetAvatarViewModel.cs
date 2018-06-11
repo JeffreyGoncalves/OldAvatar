@@ -403,6 +403,7 @@ namespace LecturerTrainer.Model
         /// </summary>
         private void display(EventArgs evt)
         {
+            
             if (KinectDevice.faceTracking && !KinectDevice.SwitchDraw)
             {
                 drawFace(evt);
@@ -471,6 +472,7 @@ namespace LecturerTrainer.Model
         /// </summary>
         private void display()
         {
+            
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.PushMatrix();
             {
@@ -504,7 +506,9 @@ namespace LecturerTrainer.Model
         /// </summary>
         public void normalMode()
         {
+            Main.kinect.skeletonUpdated -= draw;
             Main.kinect.skeletonUpdated += draw;
+            SkeletonFaceTracker.faceUpdated -= draw;
             SkeletonFaceTracker.faceUpdated += draw;
         }
 
@@ -660,6 +664,11 @@ namespace LecturerTrainer.Model
         public void forceDraw(Skeleton avatar, bool faceT)
         {
             drawAvatar(avatar, faceT);
+        }
+
+        public void drawAvatarReplay(Skeleton sk)
+        {
+            display();
         }
 
 
@@ -1026,7 +1035,8 @@ namespace LecturerTrainer.Model
                 /*The way feedback is displayed changes wether we are in normal mode or replay mode*/
 
                 /* Normal mode feedback display */
-                if(!ReplayViewModel.Get().isReplaying)
+
+                if (!ReplayViewModel.isReplaying)
                 {
                     /*OpenGL feedback of the hands crossed*/
                     if(Model.HandsJoined.hands)
@@ -1095,11 +1105,13 @@ namespace LecturerTrainer.Model
                 /* Replay Mode feedback display */
                 else{
                     /* List containing all the feedbacks that must be displayed during the current frame */
-                    List<String> feedbacksToDisplay = ReplayViewModel.Get().feedbacksAtTime();
-                    
+                    List<String> feedbacksToDisplay = ReplayViewModel.Get().currentFeedbackList;
+
                     /* Iterating through the list to see which feedback to display */
                     foreach (String message in feedbacksToDisplay)
                     {
+                        /*ServerFeedback tempFeedback = new ServerFeedback(message);
+                        ReplayViewModel.Get().manageFeedback(tempFeedback.eventName);*/
                         switch(message)
                         {
                             /*OpenGL feedback of the hands crossed*/
