@@ -378,7 +378,7 @@ namespace LecturerTrainer.ViewModel
             ToggleAvatarVideoRecording = false;
             ToggleStreamRecording = false;
             ToggleAudioRecording = false;
-            ToggleAvatarOpenGLRecording = false;
+            ToggleAvatarOpenGLRecording = true;
 
 
             feedbackRefreshTimer = new DispatcherTimer();

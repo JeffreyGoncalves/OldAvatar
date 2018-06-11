@@ -1,0 +1,503 @@
+WELCOME: DROPPED ELBOW!@armsWideEvent@2082@True
+Too agitated!@agitationEvent@2382@True
+Too agitated!@agitationEvent@2382@True
+Too agitated!@agitationEvent@2691@True
+Too agitated!@agitationEvent@2691@True
+Too agitated!@agitationEvent@2691@True
+Too agitated!@agitationEvent@2691@True
+Hands are joined@handsJoinedEvent@3143@True
+Hands are joined@handsJoinedEvent@3153@True
+Hands are joined@handsJoinedEvent@3176@True
+Hands are joined@handsJoinedEvent@3187@True
+Hands are joined@handsJoinedEvent@3214@True
+Hands are joined@handsJoinedEvent@3225@True
+Hands are joined@handsJoinedEvent@3239@True
+Hands are joined@handsJoinedEvent@3250@True
+Hands are joined@handsJoinedEvent@3276@True
+Hands are joined@handsJoinedEvent@3286@True
+Hands are joined@handsJoinedEvent@3308@True
+Hands are joined@handsJoinedEvent@3318@True
+Hands are joined@handsJoinedEvent@3342@True
+Hands are joined@handsJoinedEvent@3352@True
+Hands are joined@handsJoinedEvent@3375@True
+Hands are joined@handsJoinedEvent@3386@True
+Hands are joined@handsJoinedEvent@3411@True
+Hands are joined@handsJoinedEvent@3427@True
+Hands are joined@handsJoinedEvent@3440@True
+Hands are joined@handsJoinedEvent@3451@True
+Hands are joined@handsJoinedEvent@3477@True
+Hands are joined@handsJoinedEvent@3488@True
+Hands are joined@handsJoinedEvent@3510@True
+Hands are joined@handsJoinedEvent@3521@True
+Hands are joined@handsJoinedEvent@3545@True
+Hands are joined@handsJoinedEvent@3555@True
+Too agitated!@agitationEvent@3609@True
+Too agitated!@agitationEvent@3621@True
+Too agitated!@agitationEvent@3644@True
+Too agitated!@agitationEvent@3655@True
+Too agitated!@agitationEvent@3676@True
+Too agitated!@agitationEvent@3688@True
+Too agitated!@agitationEvent@3742@True
+Too agitated!@agitationEvent@3753@True
+Too agitated!@agitationEvent@3781@True
+Too agitated!@agitationEvent@3793@True
+Too agitated!@agitationEvent@3813@True
+Too agitated!@agitationEvent@3825@True
+Too agitated!@agitationEvent@3846@True
+Too agitated!@agitationEvent@3858@True
+Too agitated!@agitationEvent@3876@True
+Too agitated!@agitationEvent@3887@True
+Too agitated!@agitationEvent@3913@True
+Too agitated!@agitationEvent@3924@True
+Too agitated!@agitationEvent@3947@True
+Too agitated!@agitationEvent@3958@True
+Too agitated!@agitationEvent@3981@True
+Too agitated!@agitationEvent@3992@True
+WELCOME START!@armsWideEvent@4112@True
+WELCOME START!@armsWideEvent@4123@True
+WELCOME START!@armsWideEvent@4148@True
+WELCOME START!@armsWideEvent@4159@True
+WELCOME START!@armsWideEvent@4180@True
+WELCOME START!@armsWideEvent@4190@True
+WELCOME START!@armsWideEvent@4214@True
+WELCOME START!@armsWideEvent@4226@True
+WELCOME START!@armsWideEvent@4247@True
+WELCOME START!@armsWideEvent@4258@True
+Too agitated!@agitationEvent@4277@True
+WELCOME: DROPPED ELBOW!@armsWideEvent@4278@True
+Too agitated!@agitationEvent@4289@True
+Too agitated!@agitationEvent@4309@True
+Too agitated!@agitationEvent@4320@True
+Too agitated!@agitationEvent@4445@True
+Too agitated!@agitationEvent@4456@True
+Too agitated!@agitationEvent@4477@True
+Too agitated!@agitationEvent@4489@True
+Too agitated!@agitationEvent@4507@True
+Too agitated!@agitationEvent@4521@True
+Too agitated!@agitationEvent@4541@True
+Too agitated!@agitationEvent@4552@True
+Too agitated!@agitationEvent@4577@True
+Too agitated!@agitationEvent@4588@True
+Too agitated!@agitationEvent@4609@True
+Too agitated!@agitationEvent@4622@True
+Too agitated!@agitationEvent@4644@True
+Too agitated!@agitationEvent@4644@True
+Too agitated!@agitationEvent@4655@True
+Too agitated!@agitationEvent@4678@True
+Too agitated!@agitationEvent@4689@True
+Too agitated!@agitationEvent@4708@True
+Too agitated!@agitationEvent@4720@True
+Too agitated!@agitationEvent@4845@True
+Too agitated!@agitationEvent@4857@True
+Too agitated!@agitationEvent@5013@True
+Too agitated!@agitationEvent@5025@True
+Too agitated!@agitationEvent@5046@True
+Hands are joined@handsJoinedEvent@5047@True
+Too agitated!@agitationEvent@5059@True
+Hands are joined@handsJoinedEvent@5059@True
+Too agitated!@agitationEvent@5080@True
+Hands are joined@handsJoinedEvent@5080@True
+Too agitated!@agitationEvent@5091@True
+Hands are joined@handsJoinedEvent@5091@True
+Too agitated!@agitationEvent@5112@True
+Hands are joined@handsJoinedEvent@5112@True
+Too agitated!@agitationEvent@5124@True
+Hands are joined@handsJoinedEvent@5124@True
+Too agitated!@agitationEvent@5144@True
+Hands are joined@handsJoinedEvent@5144@True
+Too agitated!@agitationEvent@5157@True
+Hands are joined@handsJoinedEvent@5157@True
+Too agitated!@agitationEvent@5182@True
+Hands are joined@handsJoinedEvent@5182@True
+Too agitated!@agitationEvent@5194@True
+Hands are joined@handsJoinedEvent@5194@True
+Too agitated!@agitationEvent@5214@True
+Hands are joined@handsJoinedEvent@5214@True
+Too agitated!@agitationEvent@5227@True
+Hands are joined@handsJoinedEvent@5227@True
+Too agitated!@agitationEvent@5249@True
+Hands are joined@handsJoinedEvent@5249@True
+Too agitated!@agitationEvent@5260@True
+Hands are joined@handsJoinedEvent@5260@True
+Too agitated!@agitationEvent@5293@True
+Hands are joined@handsJoinedEvent@5293@True
+Too agitated!@agitationEvent@5306@True
+Hands are joined@handsJoinedEvent@5306@True
+Too agitated!@agitationEvent@5319@True
+Hands are joined@handsJoinedEvent@5319@True
+Too agitated!@agitationEvent@5331@True
+Hands are joined@handsJoinedEvent@5331@True
+Too agitated!@agitationEvent@5347@True
+Hands are joined@handsJoinedEvent@5347@True
+Too agitated!@agitationEvent@5359@True
+Hands are joined@handsJoinedEvent@5359@True
+Hands are joined@handsJoinedEvent@5377@True
+Hands are joined@handsJoinedEvent@5388@True
+Hands are joined@handsJoinedEvent@5408@True
+Hands are joined@handsJoinedEvent@5420@True
+Hands are joined@handsJoinedEvent@5444@True
+Hands are joined@handsJoinedEvent@5456@True
+Hands are joined@handsJoinedEvent@5478@True
+Hands are joined@handsJoinedEvent@5490@True
+Hands are joined@handsJoinedEvent@5509@True
+Hands are joined@handsJoinedEvent@5519@True
+Too agitated!@agitationEvent@5545@True
+Hands are joined@handsJoinedEvent@5545@True
+Too agitated!@agitationEvent@5556@True
+Hands are joined@handsJoinedEvent@5556@True
+Hands are joined@handsJoinedEvent@5578@True
+Hands are joined@handsJoinedEvent@5590@True
+Too agitated!@agitationEvent@5610@True
+Hands are joined@handsJoinedEvent@5610@True
+Too agitated!@agitationEvent@5621@True
+Hands are joined@handsJoinedEvent@5621@True
+Hands are joined@handsJoinedEvent@5642@True
+Hands are joined@handsJoinedEvent@5653@True
+Too agitated!@agitationEvent@5682@True
+Hands are joined@handsJoinedEvent@5682@True
+Too agitated!@agitationEvent@5693@True
+Hands are joined@handsJoinedEvent@5693@True
+Too agitated!@agitationEvent@5712@True
+Hands are joined@handsJoinedEvent@5712@True
+Too agitated!@agitationEvent@5723@True
+Hands are joined@handsJoinedEvent@5723@True
+Too agitated!@agitationEvent@5744@True
+Hands are joined@handsJoinedEvent@5744@True
+Too agitated!@agitationEvent@5755@True
+Hands are joined@handsJoinedEvent@5755@True
+Too agitated!@agitationEvent@5778@True
+Hands are joined@handsJoinedEvent@5778@True
+Too agitated!@agitationEvent@5789@True
+Hands are joined@handsJoinedEvent@5789@True
+Too agitated!@agitationEvent@5809@True
+Hands are joined@handsJoinedEvent@5809@True
+Too agitated!@agitationEvent@5820@True
+Hands are joined@handsJoinedEvent@5820@True
+Too agitated!@agitationEvent@5845@True
+Hands are joined@handsJoinedEvent@5845@True
+Too agitated!@agitationEvent@5856@True
+Hands are joined@handsJoinedEvent@5856@True
+Hands are joined@handsJoinedEvent@5877@True
+Hands are joined@handsJoinedEvent@5888@True
+Hands are joined@handsJoinedEvent@5912@True
+Hands are joined@handsJoinedEvent@5923@True
+Hands are joined@handsJoinedEvent@5944@True
+Hands are joined@handsJoinedEvent@5955@True
+Hands are joined@handsJoinedEvent@5976@True
+Hands are joined@handsJoinedEvent@5987@True
+Hands are joined@handsJoinedEvent@6046@True
+Hands are joined@handsJoinedEvent@6059@True
+Hands are joined@handsJoinedEvent@6078@True
+Hands are joined@handsJoinedEvent@6090@True
+Hands are joined@handsJoinedEvent@6113@True
+Hands are joined@handsJoinedEvent@6125@True
+Hands are joined@handsJoinedEvent@6144@True
+Hands are joined@handsJoinedEvent@6157@True
+Hands are joined@handsJoinedEvent@6180@True
+Hands are joined@handsJoinedEvent@6192@True
+Hands are joined@handsJoinedEvent@6213@True
+Hands are joined@handsJoinedEvent@6225@True
+Hands are joined@handsJoinedEvent@6245@True
+Hands are joined@handsJoinedEvent@6257@True
+Hands are joined@handsJoinedEvent@6283@True
+Hands are joined@handsJoinedEvent@6294@True
+Hands are joined@handsJoinedEvent@6315@True
+Hands are joined@handsJoinedEvent@6326@True
+Hands are joined@handsJoinedEvent@6351@True
+Hands are joined@handsJoinedEvent@6361@True
+Hands are joined@handsJoinedEvent@6380@True
+Hands are joined@handsJoinedEvent@6391@True
+Hands are joined@handsJoinedEvent@6413@True
+Hands are joined@handsJoinedEvent@6423@True
+Hands are joined@handsJoinedEvent@6448@True
+Hands are joined@handsJoinedEvent@6459@True
+Hands are joined@handsJoinedEvent@6483@True
+Hands are joined@handsJoinedEvent@6494@True
+Hands are joined@handsJoinedEvent@6514@True
+Hands are joined@handsJoinedEvent@6525@True
+Hands are joined@handsJoinedEvent@6547@True
+Hands are joined@handsJoinedEvent@6558@True
+Hands are joined@handsJoinedEvent@6579@True
+Hands are joined@handsJoinedEvent@6590@True
+right hand raised@handsRaisedEvent@6614@True
+Hands are joined@handsJoinedEvent@6644@True
+Hands are joined@handsJoinedEvent@6655@True
+Hands are joined@handsJoinedEvent@6676@True
+Hands are joined@handsJoinedEvent@6686@True
+Hands are joined@handsJoinedEvent@6711@True
+Hands are joined@handsJoinedEvent@6722@True
+Hands are joined@handsJoinedEvent@6743@True
+Hands are joined@handsJoinedEvent@6754@True
+Hands are joined@handsJoinedEvent@6782@True
+Hands are joined@handsJoinedEvent@6793@True
+Too agitated!@agitationEvent@6812@True
+Arms Crossed@armsCrossedEvent@6812@True
+Arms Crossed@armsCrossedEvent@6824@True
+Arms Crossed@armsCrossedEvent@6845@True
+Arms Crossed@armsCrossedEvent@6858@True
+Arms Crossed@armsCrossedEvent@6885@True
+Arms Crossed@armsCrossedEvent@6899@True
+Hands are joined@handsJoinedEvent@6949@True
+Hands are joined@handsJoinedEvent@6960@True
+right hand raised@handsRaisedEvent@6981@True
+right hand raised@handsRaisedEvent@7048@True
+Too agitated!@agitationEvent@7313@True
+Hands are joined@handsJoinedEvent@7313@True
+Too agitated!@agitationEvent@7324@True
+Hands are joined@handsJoinedEvent@7324@True
+Too agitated!@agitationEvent@7352@True
+Arms Crossed@armsCrossedEvent@7352@True
+Too agitated!@agitationEvent@7369@True
+Arms Crossed@armsCrossedEvent@7369@True
+Too agitated!@agitationEvent@7384@True
+Too agitated!@agitationEvent@7395@True
+Too agitated!@agitationEvent@7414@True
+Too agitated!@agitationEvent@7414@True
+Arms Crossed@armsCrossedEvent@7414@True
+Too agitated!@agitationEvent@7426@True
+Arms Crossed@armsCrossedEvent@7426@True
+Too agitated!@agitationEvent@7445@True
+Too agitated!@agitationEvent@7455@True
+Too agitated!@agitationEvent@7479@True
+Too agitated!@agitationEvent@7490@True
+Too agitated!@agitationEvent@7512@True
+Too agitated!@agitationEvent@7522@True
+Too agitated!@agitationEvent@7548@True
+Hands are joined@handsJoinedEvent@7549@True
+Too agitated!@agitationEvent@7560@True
+Hands are joined@handsJoinedEvent@7560@True
+Too agitated!@agitationEvent@7581@True
+Too agitated!@agitationEvent@7592@True
+Too agitated!@agitationEvent@7613@True
+Too agitated!@agitationEvent@7624@True
+Too agitated!@agitationEvent@7644@True
+Too agitated!@agitationEvent@7655@True
+Too agitated!@agitationEvent@7678@True
+Too agitated!@agitationEvent@7689@True
+Too agitated!@agitationEvent@7714@True
+Too agitated!@agitationEvent@7725@True
+Too agitated!@agitationEvent@7745@True
+Too agitated!@agitationEvent@7756@True
+Too agitated!@agitationEvent@7776@True
+Too agitated!@agitationEvent@7787@True
+Too agitated!@agitationEvent@7814@True
+Too agitated!@agitationEvent@7814@True
+Too agitated!@agitationEvent@7825@True
+Too agitated!@agitationEvent@7845@True
+Hands in the Pocket@handsInPocketEvent@7846@True
+Too agitated!@agitationEvent@7856@True
+Hands in the Pocket@handsInPocketEvent@7856@True
+Too agitated!@agitationEvent@7880@True
+Hands in the Pocket@handsInPocketEvent@7880@True
+Too agitated!@agitationEvent@7892@True
+Hands in the Pocket@handsInPocketEvent@7892@True
+Too agitated!@agitationEvent@7913@True
+Hands in the Pocket@handsInPocketEvent@7913@True
+Too agitated!@agitationEvent@7923@True
+Hands in the Pocket@handsInPocketEvent@7923@True
+Too agitated!@agitationEvent@7943@True
+Hands in the Pocket@handsInPocketEvent@7943@True
+Too agitated!@agitationEvent@7953@True
+Hands in the Pocket@handsInPocketEvent@7953@True
+Too agitated!@agitationEvent@7980@True
+Hands in the Pocket@handsInPocketEvent@7981@True
+Too agitated!@agitationEvent@7991@True
+Hands in the Pocket@handsInPocketEvent@7991@True
+Too agitated!@agitationEvent@8013@True
+Hands in the Pocket@handsInPocketEvent@8013@True
+Too agitated!@agitationEvent@8024@True
+Hands in the Pocket@handsInPocketEvent@8024@True
+Too agitated!@agitationEvent@8052@True
+Hands in the Pocket@handsInPocketEvent@8052@True
+Too agitated!@agitationEvent@8063@True
+Hands in the Pocket@handsInPocketEvent@8063@True
+Too agitated!@agitationEvent@8084@True
+Hands in the Pocket@handsInPocketEvent@8084@True
+Too agitated!@agitationEvent@8095@True
+Hands in the Pocket@handsInPocketEvent@8096@True
+Too agitated!@agitationEvent@8113@True
+Hands in the Pocket@handsInPocketEvent@8113@True
+Too agitated!@agitationEvent@8124@True
+Hands in the Pocket@handsInPocketEvent@8124@True
+Too agitated!@agitationEvent@8149@True
+Hands in the Pocket@handsInPocketEvent@8149@True
+Too agitated!@agitationEvent@8160@True
+Hands in the Pocket@handsInPocketEvent@8160@True
+Too agitated!@agitationEvent@8180@True
+Hands in the Pocket@handsInPocketEvent@8180@True
+Too agitated!@agitationEvent@8191@True
+Hands in the Pocket@handsInPocketEvent@8191@True
+Too agitated!@agitationEvent@8212@True
+Hands in the Pocket@handsInPocketEvent@8212@True
+Too agitated!@agitationEvent@8222@True
+Hands in the Pocket@handsInPocketEvent@8222@True
+Too agitated!@agitationEvent@8244@True
+Hands in the Pocket@handsInPocketEvent@8244@True
+Too agitated!@agitationEvent@8254@True
+Hands in the Pocket@handsInPocketEvent@8254@True
+Too agitated!@agitationEvent@8276@True
+Too agitated!@agitationEvent@8287@True
+Too agitated!@agitationEvent@8317@True
+Too agitated!@agitationEvent@8327@True
+Too agitated!@agitationEvent@8346@True
+Too agitated!@agitationEvent@8356@True
+Too agitated!@agitationEvent@8383@True
+Too agitated!@agitationEvent@8398@True
+Too agitated!@agitationEvent@8413@True
+Too agitated!@agitationEvent@8424@True
+Too agitated!@agitationEvent@8443@True
+Hands in the Pocket@handsInPocketEvent@8443@True
+Too agitated!@agitationEvent@8453@True
+Hands in the Pocket@handsInPocketEvent@8453@True
+Hands in the Pocket@handsInPocketEvent@8477@True
+Hands in the Pocket@handsInPocketEvent@8485@True
+Hands in the Pocket@handsInPocketEvent@8547@True
+Hands in the Pocket@handsInPocketEvent@8557@True
+Hands in the Pocket@handsInPocketEvent@8578@True
+Hands in the Pocket@handsInPocketEvent@8587@True
+Hands in the Pocket@handsInPocketEvent@8609@True
+Hands in the Pocket@handsInPocketEvent@8618@True
+Hands in the Pocket@handsInPocketEvent@8646@True
+Hands in the Pocket@handsInPocketEvent@8656@True
+Hands in the Pocket@handsInPocketEvent@8678@True
+Hands in the Pocket@handsInPocketEvent@8687@True
+Hands in the Pocket@handsInPocketEvent@8710@True
+Hands in the Pocket@handsInPocketEvent@8719@True
+Hands in the Pocket@handsInPocketEvent@8745@True
+Hands in the Pocket@handsInPocketEvent@8755@True
+Hands in the Pocket@handsInPocketEvent@8784@True
+Hands in the Pocket@handsInPocketEvent@8792@True
+Hands in the Pocket@handsInPocketEvent@8810@True
+Hands in the Pocket@handsInPocketEvent@8819@True
+Hands in the Pocket@handsInPocketEvent@8846@True
+Hands in the Pocket@handsInPocketEvent@8856@True
+Hands in the Pocket@handsInPocketEvent@8873@True
+Hands in the Pocket@handsInPocketEvent@8883@True
+Too agitated!@agitationEvent@8913@True
+Too agitated!@agitationEvent@8922@True
+Too agitated!@agitationEvent@8942@True
+Too agitated!@agitationEvent@8952@True
+Too agitated!@agitationEvent@8974@True
+Too agitated!@agitationEvent@8983@True
+Too agitated!@agitationEvent@9015@True
+Too agitated!@agitationEvent@9024@True
+Too agitated!@agitationEvent@9042@True
+Too agitated!@agitationEvent@9051@True
+Too agitated!@agitationEvent@9077@True
+Too agitated!@agitationEvent@9087@True
+Too agitated!@agitationEvent@9112@True
+Too agitated!@agitationEvent@9122@True
+Too agitated!@agitationEvent@9141@True
+Too agitated!@agitationEvent@9150@True
+Too agitated!@agitationEvent@9177@True
+Too agitated!@agitationEvent@9187@True
+Too agitated!@agitationEvent@9209@True
+Too agitated!@agitationEvent@9218@True
+Too agitated!@agitationEvent@9312@True
+Too agitated!@agitationEvent@9322@True
+Too agitated!@agitationEvent@9346@True
+Too agitated!@agitationEvent@9355@True
+Too agitated!@agitationEvent@9377@True
+Too agitated!@agitationEvent@9386@True
+Too agitated!@agitationEvent@9511@True
+Hands are joined@handsJoinedEvent@9511@True
+Too agitated!@agitationEvent@9521@True
+Hands are joined@handsJoinedEvent@9521@True
+Too agitated!@agitationEvent@9542@True
+Hands are joined@handsJoinedEvent@9542@True
+Too agitated!@agitationEvent@9552@True
+Hands are joined@handsJoinedEvent@9552@True
+Too agitated!@agitationEvent@9574@True
+Hands are joined@handsJoinedEvent@9574@True
+Too agitated!@agitationEvent@9584@True
+Hands are joined@handsJoinedEvent@9584@True
+Too agitated!@agitationEvent@9609@True
+Hands are joined@handsJoinedEvent@9609@True
+Too agitated!@agitationEvent@9619@True
+Hands are joined@handsJoinedEvent@9619@True
+Too agitated!@agitationEvent@9639@True
+Too agitated!@agitationEvent@9647@True
+Too agitated!@agitationEvent@9675@True
+Too agitated!@agitationEvent@9683@True
+Too agitated!@agitationEvent@9707@True
+Hands are joined@handsJoinedEvent@9707@True
+Too agitated!@agitationEvent@9715@True
+Hands are joined@handsJoinedEvent@9715@True
+Too agitated!@agitationEvent@9740@True
+Hands are joined@handsJoinedEvent@9740@True
+Too agitated!@agitationEvent@9748@True
+Hands are joined@handsJoinedEvent@9748@True
+Too agitated!@agitationEvent@9778@True
+Hands are joined@handsJoinedEvent@9778@True
+Too agitated!@agitationEvent@9787@True
+Hands are joined@handsJoinedEvent@9787@True
+Hands are joined@handsJoinedEvent@9808@True
+Hands are joined@handsJoinedEvent@9815@True
+Hands are joined@handsJoinedEvent@9844@True
+Hands are joined@handsJoinedEvent@9851@True
+Hands are joined@handsJoinedEvent@9876@True
+Hands are joined@handsJoinedEvent@9883@True
+Hands are joined@handsJoinedEvent@9908@True
+Hands are joined@handsJoinedEvent@9917@True
+Hands are joined@handsJoinedEvent@9944@True
+Hands are joined@handsJoinedEvent@9951@True
+Too agitated!@agitationEvent@9980@True
+Too agitated!@agitationEvent@9991@True
+Too agitated!@agitationEvent@10009@True
+Hands are joined@handsJoinedEvent@10009@True
+Too agitated!@agitationEvent@10020@True
+Hands are joined@handsJoinedEvent@10020@True
+Too agitated!@agitationEvent@10042@True
+Too agitated!@agitationEvent@10042@True
+Too agitated!@agitationEvent@10042@True
+Too agitated!@agitationEvent@10052@True
+Too agitated!@agitationEvent@10072@True
+Too agitated!@agitationEvent@10079@True
+Hands in the Pocket@handsInPocketEvent@10107@True
+Hands in the Pocket@handsInPocketEvent@10115@True
+Hands in the Pocket@handsInPocketEvent@10141@True
+Hands in the Pocket@handsInPocketEvent@10149@True
+Too agitated!@agitationEvent@10173@True
+right hand raised@handsRaisedEvent@10173@True
+Too agitated!@agitationEvent@10183@True
+Too agitated!@agitationEvent@10207@True
+WELCOME START!@armsWideEvent@10207@True
+WELCOME START!@armsWideEvent@10214@True
+WELCOME START!@armsWideEvent@10239@True
+WELCOME START!@armsWideEvent@10247@True
+WELCOME START!@armsWideEvent@10275@True
+WELCOME START!@armsWideEvent@10283@True
+WELCOME START!@armsWideEvent@10307@True
+WELCOME START!@armsWideEvent@10314@True
+WELCOME: DROPPED ELBOW!@armsWideEvent@10341@True
+Too agitated!@agitationEvent@10374@True
+Too agitated!@agitationEvent@10382@True
+Too agitated!@agitationEvent@10406@True
+Too agitated!@agitationEvent@10414@True
+Too agitated!@agitationEvent@10442@True
+WELCOME START!@armsWideEvent@10442@True
+WELCOME START!@armsWideEvent@10449@True
+left hand raised@handsRaisedEvent@10474@True
+WELCOME START!@armsWideEvent@10474@True
+WELCOME START!@armsWideEvent@10482@True
+Hands are joined@handsJoinedEvent@10506@True
+WELCOME START!@armsWideEvent@10506@True
+Hands are joined@handsJoinedEvent@10515@True
+WELCOME START!@armsWideEvent@10515@True
+Hands are joined@handsJoinedEvent@10543@True
+WELCOME: DROPPED ELBOW!@armsWideEvent@10543@True
+Hands are joined@handsJoinedEvent@10551@True
+Hands are joined@handsJoinedEvent@10777@True
+Hands are joined@handsJoinedEvent@10784@True
+Hands are joined@handsJoinedEvent@10806@True
+Arms Crossed@armsCrossedEvent@10806@True
+Hands are joined@handsJoinedEvent@10814@True
+Arms Crossed@armsCrossedEvent@10814@True
+Hands are joined@handsJoinedEvent@10839@True
+Arms Crossed@armsCrossedEvent@10839@True
+Hands are joined@handsJoinedEvent@10846@True
+Arms Crossed@armsCrossedEvent@10846@True
+Hands are joined@handsJoinedEvent@10874@True
+Arms Crossed@armsCrossedEvent@10874@True
+Hands are joined@handsJoinedEvent@10882@True
+Arms Crossed@armsCrossedEvent@10882@True

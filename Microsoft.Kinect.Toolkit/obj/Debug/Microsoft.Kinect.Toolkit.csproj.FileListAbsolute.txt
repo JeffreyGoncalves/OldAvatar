@@ -1,0 +1,17 @@
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.dll
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.pdb
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.dll.CodeAnalysisLog.xml
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.Toolkit.dll.lastcodeanalysissucceeded
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.dll
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\bin\Debug\Microsoft.Kinect.xml
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.csprojAssemblyReference.cache
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\KinectSensorChooserUI.baml
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\KinectSensorChooserUI.g.cs
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit_MarkupCompile.cache
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.g.resources
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.Properties.Resources.resources
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.csproj.GenerateResource.cache
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.csproj.CoreCompileInputs.cache
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.csproj.CopyComplete
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.dll
+C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\Microsoft.Kinect.Toolkit\obj\Debug\Microsoft.Kinect.Toolkit.pdb
