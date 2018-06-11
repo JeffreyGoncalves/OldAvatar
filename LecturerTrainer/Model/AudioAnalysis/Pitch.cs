@@ -630,8 +630,6 @@ namespace LecturerTrainer.Model.AudioAnalysis
         {
             this.isRecording = false;
         }
-        
-
 
         #endregion
     }

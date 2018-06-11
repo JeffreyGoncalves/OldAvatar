@@ -176,7 +176,14 @@ namespace LecturerTrainer.Model
         /// <param name="fdw"></param>
         public static void EnqueueXMLFace(FaceDataWrapper fdw)
         {
-            xmlFaceQueue.EnqueueItem(fdw);
+            try
+            {
+                xmlFaceQueue.EnqueueItem(fdw);
+            }
+            catch(Exception e)
+            {
+                 Console.WriteLine(e.ToString());
+            }
         }
 
         #endregion
@@ -350,6 +357,9 @@ namespace LecturerTrainer.Model
         }
         #endregion
 
+        ///<summary>
+        ///Save the face data in a binary file (don't work yet)
+        ///</summary>
         public static void StartSavingBinaryFace()
         {
             string fileName = SavingTools.pathFolder + "/" + "faceData.dat";
@@ -420,6 +430,9 @@ namespace LecturerTrainer.Model
                         writer.Write(fdw.faceTriangles.ElementAt(i).Third);
                     }
 
+                }, () => 
+                {
+                    writer.Close();
                 }, "BinaryFaceRecordingTask");
             }
         }

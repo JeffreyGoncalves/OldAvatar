@@ -74,7 +74,7 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
-        private int skeletonNumber = 0;
+        public int skeletonNumber = 0;
 
         private SortedList<int, Skeleton> skeletonsList;
         public SortedList<int, Skeleton> SkeletonList
@@ -91,6 +91,7 @@ namespace LecturerTrainer.ViewModel
         public static WelcomeTraining _welcomegesture = new WelcomeTraining();
         public static SaluteTraining _salutegesture = new SaluteTraining();
         public static HypeTraining _hypegesture = new HypeTraining();
+        public static FaceTraining _facegesture = new FaceTraining();
 
         public static string AvatarGesture;
 
@@ -113,6 +114,7 @@ namespace LecturerTrainer.ViewModel
             _welcomegesture.GestureRecognized += WelcomeTraining_GestureRecognized;
             _salutegesture.GestureRecognized += SaluteTraining_GestureRecognized;
             _hypegesture.GestureRecognized += HypeTraining_GestureRecognized;
+            _facegesture.GestureRecognized += FaceTraining_GestureRecognized;
         }
 
         public void initialize()
@@ -302,6 +304,35 @@ namespace LecturerTrainer.ViewModel
             return skToReturn;
         }
 
+        public String PathSkdAvatar()
+        {
+            String returnPath = "";
+
+            if (pathFile != "")
+            {
+                string curItem = twav.VideosList.SelectedItem.ToString();
+                returnPath = videosMap[curItem] + "/" + curItem + ".skd";
+            }
+
+            return returnPath;
+        }
+
+        public String PathFaceAvatar()
+        {
+            String returnPath = "";
+
+            if (pathFile != "")
+            {
+                string curItem = twav.VideosList.SelectedItem.ToString();
+                returnPath = videosMap[curItem] + "/" + curItem + ".xml";
+
+                if (!File.Exists(returnPath))
+                    returnPath = "";
+            }
+
+            return returnPath;
+        }
+
         //When the waving gesture is recognized, we determine what file should be played to respond to the user
         public static void Gesture_GestureRecognized(object sender, EventArgs e)
         {
@@ -471,6 +502,11 @@ namespace LecturerTrainer.ViewModel
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Raise_your_arms.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
+        }
+
+        public static void FaceTraining_GestureRecognized(object sender, EventArgs e)
+        {
+
         }
     }
 }

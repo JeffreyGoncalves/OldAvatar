@@ -871,6 +871,8 @@ namespace LecturerTrainer.ViewModel
                 {
                     DrawingSheetAvatarViewModel.backgroundXMLFaceRecordingEventStream += backgroundFaceXMLRecording;
                     SavingTools.StartSavingXMLFace();
+                    //Binary change
+                    //SavingTools.StartSavingBinaryFace();
                 }
 
             }

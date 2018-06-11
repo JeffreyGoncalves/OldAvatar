@@ -298,6 +298,7 @@
     <Compile Include="Model\AudioAnalysis\AudioRecorder.cs" />
     <Compile Include="Model\BodyAnalysis\Agitation.cs" />
     <Compile Include="Model\BodyAnalysis\Class1.cs" />
+    <Compile Include="Model\BodyAnalysis\FaceTraining.cs" />
     <Compile Include="Model\BodyAnalysis\SaluteTraining.cs" />
     <Compile Include="Model\BodyAnalysis\WelcomeTraining.cs" />
     <Compile Include="Model\BodyAnalysis\PowerTraining.cs" />

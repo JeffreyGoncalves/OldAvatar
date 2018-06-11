@@ -551,7 +551,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                         counterTicTmp++;
                         using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\Public\TestFolder\testTics.txt", true))
                         {
-                            file.WriteLine("{0} detected, actual number of \" {0} \" : {1} ", tics.ElementAt(ind).Key, currentCount);
+                            file.WriteLine("{0} detected, actual number of \" {0} \" : {1} ", tics.ElementAt(ind).Key, currentCount); 
                         }
                         ticEvent(null, new InstantFeedback("\" " + tics.ElementAt(ind).Key + " \" said " + currentCount + " time(s)"));
                     }

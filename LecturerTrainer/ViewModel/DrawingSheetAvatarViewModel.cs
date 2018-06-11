@@ -26,13 +26,14 @@ namespace LecturerTrainer.Model
     class DrawingSheetAvatarViewModel : DrawingSheetViewModel
     {
         private static int count = 0;
+        private static Skeleton skToDisplay = null;
+
         #region fields
 
         /// <summary>
         /// the instance of the singleton class 
         /// </summary>
         private static DrawingSheetAvatarViewModel dsavm = null;
-
 
         /// <summary>
         /// Raise an event when we want to transfer a frame to the recorder
@@ -403,6 +404,8 @@ namespace LecturerTrainer.Model
         /// </summary>
         private void display(EventArgs evt)
         {
+            count++;
+
             if (KinectDevice.faceTracking && !KinectDevice.SwitchDraw)
             {
                 drawFace(evt);
@@ -426,15 +429,46 @@ namespace LecturerTrainer.Model
                     GL.Translate(1.0f, 0, 0);
                     /*Get the skeleton object to replay*/
                     trackedBoneColor = mentorBoneColor;
-                    Skeleton skToDisplay = TrainingWithAvatarViewModel.Get().chooseSkeletonToDisplay();
-                    if (skToDisplay != null)
+
+                    //CHANGEMENT
+
+                    //Skeleton skToDisplay = TrainingWithAvatarViewModel.Get().chooseSkeletonToDisplay();
+                    String faceToDisplay = TrainingWithAvatarViewModel.Get().PathFaceAvatar();
+                    int currentSkeleton = TrainingWithAvatarViewModel.Get().skeletonNumber;
+
+                    if (faceToDisplay != "")
                     {
                         mentor = true;
-                        drawAvatar(skToDisplay, false);
+                        if (count % 2 == 0)
+                        {
+                            skToDisplay = TrainingWithAvatarViewModel.Get().chooseSkeletonToDisplay();
+                            if(skToDisplay != null)
+                                DrawMentor(skToDisplay, faceToDisplay, currentSkeleton, true);
+                        }
+                        else
+                        {
+                            if (skToDisplay != null)
+                            {
+                                Console.WriteLine("##########################");
+                                Console.WriteLine("Current skeleton : " + currentSkeleton);
+                                Console.WriteLine("path : " + faceToDisplay);
+                                DrawMentor(skToDisplay, faceToDisplay, currentSkeleton, true);
+                            }
+                        }
+
+                        //drawAvatar(skToDisplay, false);
+
                         mentor = false;
                     }
                     else
-                        drawInitialAvatar();
+                    {
+                        mentor = true;
+                        skToDisplay = TrainingWithAvatarViewModel.Get().chooseSkeletonToDisplay();
+                        if (skToDisplay != null)
+                            DrawMentor(skToDisplay, faceToDisplay, currentSkeleton, false);
+                        mentor = false;
+                    }
+
                     GL.PopMatrix();
                     GL.Flush();
                     trackedBoneColor = savedBoneColor;
@@ -809,9 +843,6 @@ namespace LecturerTrainer.Model
                         float beta;
                         float alphaStep = (float)(Math.PI) / (float)generalSlices;
                         float betaStep = (float)(Math.PI) / (float)generalStacks;
-
-
-                        
                         
                         float RVert = (float)Math.Sqrt(Math.Pow((face21.X - face22.X), 2) + Math.Pow((face21.Y - face22.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
                         float RHori = (float)Math.Sqrt(Math.Pow((face23.X - face20.X), 2) + Math.Pow((face23.Y - face20.Y), 2)) / 2; //Vertical semi-axis of the ellipse
@@ -885,6 +916,124 @@ namespace LecturerTrainer.Model
                 }
                 GL.PopMatrix();
 
+            }
+        }
+
+        /// <summary>
+        /// Draw the mentor Avatar
+        /// </summary>
+        /// <param name="mentor"></param>
+        /// <param name="facePath"></param>
+        private void DrawMentor(Skeleton mentor, String facePath, int currentSkeleton, bool draw)
+        {
+            if (mentor.TrackingState == SkeletonTrackingState.Tracked)
+                this.DrawBonesAndJoints(mentor);
+
+            if (draw)
+            {
+                FaceDataWrapper fdw = ReplayAvatar.loadFaceWFrame(facePath, currentSkeleton);
+                drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
+
+                GL.PushMatrix();
+                {
+                    OpenTK.Vector4 faceColor = new OpenTK.Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+                    GL.Color4(faceColor);
+                    GL.Normal3(0.0f, 0.0f, 1.0f);
+                    GL.LineWidth(3.0f);
+                    GL.Begin(PrimitiveType.LineLoop);
+                    GL.Vertex3(MTUL);
+                    GL.Vertex3(ORCM);
+                    GL.Vertex3(MBUL);
+                    GL.Vertex3(OLCM);
+                    GL.Vertex3(MTUL);
+                    GL.End();
+
+                    GL.Begin(PrimitiveType.LineLoop);
+                    GL.Vertex3(MTLL);
+                    GL.Vertex3(ORCM);
+                    GL.Vertex3(MBLL);
+                    GL.Vertex3(OLCM);
+                    GL.Vertex3(MTLL);
+                    GL.End();
+
+                    //                    GL.LineWidth(2.0f);
+                    // Drawing of the right eye
+                    Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
+                    {
+                        float alpha;
+                        float beta;
+                        float alphaStep = (float)(Math.PI) / (float)generalSlices;
+                        float betaStep = (float)(Math.PI) / (float)generalStacks;
+
+
+                        float RVert = (float)Math.Sqrt(Math.Pow((face21.X - face22.X), 2) + Math.Pow((face21.Y - face22.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
+                        float RHori = (float)Math.Sqrt(Math.Pow((face23.X - face20.X), 2) + Math.Pow((face23.Y - face20.Y), 2)) / 2; //Vertical semi-axis of the ellipse
+
+                        Gl.glVertex3f(face23.X, face23.Y, face23.Z);
+                        for (alpha = -(float)Math.PI / 2; alpha < (float)Math.PI / 2; alpha += alphaStep)
+                        {
+                            for (beta = 0; beta < (float)2 * Math.PI; beta += alphaStep)
+                            {
+                                Gl.glVertex3f(face23.X + (float)Math.Cos(alpha) * (float)Math.Cos(beta) * RHori - RHori,
+                                    face21.Y + (float)Math.Sin(beta) * (float)Math.Cos(alpha) * RVert - RVert, face22.Z);
+
+                                Gl.glVertex3f(face23.X + RHori * (float)Math.Cos(alpha + alphaStep) * (float)Math.Cos(beta) - RHori,
+                                    face21.Y + RVert * (float)Math.Cos(alpha + alphaStep) * (float)Math.Sin(beta) - RVert, face22.Z);
+                            }
+                        }
+                        Gl.glVertex3f(face23.X, face23.Y, face23.Z);
+
+                        //Gl.glVertex3f(face22.X, face22.Y, face22.Z);
+                        //Gl.glVertex3f(face20.X, face20.Y, face20.Z);
+                        //Gl.glVertex3f(face21.X, face21.Y, face21.Z);
+
+                    }
+                    Gl.glEnd();
+
+                    // Drawing of the right eyebrow
+                    GL.Begin(PrimitiveType.Polygon);
+                    GL.Vertex3(face15);
+                    GL.Vertex3(face16);
+                    GL.Vertex3(face17);
+                    GL.Vertex3(face18);
+                    GL.End();
+
+                    // Drawing of the left eye
+                    Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
+
+                    float LVert = (float)Math.Sqrt(Math.Pow((face54.X - face55.X), 2) + Math.Pow((face54.Y - face55.Y), 2)) / 2;
+                    float LHori = (float)Math.Sqrt(Math.Pow((face56.X - face53.X), 2) + Math.Pow((face56.Y - face53.Y), 2)) / 2;
+
+                    float theta;
+                    float phi;
+                    float thetaStep = (float)(Math.PI) / (float)generalSlices;
+                    float phiStep = (float)(Math.PI) / (float)generalStacks;
+                    for (theta = -(float)Math.PI / 2; theta < (float)Math.PI / 2; theta += thetaStep)
+                    {
+                        for (phi = -(float)Math.PI; phi < (float)Math.PI; phi += phiStep)
+                        {
+
+                            Gl.glVertex3f(face56.X + (float)Math.Cos(theta) * (float)Math.Cos(phi) * LHori + LHori,
+                                face56.Y + (float)Math.Sin(phi) * (float)Math.Cos(theta) * LVert, face56.Z);
+
+                            Gl.glVertex3f(face56.X + LHori + LHori * (float)Math.Cos(theta + thetaStep) * (float)Math.Cos(phi),
+                                face56.Y + LVert * (float)Math.Cos(theta + thetaStep) * (float)Math.Sin(phi), face56.Z);
+                        }
+
+                    }
+
+
+                    Gl.glEnd();
+
+                    // Drawing of the left eyebrow
+                    GL.Begin(PrimitiveType.Polygon);
+                    GL.Vertex3(face48);
+                    GL.Vertex3(face49);
+                    GL.Vertex3(face50);
+                    GL.Vertex3(face51);
+                    GL.End();
+                }
+                GL.PopMatrix();
             }
         }
 

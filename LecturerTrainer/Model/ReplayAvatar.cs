@@ -233,54 +233,39 @@ namespace LecturerTrainer.Model
             elapsedVideoTime += (ReplayViewModel.normalSpeed);
             setDisplayedTime();
 
-            if (faceDir != "" && count % 2 == 0)
+            if (faceDir != "")
             {
-                if (currentSkeletonNumber < skeletonsList.Count)
-                    currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
-                else
-                    currentSkeleton = null;
-
-                if (currentSkeleton != null)
+                if(count % 2 == 0)
                 {
-                    try
+                    if (currentSkeletonNumber < skeletonsList.Count)
+                        currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
+                    else
+                        currentSkeleton = null;
+
+                    if (currentSkeleton != null)
                     {
+                        //Binary change
+                        //FaceDataWrapper fdw = LoadBinaryFaceFrame(faceDir, (int)currentSkeletonNumber);
                         FaceDataWrapper fdw = loadFaceWFrame(faceDir, (int)currentSkeletonNumber);
                         DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
                         DrawingSheetAvatarViewModel.Get().drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
                     }
-                    catch (Exception e)
+                    else
                     {
-                        Console.WriteLine(e);
+                        replayViewModel.stopButtonCommand();
                     }
-                }
-                else
-                {
-                    replayViewModel.stopButtonCommand();
-                }
 
-                currentSkeletonNumber += nbSkeletonsPerFrame;
+                    currentSkeletonNumber += nbSkeletonsPerFrame;
+                }
             }
-            else if(faceDir == "") 
+            else
             {
                 if (currentSkeletonNumber < skeletonsList.Count)
                     currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
                 else
                     currentSkeleton = null;
 
-                if (currentSkeleton != null)
-                {
-                    try
-                    {
-                        FaceDataWrapper fdw = loadFaceWFrame(faceDir, (int)currentSkeletonNumber);
-                        DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
-                        DrawingSheetAvatarViewModel.Get().drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-                else
+                if(currentSkeleton == null)
                 {
                     replayViewModel.stopButtonCommand();
                 }
@@ -529,7 +514,7 @@ namespace LecturerTrainer.Model
         /// <param name="frame">The frame number</param>
         /// <returns>The faceDataWrapper containing the data needed to display the face</returns>
         /// <author> Amirali Ghazi </author>
-        public FaceDataWrapper loadFaceWFrame(string path, int frame)
+        public static FaceDataWrapper loadFaceWFrame(string path, int frame)
         {
             System.Xml.XmlReaderSettings settings = new System.Xml.XmlReaderSettings { IgnoreWhitespace = true, CheckCharacters = true };
             XmlReader xmlFaceReader;
@@ -677,7 +662,13 @@ namespace LecturerTrainer.Model
         }
         #endregion
 
-        public FaceDataWrapper LoadBinaryFaceFrame(string fileName, int frame)
+
+        /// <summary>
+        /// Alternative load faceData methode (Don't work yet)  
+        /// </summary>
+        /// <param name="path">The path of the faceData</param>
+        /// <returns>The faceDataWrapper containing the data needed to display the face</returns>
+        public FaceDataWrapper LoadBinaryFaceFrame(string fileName)
         {
             if (File.Exists(fileName))
             {
