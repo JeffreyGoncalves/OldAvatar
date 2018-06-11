@@ -258,6 +258,77 @@ namespace LecturerTrainer.Model
             }
             currentSkeletonNumber += nbSkeletonsPerFrame;
         }
+                /*
+        private static int count = 0;
+        /// <summary>
+        /// update the current skeleton in the folder
+        /// </summary>
+        /// <returns></returns>
+        private void nextSkeleton(object sender, EventArgs evt)
+        {
+            count++;
+
+            elapsedVideoTime += (ReplayViewModel.normalSpeed);
+            setDisplayedTime();
+
+            if (faceDir != "" && count % 2 == 0)
+            {
+                if (currentSkeletonNumber < skeletonsList.Count)
+                    currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
+                else
+                    currentSkeleton = null;
+
+                if (currentSkeleton != null)
+                {
+                    try
+                    {
+                        FaceDataWrapper fdw = loadFaceWFrame(faceDir, (int)currentSkeletonNumber);
+                        DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
+                        DrawingSheetAvatarViewModel.Get().drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+                else
+                {
+                    replayViewModel.stopButtonCommand();
+                }
+
+                currentSkeletonNumber += nbSkeletonsPerFrame;
+            }
+            else if(faceDir == "") 
+            {
+                if (currentSkeletonNumber < skeletonsList.Count)
+                    currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
+                else
+                    currentSkeleton = null;
+
+                if (currentSkeleton != null)
+                {
+                    try
+                    {
+                        FaceDataWrapper fdw = loadFaceWFrame(faceDir, (int)currentSkeletonNumber);
+                        DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
+                        DrawingSheetAvatarViewModel.Get().drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+                else
+                {
+                    replayViewModel.stopButtonCommand();
+                }
+
+                currentSkeletonNumber += nbSkeletonsPerFrame;
+            }
+
+            // We only draw the last skeleton
+            DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
+}*/
 
         /// <summary>
         /// Updates the displayed time
@@ -270,7 +341,7 @@ namespace LecturerTrainer.Model
         private static  string FormatTime(long time)
         {
             var _timeMS = (int)time;
-            int h, m, s, ms;
+            int h, m, s/*, ms*/;
             string stringTime = "";
 
             h = _timeMS / 3600000;

@@ -53,8 +53,6 @@ namespace LecturerTrainer.ViewModel
 
         private ReplayAvatar skeletonScrolling;
 
-        private Skeleton nextSkeleton;
-        private long nextSkeletonTime;
 
         /// <summary>
         /// Time elapsed in the video, textual version
@@ -224,7 +222,7 @@ namespace LecturerTrainer.ViewModel
 
             SideToolsViewModel.Get().disableTrackingAndTrainingTab();
             ManagePerformanceFiles();
-            ManageSpeedElements();
+            //ManageSpeedElements();
             Mute();
             pauseButtonCommand();
 
@@ -308,14 +306,21 @@ namespace LecturerTrainer.ViewModel
                             listTemp.Add(splitedLine[0]);
                         tempLine = file.ReadLine();
                     }
-                    // else we change the two bounds of the interval 
-                    // and we add the list in the ;other list and create a new one
-                    else
+                    // else if the number of list is less than the number of skeletons
+                    // we change the two bounds of the interval 
+                    // and we add the list in the other list and create a new one
+                    else if(count < ReplayAvatar.SkeletonList.Count)
                     {
                         listFeedback.Add(listTemp);
                         timeDown = timeUp;
                         timeUp = ReplayAvatar.SkeletonList[count++].Item1;
+                        Console.Out.WriteLine(" -- " + count);
                         listTemp = new List<String>();
+                    }
+                    // else we read the end of the feedback.txt
+                    else
+                    {
+                        tempLine = file.ReadLine();
                     }
                 }
                 file.Close();
@@ -381,24 +386,24 @@ namespace LecturerTrainer.ViewModel
                     tryAddOtherSources("stream.avi");
                     isReplaying = true;
                 }
-                else if (Path.GetFileName(filePath) == "skeletonData.skd")
+                else if (Path.GetFileName(filePath) == "avatarSkeletonData.skd")
                 {
                     DrawingSheetView.Get().Show3DSheet();
                     filePathAvatar = filePath;
                     activate(ReplayView.Get().Avatar, GeneralSideTool.Get().Avatar);
                     deactivateOther(ReplayView.Get().Stream, ReplayView.Get().VideoAvatar);
 
-                    var faceData = filePath.Replace("skeletonData.skd", "faceData.xml");
+                    var faceData = filePath.Replace("avatarSkeletonData.skd", "faceData.xml");
                     if(File.Exists(faceData))
                     {
                         skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, this, 0);
-                        tryAddOtherSources("skeletonData.skd");
+                        tryAddOtherSources("avatarSkeletonData.skd");
                         isReplaying = true;
                     }
                     else
                     {
                         skeletonScrolling = new ReplayAvatar(filePathAvatar, this, 0);
-                        tryAddOtherSources("skeletonData.skd");
+                        tryAddOtherSources("avatarSkeletonData.skd");
                         isReplaying = true;
                     }
                 }
@@ -455,7 +460,15 @@ namespace LecturerTrainer.ViewModel
                 string fileName = Path.GetFileName(s);
                 if (fileName != fileBase)
                 {
-                    if (fileName == "avatar.avi")
+                    if (fileName == "avatarSkeletonData.skd")
+                    {
+                        // the replay needs an instance of ReplayAvatar, so if the first file chose is not the .skd
+                        // we have to create one
+                        skeletonScrolling = new ReplayAvatar(s, this, 0);
+                        addOtherVideoSources(ReplayView.Get().Avatar);
+                        filePathAvatar = s;
+                    }
+                    else if (fileName == "avatar.avi")
                     {
                         addOtherVideoSources(ReplayView.Get().VideoAvatar);
                         filePathVideoAvatar = s;
@@ -473,14 +486,6 @@ namespace LecturerTrainer.ViewModel
                     else if (fileName == "feedback.txt")
                     {
                         initialiseFeedbacksQueue(s);
-                    }
-                    else if (fileName == "skeletonData.skd")
-                    {
-                        // the replay needs an instance of ReplayAvatar, so if the first file chose is not the .skd
-                        // we have to create one
-                        skeletonScrolling = new ReplayAvatar(s, this, 0);
-                        addOtherVideoSources(ReplayView.Get().Avatar);
-                        filePathAvatar = s;
                     }
                     else if (fileName == "charts.xml")
                     {
@@ -507,7 +512,7 @@ namespace LecturerTrainer.ViewModel
             replayViewRadio.Opacity = 1;
         }
 
-
+/*
         /// <summary>
         /// Manages speed buttons and labels according to the current state
         /// Modified by Baptiste Germond
@@ -537,7 +542,7 @@ namespace LecturerTrainer.ViewModel
                 // Finally, the speed can be displayed
                 ReplayView.Get().SpeedLabel.Text = "Speed : " + speedRatios[speedRatioIndex];
         }
-
+*/
         /// <summary>
         /// Detect when the video ended to change the button to stop
         /// </summary>
@@ -686,10 +691,10 @@ namespace LecturerTrainer.ViewModel
             {
                 DrawingSheetView.Get().ReplayAudio.Play();
             }
-            ReplayView.Get().FastButton.IsEnabled = true;
-            ReplayView.Get().SlowButton.IsEnabled = true;
+            //ReplayView.Get().FastButton.IsEnabled = true;
+            //ReplayView.Get().SlowButton.IsEnabled = true;
             ReplayView.Get().PauseButton.IsEnabled = true;
-            ManageSpeedElements();
+            //ManageSpeedElements();
         }
 
         /// <summary>
@@ -715,10 +720,10 @@ namespace LecturerTrainer.ViewModel
                 DrawingSheetView.Get().ReplayAudio.Pause();
             }
 
-            ReplayView.Get().FastButton.IsEnabled = true;
-            ReplayView.Get().SlowButton.IsEnabled = true;
+            //ReplayView.Get().FastButton.IsEnabled = true;
+            //ReplayView.Get().SlowButton.IsEnabled = true;
             ReplayView.Get().PauseButton.IsEnabled = true;
-            ManageSpeedElements();
+            //ManageSpeedElements();
         }
 
         /// <summary>
@@ -746,15 +751,15 @@ namespace LecturerTrainer.ViewModel
             }
             Tools.restartStopWatch();
             currentListNumber = 0;
-            ReplayView.Get().FastButton.IsEnabled = false;
-            ReplayView.Get().SlowButton.IsEnabled = false;
+            //ReplayView.Get().FastButton.IsEnabled = false;
+            //ReplayView.Get().SlowButton.IsEnabled = false;
             ReplayView.Get().PauseButton.IsEnabled = false;
             speedRatioIndex = 2;
             DrawingSheetView.Get().ReplayAudio.SpeedRatio = speedRatios[speedRatioIndex];
             DrawingSheetView.Get().ReplayVideo.SpeedRatio = speedRatios[speedRatioIndex];
             //if(skeletonScrolling != null)
             //    skeletonScrolling.Speed = speedRatios[speedRatioIndex];
-            ManageSpeedElements();
+            //ManageSpeedElements();
   
             // Icons cleaning and initialization of the feedback queue thanks to the save
             IconViewModel.get().clearAll();
@@ -778,7 +783,7 @@ namespace LecturerTrainer.ViewModel
                     DrawingSheetView.Get().ReplayVideo.SpeedRatio = speedRatios[speedRatioIndex];
                 if (skeletonScrolling!= null)
                     skeletonScrolling.Speed = speedRatios[speedRatioIndex];
-                ManageSpeedElements();
+                //ManageSpeedElements();
             }
         }
 
@@ -796,7 +801,7 @@ namespace LecturerTrainer.ViewModel
                     DrawingSheetView.Get().ReplayVideo.SpeedRatio = speedRatios[speedRatioIndex];
                 if (skeletonScrolling != null)
                     skeletonScrolling.Speed = speedRatios[speedRatioIndex];
-                ManageSpeedElements();
+                //ManageSpeedElements();
             }
         }
 

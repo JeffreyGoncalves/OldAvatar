@@ -26,7 +26,6 @@ namespace LecturerTrainer.Model
     {
         private static DateTime localDate = DateTime.Now;
         public static string pathFolder ="";
-        private static int time;
 
         #region PCQueueFields
         /// <summary>
@@ -242,7 +241,7 @@ namespace LecturerTrainer.Model
                     ConformanceLevel = ConformanceLevel.Auto,
                     Indent = true
                 };
-                xmlSkeletonWriter = XmlWriter.Create(SavingTools.pathFolder + "/" + "skeletonData.skd", settings);
+                xmlSkeletonWriter = XmlWriter.Create(SavingTools.pathFolder + "/" + "avatarSkeletonData.skd", settings);
                 xmlSkeletonWriter.WriteStartDocument();
                 xmlSkeletonWriter.WriteStartElement("Skeletons");
                 xmlSkeletonQueue = new PCQueue<Skeleton>(sk =>
@@ -279,7 +278,7 @@ namespace LecturerTrainer.Model
             catch (Exception ex)
             {
                 if (Tools.getStateStopWatch())
-                    Tools.getStopWatch();
+                    Tools.stopStopWatch();
                 Console.WriteLine(ex.ToString());
             }
             

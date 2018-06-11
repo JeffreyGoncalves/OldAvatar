@@ -208,11 +208,13 @@
                                 <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                             </CheckBox.Foreground>
                         </CheckBox>
+                      <!--
                         <CheckBox x:Name="AvatarOpenGLRecordingCheckbox" Content="Avatar recording" IsChecked="{Binding ToggleAvatarOpenGLRecording}" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Top" Width="198" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}">
                             <CheckBox.Foreground>
                                 <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                             </CheckBox.Foreground>
                         </CheckBox>
+                        -->
                         <CheckBox x:Name="AvatarVideoRecordingCheckbox" Content="Video avatar recording" IsChecked="{Binding ToggleAvatarVideoRecording}" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Top" Width="198" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Background="White">
                             <CheckBox.Foreground>
                                 <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
@@ -380,7 +382,8 @@
                                 <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                             </Label.Foreground>
                         </Label>
-                        <Separator HorizontalAlignment="Left" Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0,0,0" VerticalAlignment="Top" Width="228" d:LayoutOverrides="LeftMargin, RightMargin">
+                      <Separator HorizontalAlignment="Left" Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0,0,0" VerticalAlignment="Top" Width="228">
+                        <!--d:LayoutOverrides="LeftMargin, RightMargin"-->
                             <Separator.Background>
                                 <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
                             </Separator.Background>

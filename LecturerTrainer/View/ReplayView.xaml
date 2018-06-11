@@ -69,23 +69,23 @@
                 </Separator>
                 <Grid x:Name="ReplayButtonsGrid" Margin="14,85,14,0" Height="40" VerticalAlignment="Top" HorizontalAlignment="Center">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="40"/>
-                        <ColumnDefinition Width="0"/>
+                      <ColumnDefinition Width="0"/>
+                      <ColumnDefinition Width="40"/>
+                      <ColumnDefinition Width="5"/>
+                      <ColumnDefinition Width="0"/>
+                      <ColumnDefinition Width="0"/>
+                      <ColumnDefinition Width="40"/>
+                      <ColumnDefinition Width="5"/>
+                      <ColumnDefinition Width="0"/>
+                      <ColumnDefinition Width="0"/>
+                      <ColumnDefinition Width="40"/>
+                      <ColumnDefinition Width="0"/>
                     </Grid.ColumnDefinitions>
                     <RadioButton x:Name="PlayButton" GroupName="ReplayButtons" Command="{Binding PlayPerformanceCommand}" Content="RadioButton" Grid.Column="1" Style="{DynamicResource PlayRadioButton}"/>
                     <RadioButton x:Name="PauseButton" GroupName="ReplayButtons" Command="{Binding PausePerformanceCommand}" Content="RadioButton" Grid.Column="5" Style="{DynamicResource PauseRadioButton}"/>
                     <RadioButton x:Name="StopButton" GroupName="ReplayButtons" Command="{Binding StopPerformanceCommand}" Content="RadioButton" Grid.Column="9" Style="{DynamicResource StopRadioButton}" IsChecked="True"/>
-                    <Button x:Name="FastButton" Content="Button" Command="{Binding SpeedUpPerformanceCommand}" Style="{DynamicResource FastButton}" Grid.Column="7" />
-                    <Button x:Name="SlowButton" Content="Button" Command="{Binding SlowDownPerformanceCommand}" Style="{DynamicResource SlowButton}" Grid.Column="3"/>
+                    <!--<Button x:Name="FastButton" Content="Button" Command="{Binding SpeedUpPerformanceCommand}" Style="{DynamicResource FastButton}" Grid.Column="7" />-->
+                    <!--<Button x:Name="SlowButton" Content="Button" Command="{Binding SlowDownPerformanceCommand}" Style="{DynamicResource SlowButton}" Grid.Column="3"/>-->
 
                 </Grid>
                 <CheckBox x:Name="SoundCheckbox"  Content="CheckBox" HorizontalAlignment="Center" Height="40" Margin="0,35.667,0,0" Style="{DynamicResource SoundCheckBox}" Command="{Binding PerformanceSoundCommand}" VerticalAlignment="Top" Width="40" IsEnabled="False"/>
