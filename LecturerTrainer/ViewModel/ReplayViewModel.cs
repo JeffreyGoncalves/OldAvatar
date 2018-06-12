@@ -447,7 +447,7 @@ namespace LecturerTrainer.ViewModel
                 audioSource = true;
                 ReplayView.Get().SoundCheckbox.IsEnabled = true;
         }
-
+		
         /// <summary>
         /// Adding the other replay available with the replay the user chose
         /// Added by Baptiste Germond

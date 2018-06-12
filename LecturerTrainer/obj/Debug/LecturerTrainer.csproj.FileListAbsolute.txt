@@ -40,8 +40,6 @@ C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\LecturerTrain
 C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\LecturerTrainer\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\LecturerTrainer\obj\Debug\LecturerTrainer_MarkupCompile.cache
 C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\LecturerTrainer\obj\Debug\LecturerTrainer_MarkupCompile.lref
-C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\LecturerTrainer\bin\Debug\FaceTrackData.dll
-C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\LecturerTrainer\bin\Debug\FaceTrackLib.dll
 C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\LecturerTrainer\bin\Debug\freenect.dll
 C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\LecturerTrainer\bin\Debug\avcodec-53.dll
 C:\Users\Oummar\Desktop\repos.zip (Unzipped Files)\repos\OldAvatar\LecturerTrainer\bin\Debug\avdevice-53.dll
