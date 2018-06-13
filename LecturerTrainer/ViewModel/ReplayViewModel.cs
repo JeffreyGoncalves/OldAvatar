@@ -47,12 +47,25 @@ namespace LecturerTrainer.ViewModel
         // Indicates if the video is paused
         private bool paused = true;
         // Indicates if the video is played
-        private static bool played = false;
+        public static bool played = false;
         // Indicates if the statistics source is detected
         private string statisticsPath = "";
 
         private ReplayAvatar skeletonScrolling;
 
+        public ReplayAvatar SkeletonScrolling
+        {
+            get
+            {
+                return skeletonScrolling;
+            }
+        }
+
+        public static int timeEnd;
+
+        public static int localOffset = 0;
+
+        public static int initTime = 0;
 
         /// <summary>
         /// Time elapsed in the video, textual version
@@ -137,8 +150,6 @@ namespace LecturerTrainer.ViewModel
         // Commands linked to view controls
         private ICommand playPerformanceCommand;
         private ICommand performanceSoundCommand;
-        private ICommand speedUpPerformanceCommand;
-        private ICommand slowDownPerformanceCommand;
         private ICommand pausePerformanceCommand;
         private ICommand stopPerformanceCommand;
         private ICommand videoAvatarDisplayCommand;
@@ -148,8 +159,6 @@ namespace LecturerTrainer.ViewModel
         private ICommand otherReplayCommand;
         public ICommand PlayPerformanceCommand { get { return playPerformanceCommand; } }
         public ICommand PerformanceSoundCommand { get { return performanceSoundCommand; } }
-        public ICommand SpeedUpPerformanceCommand { get { return speedUpPerformanceCommand; } }
-        public ICommand SlowDownPerformanceCommand { get { return slowDownPerformanceCommand; } }
         public ICommand PausePerformanceCommand { get { return pausePerformanceCommand; } }
         public ICommand StopPerformanceCommand { get { return stopPerformanceCommand; } }
         public ICommand VideoAvatarDisplayCommand { get { return videoAvatarDisplayCommand; } }
@@ -206,8 +215,8 @@ namespace LecturerTrainer.ViewModel
             instance = this;
             performanceSoundCommand = new RelayCommand(performanceSound);
             playPerformanceCommand = new RelayCommand(Play);
-            speedUpPerformanceCommand = new RelayCommand(SpeedUp);
-            slowDownPerformanceCommand = new RelayCommand(SlowDown);
+            //speedUpPerformanceCommand = new RelayCommand(SpeedUp);
+            //slowDownPerformanceCommand = new RelayCommand(SlowDown);
             pausePerformanceCommand = new RelayCommand(Pause);
             stopPerformanceCommand = new RelayCommand(Stop);
             //videoAvatarDisplayCommand = new RelayCommand(videoAvatarDisplay);
@@ -225,8 +234,6 @@ namespace LecturerTrainer.ViewModel
             //ManageSpeedElements();
             Mute();
             pauseButtonCommand();
-
-            Console.Out.WriteLine("end constr");
         }
 
 
@@ -314,7 +321,6 @@ namespace LecturerTrainer.ViewModel
                         listFeedback.Add(listTemp);
                         timeDown = timeUp;
                         timeUp = ReplayAvatar.SkeletonList[count++].Item1;
-                        Console.Out.WriteLine(" -- " + count);
                         listTemp = new List<String>();
                     }
                     // else we read the end of the feedback.txt
@@ -344,10 +350,15 @@ namespace LecturerTrainer.ViewModel
         /// <param name="evt"></param>
         public void nextFeedbackList(object sender, EventArgs evt)
         {
-            currentListNumber ++;
+            /*currentListNumber ++;
             if(currentListNumber != listlistString.Count)
             {
                 currentFeedbackList = listlistString.ElementAt(currentListNumber);
+            }*/
+            //currentListNumber ++;
+            if(ReplayAvatar.CurrentSkeletonNumber != listlistString.Count)
+            {
+                currentFeedbackList = listlistString.ElementAt(ReplayAvatar.CurrentSkeletonNumber);
             }
         }
 
@@ -512,37 +523,6 @@ namespace LecturerTrainer.ViewModel
             replayViewRadio.Opacity = 1;
         }
 
-/*
-        /// <summary>
-        /// Manages speed buttons and labels according to the current state
-        /// Modified by Baptiste Germond
-        /// </summary>
-        private void ManageSpeedElements()
-        {
-                // If maxSpeed is reached, speeding up is not possible
-                if (speedRatioIndex == speedRatios.Count() - 1)
-                    ReplayView.Get().FastButton.IsEnabled = false;
-
-                // If minSpeed is reached, slowing down is not possible
-                else if (speedRatioIndex == 0)
-                    ReplayView.Get().SlowButton.IsEnabled = false;
-
-                // In other cases, speeding up and slowing down is possible
-                else
-                {
-                    ReplayView.Get().SlowButton.IsEnabled = true;
-                    ReplayView.Get().FastButton.IsEnabled = true;
-                }
-
-                if (speedRatios[speedRatioIndex]==1 && timeRecord%200 != 0)
-                {
-                    timeRecord -= timeRecord % 200;
-                }
-
-                // Finally, the speed can be displayed
-                ReplayView.Get().SpeedLabel.Text = "Speed : " + speedRatios[speedRatioIndex];
-        }
-*/
         /// <summary>
         /// Detect when the video ended to change the button to stop
         /// </summary>
@@ -580,6 +560,28 @@ namespace LecturerTrainer.ViewModel
             ReplayView.Get().PlayButton.IsChecked = true;
             if (ReplayView.Get().PlayButton.Command != null)
                 ReplayView.Get().PlayButton.Command.Execute(null);
+        }
+
+        public static void changeCurrentAvatar(int newTime)
+        {
+            var timeDown = 0;
+            var timeUp = ReplayAvatar.SkeletonList[0].Item1;
+            for(int i = 0; i < ReplayAvatar.SkeletonList.Count; i++)
+            {
+                if (newTime <= timeUp && newTime >= timeDown)
+                {
+                    ReplayAvatar.CurrentSkeletonNumber = i;
+                    ReplayAvatar.realTime = false;
+                    localOffset = initTime - ReplayAvatar.SkeletonList[ReplayAvatar.CurrentSkeletonNumber].Item1;
+                    return; 
+                }
+                else
+                {
+                    timeDown = timeUp;
+                    timeUp = ReplayAvatar.SkeletonList[i + 1].Item1;
+                }
+            }
+            return;
         }
 
         /// <summary>
@@ -658,14 +660,27 @@ namespace LecturerTrainer.ViewModel
                 }
                 else
                 {
-                    DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch());
-                    DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch());
+                    DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
+                    DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
                 }
                 filePath = filePathVideoStream;
                 DrawingSheetView.Get().ShowReplayVideoSheet();
                 PlayOrStop();
             }
         }
+
+        public static void PlayReplay()
+        {
+            played = true;
+            Get().SkeletonScrolling.Start();
+        }
+
+        public static void PauseReplay()
+        {
+            played = false;
+            Get().SkeletonScrolling.Pause();
+        }
+
 
         // These functions are invoked when the user manipulate the media player
         /// <summary>
@@ -750,6 +765,8 @@ namespace LecturerTrainer.ViewModel
                 DrawingSheetView.Get().ReplayAudio.Stop();
             }
             Tools.restartStopWatch();
+            ReplayAvatar.offset = 0;
+            ReplayAvatar.realTime = true;
             currentListNumber = 0;
             //ReplayView.Get().FastButton.IsEnabled = false;
             //ReplayView.Get().SlowButton.IsEnabled = false;
@@ -767,42 +784,6 @@ namespace LecturerTrainer.ViewModel
                 feedbacksQueue = new Queue<ServerFeedback>(savedFeedbacksQueue);
             if (filePath != null)
                 DrawingSheetView.Get().ReplayVideo.Source = new Uri(filePath, UriKind.Relative);
-        }
-
-        /// <summary>
-        /// Speeds up the performance
-        /// </summary>
-        public void SpeedUp()
-        {
-            if (speedRatioIndex < speedRatios.Count() - 1)
-            {
-                speedRatioIndex++;
-                if (DrawingSheetView.Get().ReplayAudio.Source != null)
-                    DrawingSheetView.Get().ReplayAudio.SpeedRatio = speedRatios[speedRatioIndex];
-                if (DrawingSheetView.Get().ReplayVideo.Source != null)
-                    DrawingSheetView.Get().ReplayVideo.SpeedRatio = speedRatios[speedRatioIndex];
-                if (skeletonScrolling!= null)
-                    skeletonScrolling.Speed = speedRatios[speedRatioIndex];
-                //ManageSpeedElements();
-            }
-        }
-
-        /// <summary>
-        /// Slows down the performance
-        /// </summary>
-        public void SlowDown()
-        {
-            if (speedRatioIndex > 0)
-            {
-                speedRatioIndex--;
-                if (DrawingSheetView.Get().ReplayAudio.Source != null)
-                    DrawingSheetView.Get().ReplayAudio.SpeedRatio = speedRatios[speedRatioIndex];
-                if (DrawingSheetView.Get().ReplayVideo.Source != null)
-                    DrawingSheetView.Get().ReplayVideo.SpeedRatio = speedRatios[speedRatioIndex];
-                if (skeletonScrolling != null)
-                    skeletonScrolling.Speed = speedRatios[speedRatioIndex];
-                //ManageSpeedElements();
-            }
         }
 
         public void performanceSound()

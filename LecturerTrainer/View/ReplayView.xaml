@@ -89,6 +89,7 @@
 
                 </Grid>
                 <CheckBox x:Name="SoundCheckbox"  Content="CheckBox" HorizontalAlignment="Center" Height="40" Margin="0,35.667,0,0" Style="{DynamicResource SoundCheckBox}" Command="{Binding PerformanceSoundCommand}" VerticalAlignment="Top" Width="40" IsEnabled="False"/>
+                <Slider x:Name="LenghtVideo" VerticalAlignment="Top" Margin="15,140,15,0" Height="{DynamicResource GeneralFieldHeight}" Minimum="0" Maximum="100" ValueChanged = "slider_ValueChanged" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted" Value="{Binding MonotonySampleLength, Mode=TwoWay}" />
             </Grid>
         </Border>
         <Border x:Name="DisplayButtons" Margin="0" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" Grid.Row="3" Grid.Column="1">

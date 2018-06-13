@@ -34,11 +34,6 @@ namespace LecturerTrainer.Model
         private ReplayViewModel replayViewModel;
 
         /// <summary>
-        /// The current speed
-        /// </summary>
-        private double speed = 1;
-
-        /// <summary>
         /// Directory containing skeleton frames
         /// </summary>
         private string avatarDir;
@@ -46,7 +41,23 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// Current skeleton frame number
         /// </summary>
-        private float currentSkeletonNumber;
+        private static int currentSkeletonNumber;
+
+        public static int CurrentSkeletonNumber
+        {
+            get
+            {
+                return currentSkeletonNumber;
+            }
+            set
+            {
+                currentSkeletonNumber = value;
+            }
+        }
+
+        public static bool realTime = true;
+
+        public static int offset = 0;
 
         /// <summary>
         /// Current skeleton object
@@ -60,12 +71,6 @@ namespace LecturerTrainer.Model
                 return currentSkeleton;
             }
         }
-
-        /// <summary>
-        /// Number of skeleton objects analysed in one scrolling frame
-        /// Used to avoid slowing down the application in fast motion
-        /// </summary>
-        private int nbSkeletonsPerFrame = 1;
 
         // Face
 
@@ -100,21 +105,6 @@ namespace LecturerTrainer.Model
       
         #endregion
 
-        #region properties
-        /// <summary>
-        /// The current speed
-        /// </summary>
-        public double Speed
-        {
-            get { return speed; }
-            set
-            {
-                speed = value;
-                updateSpeed(value);
-            }
-        }
-        #endregion
-
         #region constructor
         /// <summary>
         /// Time ellapsed in ms. It is not the real elapsed time, it depends on the speed
@@ -138,9 +128,9 @@ namespace LecturerTrainer.Model
             
             //Initilise the first skeleton to be displayed, depending if the replay is on play or stop
             if (currentSkeletonNumber > skeletonsList.Count)
-                currentSkeleton = skeletonsList[(int)skeletonsList.Count - 1].Item2;
+                currentSkeleton = skeletonsList[skeletonsList.Count - 1].Item2;
             else
-                currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
+                currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
 
             // draw the first avatar
             DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
@@ -155,6 +145,7 @@ namespace LecturerTrainer.Model
             timeToUpdate.Tick += nextSkeleton;
             timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
             timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
+            timeToUpdate.Tick += changeSlider;
         }
         /// <summary>
         /// Constructor for skeleton scrolling without face elements
@@ -164,34 +155,14 @@ namespace LecturerTrainer.Model
         public ReplayAvatar(string skDir, ReplayViewModel rvm, int num) : this(skDir, "", rvm, num) { }
         #endregion
 
-        #region methods
-        /// <summary>
-        /// Updates the current speed
-        /// </summary>
-        private void updateSpeed(double newSpeed)
-        {
-            // Update of the timer interval
-            if (newSpeed != 1)
-            {
-                if (newSpeed > 1)
-                    nbSkeletonsPerFrame = (int)newSpeed;
-                timeToUpdate.Interval = TimeSpan.FromMilliseconds(getSpeedInMS(newSpeed));
-            }
-            else
-            {
-                nbSkeletonsPerFrame = 1;
-                timeToUpdate.Interval = TimeSpan.FromMilliseconds(ReplayViewModel.normalSpeed);
-            }
-        }
+        #region replay methods
 
-        /// <summary>
-        /// Return the speed converted in ms
-        /// </summary>
-        /// <param name="speed"></param>
-        /// <returns></returns>
-        private double getSpeedInMS(double speed)
+        private void changeSlider(object sender, EventArgs evt)
         {
-            return ReplayViewModel.normalSpeed / speed;
+            if (realTime)
+               ReplayView.Get().changeValueOfSlider((int)Tools.getStopWatch());
+            else
+                ReplayView.Get().changeValueOfSlider((int)Tools.getStopWatch() - offset);
         }
         
         /// <summary>
@@ -236,7 +207,7 @@ namespace LecturerTrainer.Model
                 {
                     try
                     {
-                        FaceDataWrapper fdw = loadFaceWFrame(faceDir, (int)currentSkeletonNumber);
+                        FaceDataWrapper fdw = loadFaceWFrame(faceDir, currentSkeletonNumber);
                         DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
                         DrawingSheetAvatarViewModel.Get().drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
                     }
@@ -256,7 +227,7 @@ namespace LecturerTrainer.Model
             {
                 replayViewModel.stopButtonCommand();
             }
-            currentSkeletonNumber += nbSkeletonsPerFrame;
+            currentSkeletonNumber += 1;
         }
                 /*
         private static int count = 0;
@@ -296,7 +267,7 @@ namespace LecturerTrainer.Model
                     replayViewModel.stopButtonCommand();
                 }
 
-                currentSkeletonNumber += nbSkeletonsPerFrame;
+                currentSkeletonNumber += 1;
             }
             else if(faceDir == "") 
             {
@@ -323,7 +294,7 @@ namespace LecturerTrainer.Model
                     replayViewModel.stopButtonCommand();
                 }
 
-                currentSkeletonNumber += nbSkeletonsPerFrame;
+                currentSkeletonNumber += 1;
             }
 
             // We only draw the last skeleton
@@ -335,7 +306,7 @@ namespace LecturerTrainer.Model
         /// </summary>
         public static void setDisplayedTime()
         {
-            ReplayViewModel.Get().ElapsedTime = FormatTime(Tools.getStopWatch());
+            ReplayViewModel.Get().ElapsedTime = FormatTime(Tools.getStopWatch() - offset);
         }
 
         private static  string FormatTime(long time)
@@ -396,7 +367,7 @@ namespace LecturerTrainer.Model
             Tools.stopStopWatch();
             timeToUpdate.Stop();
             currentSkeletonNumber = 0;
-            currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
+            currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
             DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
             DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
         }
@@ -486,6 +457,7 @@ namespace LecturerTrainer.Model
                     }
                 }
             }
+            ReplayViewModel.timeEnd = skeletonSortedListWithTime[skeletonSortedListWithTime.Count - 1].Item1;
             return skeletonSortedListWithTime;
         }
 
