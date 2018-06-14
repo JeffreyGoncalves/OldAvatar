@@ -216,7 +216,7 @@ namespace LecturerTrainer.ViewModel
 
         public void Ok()
         {
-            if (!ReplayViewModel.Get().isReplaying)
+            if (!ReplayViewModel.isReplaying)
             {
                 this.viewSess.OkButton.IsEnabled = false;
                 this.viewSess.timerLaunchRecord.Visibility = System.Windows.Visibility.Visible;
