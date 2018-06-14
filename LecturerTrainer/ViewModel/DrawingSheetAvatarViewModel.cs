@@ -600,7 +600,6 @@ namespace LecturerTrainer.Model
 
             //Eyes alignment
             EyesAlignment = new Vector3(face53.X - face20.X, face53.Y - face20.Y, face53.Z - face20.Z);
-            
 
             //Finally, we want to lengthen face elements
             float verticalFaceGap = 0.02f * 2.0f;
@@ -819,7 +818,6 @@ namespace LecturerTrainer.Model
                     GL.Vertex3(MTLL);
                     GL.End();
 
-                    //                    GL.LineWidth(2.0f);
                     // Drawing of the right eye
                     Gl.glPushMatrix();
                     {
@@ -838,31 +836,31 @@ namespace LecturerTrainer.Model
                         test2.X = -EyesAlignment.X + headCenterPoint.X;
                         test2.Y = -EyesAlignment.Y + headCenterPoint.Y;
                         test2.Z = -EyesAlignment.Z + headCenterPoint.Z;
-                        
+
                         float betaStep = (float)(Math.PI) / (float)generalStacks;
                         Vector2[] ellipsePoints = new Vector2[20];
                         Vector3[] eyesPoints = new Vector3[20];
                         float RVert = (float)Math.Sqrt(Math.Pow((face21.X - face22.X), 2) + Math.Pow((face21.Y - face22.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
                         float RHori = (float)Math.Sqrt(Math.Pow((face23.X - face20.X), 2) + Math.Pow((face23.Y - face20.Y), 2)) / 2; //Vertical semi-axis of the ellipse
-                        int cnt = 0;                       
-                        
-                        for (beta = 0; beta < (float) 2* Math.PI; beta += betaStep)
+                        int cnt = 0;
+
+                        for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
                         {
-                  
-                            eyesPoints[cnt] = ((float)Math.Cos(beta) * RHori )*test1 +  (float)Math.Sin(beta) * RVert*headCenterPoint;
-                            
+
+                            eyesPoints[cnt] = ((float)Math.Cos(beta) * RHori) * test1 + (float)Math.Sin(beta) * RVert * headCenterPoint;
+
                             cnt++;
                         }
 
                         Gl.glColor4f(0, 0, 0, 1);
                         Gl.glTranslatef(face23.X - RHori, face21.Y - RVert, test1.Z);
                         Gl.glScalef(2, 4, 1);
-                        Gl.glRotatef(-(float)Math.PI/7 * (180/(float) Math.PI), face23.X - RHori, face21.Y - RVert, test1.Z); // Math.PI/7 is a flat value found after several testing
+                        Gl.glRotatef(-(float)Math.PI / 7 * (180 / (float)Math.PI), face23.X - RHori, face21.Y - RVert, test1.Z); // Math.PI/7 is a flat value found after several testing
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 
                         for (cnt = 0; cnt < ellipsePoints.Length; cnt++)
                         {
-                                Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
+                            Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
                         }
                         Gl.glEnd();
 
@@ -917,7 +915,7 @@ namespace LecturerTrainer.Model
 
                         Gl.glColor4f(0, 0, 0, 1);
                         Gl.glTranslatef(face56.X + LHori, face54.Y - LVert, test1.Z);
-                        Gl.glScalef(3, 6 ,1);
+                        Gl.glScalef(3, 6, 1);
                         Gl.glRotatef(-(float)Math.PI / 4 * (180 / (float)Math.PI), face56.X + LHori, face54.Y - LVert, test1.Z); // Math.PI/4 is a flat value found after several testing
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 
@@ -930,34 +928,12 @@ namespace LecturerTrainer.Model
                     Gl.glPopMatrix();
 
                     // Drawing of the left eyebrow
-                    /* GL.Begin(PrimitiveType.Polygon);
-                     GL.Vertex3(face48);
-                     GL.Vertex3(face49);
-                     GL.Vertex3(face50);
-                     GL.Vertex3(face51);
-                     GL.End();*/
-
-                    float theta, phi;
-                    float thetaStep = (float)Math.PI / 10, phiStep = (float)Math.PI / 10;
-                    float LVertEB = (float)Math.Sqrt(Math.Pow((face51.X - face49.X), 2) + Math.Pow((face51.Y - face49.Y), 2)) / 2;
-                    float LHoriEB = (float)Math.Sqrt(Math.Pow((face50.X - face48.X), 2) + Math.Pow((face50.Y - face48.Y), 2)) / 2;
-                    Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
-                    Gl.glVertex3f(face50.X, face50.Y, face50.Z);
-                    for (theta = -(float)Math.PI / 2; theta < (float)Math.PI / 2; theta += thetaStep)
-                    {
-                        for (phi = (float)Math.PI; phi < 0; phi -= phiStep)
-                        {
-                            Gl.glVertex3f(face50.X - (float)Math.Cos(theta) * (float)Math.Cos(phi) * LHoriEB ,
-                                face49.Y + (float)Math.Sin(phi) * (float)Math.Cos(theta) * LVertEB , face50.Z);
-
-                            Gl.glVertex3f(face50.X -  LHoriEB * (float)Math.Cos(theta + thetaStep) * (float)Math.Cos(phi),
-                                face49.Y + LVertEB * (float)Math.Cos(theta + thetaStep) * (float)Math.Sin(phi) , face50.Z);
-                        }
-                    }
-                    Gl.glVertex3f(face49.X, face49.Y, face49.Z);
-                    Gl.glVertex3f(face48.X, face48.Y, face48.Z);
-                    Gl.glVertex3f(face51.X, face51.Y, face51.Z);
-                    Gl.glEnd();
+                    GL.Begin(PrimitiveType.Polygon);
+                    GL.Vertex3(face48);
+                    GL.Vertex3(face49);
+                    GL.Vertex3(face50);
+                    GL.Vertex3(face51);
+                    GL.End();
                 }
                 GL.PopMatrix();
 
