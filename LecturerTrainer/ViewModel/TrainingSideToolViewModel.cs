@@ -331,7 +331,6 @@ namespace LecturerTrainer.ViewModel
             AudioProvider.keyWordEvent += keyWordEventHandler;
             Epicness.epicnessEvent += epicnessEventHandler;
             EmotionRecognition.emoEvent += iconEmotion;
-
             // Links to create for the enthusiasm event
             EmotionRecognition.emoEvent += Enthusiasm.enthusiasmHandler;
             HandsRaised.handsRaisedEvent += Enthusiasm.enthusiasmHandler;
@@ -379,14 +378,17 @@ namespace LecturerTrainer.ViewModel
             ToggleAvatarVideoRecording = false;
             ToggleStreamRecording = false;
             ToggleAudioRecording = false;
-            ToggleAvatarOpenGLRecording = false;
+            ToggleAvatarOpenGLRecording = true;
 
 
             feedbackRefreshTimer = new DispatcherTimer();
             feedbackRefreshTimer.Interval = TimeSpan.FromMilliseconds(200);
             feedbackRefreshTimer.IsEnabled = true;
             feedbackRefreshTimer.Tick += UpdatePools;
-        }
+			// ajout louche
+			feedbackRefreshTimer.Tick += DrawingSheetStreamViewModel.Get().hideFeedbacks;
+				
+		}
 
         // unique accessor to the instance of the class 
         public static TrainingSideToolViewModel Get()
@@ -426,6 +428,53 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+		/* The following events were changed so they directly call the methods that displays the feedback HUD on screen 
+		 * instead of using the pools */
+		private void armsCrossed(object sender, InstantFeedback e)
+        {
+			if(!ReplayViewModel.isReplaying)
+			{
+				DrawingSheetStreamViewModel.Get().feedbackDisplay_ArmsCrossed();
+				if (this.State == IRecordingState.Recording)
+					storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "armsCrossedEvent"));
+			}
+        }
+
+		private void iconAgitation(object sender, InstantFeedback e)
+        {
+			if(!ReplayViewModel.isReplaying){
+				DrawingSheetStreamViewModel.Get().feedbackDisplay_Agitation();
+				if (this.State == IRecordingState.Recording)
+					storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "agitationEvent"));
+			}
+		}
+
+		private void handsJoined(object sender, InstantFeedback e)
+        {
+			if(!ReplayViewModel.isReplaying){
+				DrawingSheetStreamViewModel.Get().feedbackDisplay_HandsJoined();
+				if (this.State == IRecordingState.Recording)
+					storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "handsJoinedEvent"));
+			}
+		}
+
+		private void lookingEvent(object sender, InstantFeedback e)
+        {
+			// LookCenter, LookRight and LookLeft 
+			DrawingSheetStreamViewModel.Get().feedbackEventDisplay_LookingDirection(e);
+			if (this.State == IRecordingState.Recording)
+            storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "lookEvent"));
+        }
+
+		private void iconEmotion(object sender, LongFeedback e)
+        {
+			// Happy and Surprised
+            DrawingSheetStreamViewModel.Get().feedbackEventDisplay_Emotion(e);
+			if (TrainingSideToolViewModel.Get().State == IRecordingState.Recording)
+                TrainingSideToolViewModel.Get().storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "emotionEvent"));
+        }
+
+		/* Changes were no applied to the following feedbacks events yet*/
         private void iconTooFast(object sender, LongFeedback e)
         {
             addFeedbackInPool(e, TrainingSideToolViewModel.voicepool);
@@ -454,25 +503,11 @@ namespace LecturerTrainer.ViewModel
                 storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "reflexEvent"));
         }
 
-        private void iconAgitation(object sender, InstantFeedback e)
-        {
-            addFeedbackInPool(e, TrainingSideToolViewModel.bodypool);
-            if (this.State == IRecordingState.Recording)
-                storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "agitationEvent"));
-        }
-
         private void pupilR(object sender, LongFeedback e)
         {
             addFeedbackInPool(e, TrainingSideToolViewModel.facepool);
             if (this.State == IRecordingState.Recording)
                 storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "pupilREvent"));
-        }
-
-        private void lookingEvent(object sender, InstantFeedback e)
-        {
-            addFeedbackInPool(e, TrainingSideToolViewModel.facepool);
-            if (this.State == IRecordingState.Recording)
-                storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "lookEvent"));
         }
 
         private void mShut(object sender, LongFeedback e)
@@ -487,20 +522,6 @@ namespace LecturerTrainer.ViewModel
             addFeedbackInPoolAndRemoveOne(e, "Mouth Shut", TrainingSideToolViewModel.facepool);
             if (this.State == IRecordingState.Recording)
                 storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "mouthEvent"));
-        }
-
-        private void handsJoined(object sender, InstantFeedback e)
-        {
-            addFeedbackInPoolAndRemoveOne(e, "Hands are apart", TrainingSideToolViewModel.bodypool);
-            if (this.State == IRecordingState.Recording)
-                storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "handsJoinedEvent"));
-        }
-
-        private void armsCrossed(object sender, InstantFeedback e)
-        {
-            addFeedbackInPoolAndRemoveOne(e, "Arms Crossed", TrainingSideToolViewModel.bodypool);
-            if (this.State == IRecordingState.Recording)
-                storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "armsCrossedEvent"));
         }
 
         private void handsinpocket(object sender, InstantFeedback e)
@@ -545,13 +566,6 @@ namespace LecturerTrainer.ViewModel
             {
                 storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "enthusiasmEvent"));
             }
-        }
-
-        private void iconEmotion(object sender, LongFeedback e)
-        {
-            addFeedbackInPoolAndRemoveOne(e,"Neutral", TrainingSideToolViewModel.facepool);
-            if (TrainingSideToolViewModel.Get().State == IRecordingState.Recording)
-                TrainingSideToolViewModel.Get().storingFeedbackThreadData.addTextFeedbackInQueue(StoringFeedbackThreadData.FeedbackToText(e, "emotionEvent"));
         }
 
         private void keyWordEventHandler(object sender, Feedback e)
@@ -1017,7 +1031,7 @@ namespace LecturerTrainer.ViewModel
         private void BeginRecording()
         {
             isRecording = true;
-            Tools.createAndStartTimer();
+            //Tools.createAndStartTimer();
             startStopwatch();
             DrawingSheetAvatarViewModel.Get().nbFrames = 0;
             Agitation.record = true;
@@ -1061,7 +1075,7 @@ namespace LecturerTrainer.ViewModel
                 lookingDirection.record = false;
                 EmotionRecognition.record = false;
             }
-            Tools.stopTimer();
+            //Tools.stopTimer();
             StopVideoAndAudioRecording();
         }
 
@@ -1336,13 +1350,13 @@ namespace LecturerTrainer.ViewModel
             if (fb is ValuedFeedback)
             {
                 ValuedFeedback tmp = (ValuedFeedback)fb;
-                toRet = tmp.value.ToString() + '@' + feedbackName + '@' + Tools.getTimer() + '@' + tmp.display;
+                toRet = tmp.value.ToString() + '@' + feedbackName + '@' + Tools.getStopWatch().ToString() + '@' + tmp.display;
 
             }
             else if (fb is LongFeedback)
             {
                 LongFeedback tmp = (LongFeedback)fb;
-                toRet = tmp.feedback + '@' + feedbackName + '@' + Tools.getTimer() + '@' + tmp.display;
+                toRet = tmp.feedback + '@' + feedbackName + '@' + Tools.getStopWatch().ToString() + '@' + tmp.display;
             }
             else
             {
@@ -1352,12 +1366,12 @@ namespace LecturerTrainer.ViewModel
                 {
                     if (previousFrame != (int)Tools.getTimer())
                     {
-                        toRet = fb.feedback + '@' + feedbackName + '@' + Tools.getTimer() + "@True";
+                        toRet = fb.feedback + '@' + feedbackName + '@' + Tools.getStopWatch().ToString() + "@True";
                         previousFrame = (int)Tools.getTimer();
                     }
                 }
                 else
-                    toRet = fb.feedback + '@' + feedbackName + '@' + Tools.getTimer() + "@True";
+                    toRet = fb.feedback + '@' + feedbackName + '@' + Tools.getStopWatch().ToString() + "@True";
             }
             return toRet;
         }

@@ -77,8 +77,8 @@ namespace LecturerTrainer.ViewModel
 
         public int skeletonNumber = 0;
 
-        private SortedList<int, Skeleton> skeletonsList;
-        public SortedList<int, Skeleton> SkeletonList
+        private SortedList<int, Tuple<int, Skeleton>> skeletonsList;
+        public SortedList<int, Tuple<int, Skeleton>> SkeletonList
         {
             get
             {
@@ -283,7 +283,7 @@ namespace LecturerTrainer.ViewModel
             {
                 if (playMode)
                 {
-                    skToReturn = SkeletonList[skeletonNumber];
+                    skToReturn = SkeletonList[skeletonNumber].Item2;
                     if (skeletonNumber != SkeletonList.Count - 1)
                         skeletonNumber++;
                     else
@@ -294,12 +294,12 @@ namespace LecturerTrainer.ViewModel
                 }
                 else if (pauseMode)
                 {
-                    skToReturn = SkeletonList[skeletonNumber];
+                    skToReturn = SkeletonList[skeletonNumber].Item2;
                 }
                 else if (stopMode)
                 {
                     skeletonNumber = 0;
-                    skToReturn = SkeletonList[skeletonNumber];
+                    skToReturn = SkeletonList[skeletonNumber].Item2;
                 }
             }
             return skToReturn;

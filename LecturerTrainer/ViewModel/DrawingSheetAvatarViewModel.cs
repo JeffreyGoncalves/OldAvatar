@@ -26,14 +26,13 @@ namespace LecturerTrainer.Model
     class DrawingSheetAvatarViewModel : DrawingSheetViewModel
     {
         private static int count = 0;
-        private static Skeleton skToDisplay = null;
-
         #region fields
 
         /// <summary>
         /// the instance of the singleton class 
         /// </summary>
         private static DrawingSheetAvatarViewModel dsavm = null;
+
 
         /// <summary>
         /// Raise an event when we want to transfer a frame to the recorder
@@ -101,38 +100,6 @@ namespace LecturerTrainer.Model
         private Vector3 face49;
         private Vector3 face50;
         private Vector3 face51;
-
-
-        private Vector3 mentorMTUL;
-        private Vector3 mentorMBUL;
-        private Vector3 mentorMBLL;
-        private Vector3 mentorMTLL;
-        private Vector3 mentorORCM;
-        private Vector3 mentorOLCM;
-
-        private Vector3 mentorface19;
-        private Vector3 mentorface20;
-        private Vector3 mentorface21;
-        private Vector3 mentorface22;
-        private Vector3 mentorface23;
-        private Vector3 mentorface24;
-
-        private Vector3 mentorface52;
-        private Vector3 mentorface53;
-        private Vector3 mentorface54;
-        private Vector3 mentorface55;
-        private Vector3 mentorface56;
-        private Vector3 mentorface57;
-
-        private Vector3 mentorface15;
-        private Vector3 mentorface16;
-        private Vector3 mentorface17;
-        private Vector3 mentorface18;
-
-        private Vector3 mentorface48;
-        private Vector3 mentorface49;
-        private Vector3 mentorface50;
-        private Vector3 mentorface51;
 
         /// <summary>
         /// The control allowing to create a 3D scene
@@ -265,8 +232,10 @@ namespace LecturerTrainer.Model
         private Vector3 headCenterPoint;
         private Vector3 headTilt;
 
-        private Vector3 mentorheadCenterPoint;
-        private Vector3 mentorheadTilt;
+        /// <summary>
+        /// Vector corresponding to the alignment of the eyes (headTilt.EyesAlignment is normally equal to 0)
+        /// </summary>
+        private Vector3 EyesAlignment;
 
         private bool isInitialized = false, isSignalLostInitialized = false;
 
@@ -439,8 +408,7 @@ namespace LecturerTrainer.Model
         /// </summary>
         private void display(EventArgs evt)
         {
-            count++;
-
+            
             if (KinectDevice.faceTracking && !KinectDevice.SwitchDraw)
             {
                 drawFace(evt);
@@ -464,62 +432,19 @@ namespace LecturerTrainer.Model
                     GL.Translate(1.0f, 0, 0);
                     /*Get the skeleton object to replay*/
                     trackedBoneColor = mentorBoneColor;
-
-                    //CHANGE
-
-                    String faceToDisplay = "";
-                    int currentSkeleton = TrainingWithAvatarViewModel.Get().skeletonNumber;
-
-                    String tmp = TrainingWithAvatarViewModel.Get().PathFaceAvatar();
-                    String tmp2 = tmp.Replace(".xml", ".skd");
-                    if(tmp2.Equals(TrainingWithAvatarViewModel.Get().PathFile))
-                    {
-                        faceToDisplay = tmp;
-                    }
-                    else
-                    {
-                        faceToDisplay = TrainingWithAvatarViewModel.faceDataPath;
-                    }
-
-                    if (faceToDisplay != "")
-                    {
-                        if(KinectDevice.faceTracking)
-                        {
-                            mentor = true;
-
-                            if (count % 2 == 0)
-                            {
-                                skToDisplay = TrainingWithAvatarViewModel.Get().chooseSkeletonToDisplay();
-                                if (skToDisplay != null)
-                                    DrawMentor(skToDisplay, faceToDisplay, currentSkeleton, true);
-                            }
-                            else
-                            {
-                                if (skToDisplay != null)
-                                {
-                                    DrawMentor(skToDisplay, faceToDisplay, currentSkeleton, true);
-                                }
-                            }
-
-                            mentor = false;
-                        }
-                        else
-                        {
-                            DisplayText("You need to enable the face tracking before !", -2, 0.75);
-                        }
-                    }
-                    else
+                    Skeleton skToDisplay = TrainingWithAvatarViewModel.Get().chooseSkeletonToDisplay();
+                    if (skToDisplay != null)
                     {
                         mentor = true;
-                        skToDisplay = TrainingWithAvatarViewModel.Get().chooseSkeletonToDisplay();
-                        if (skToDisplay != null)
-                            DrawMentor(skToDisplay, faceToDisplay, currentSkeleton, false);
+                        drawAvatar(skToDisplay, false);
                         mentor = false;
                     }
-
+                    else
+                        drawInitialAvatar();
                     GL.PopMatrix();
                     GL.Flush();
                     trackedBoneColor = savedBoneColor;
+
                 }
                 /*Normal mode*/
                 else
@@ -547,12 +472,12 @@ namespace LecturerTrainer.Model
             }
         }
 
-
         /// <summary>
         /// Draws the scene without any event handled
         /// </summary>
         private void display()
         {
+            
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.PushMatrix();
             {
@@ -586,7 +511,9 @@ namespace LecturerTrainer.Model
         /// </summary>
         public void normalMode()
         {
+            Main.kinect.skeletonUpdated -= draw;
             Main.kinect.skeletonUpdated += draw;
+            SkeletonFaceTracker.faceUpdated -= draw;
             SkeletonFaceTracker.faceUpdated += draw;
         }
 
@@ -671,6 +598,9 @@ namespace LecturerTrainer.Model
             face50 = new Vector3(faceP3D.ElementAt(50).X, faceP3D.ElementAt(50).Y*1.25f, faceP3D.ElementAt(50).Z) + faceAdjustment;
             face51 = new Vector3(faceP3D.ElementAt(51).X, faceP3D.ElementAt(51).Y*1.25f, faceP3D.ElementAt(51).Z) + faceAdjustment;
 
+            //Eyes alignment
+            EyesAlignment = new Vector3(face53.X - face20.X, face53.Y - face20.Y, face53.Z - face20.Z);
+
             //Finally, we want to lengthen face elements
             float verticalFaceGap = 0.02f * 2.0f;
             float horizontalFaceGap = 0.05f * 2.0f;
@@ -714,107 +644,7 @@ namespace LecturerTrainer.Model
             }
         }
 
-        public void drawFaceMentor(
-            List<Vector3DF> faceP3D,
-            List<Microsoft.Kinect.Toolkit.FaceTracking.PointF> faceP,
-            FaceTriangle[] faceT)
-        {
-            List<Vector2> faceModelPts = new List<Vector2>();
-            List<Vector2> faceModelPtsDraw = new List<Vector2>();
-            var faceModel = new List<FaceModelTriangle>();
 
-            // This vector will allow to center the face on the head
-            Vector3 faceAdjustment = new Vector3();
-
-            // the center point is situated between the two eyes and the upperlip
-            Vector3 faceCenterPoint = new Vector3(faceP3D.ElementAt(20).X, faceP3D.ElementAt(20).Y, faceP3D.ElementAt(20).Z);
-            faceCenterPoint += new Vector3(faceP3D.ElementAt(53).X, faceP3D.ElementAt(53).Y, faceP3D.ElementAt(53).Z);
-            faceCenterPoint += new Vector3(faceP3D.ElementAt(40).X, faceP3D.ElementAt(40).Y, faceP3D.ElementAt(40).Z);
-            faceCenterPoint = faceCenterPoint / 3;
-            //faceAdjustment = headCenterPoint + new Vector3(0, 0, -headRadius) - faceCenterPoint;
-
-            Vector3 radial = faceCenterPoint + mentorheadTilt / 2 - mentorheadCenterPoint;
-            double magnitude = Math.Sqrt(radial.X * radial.X + radial.Y * radial.Y + radial.Z * radial.Z);
-            float fmagnitude = (float)magnitude;
-            faceAdjustment = mentorheadCenterPoint + headRadius * radial / fmagnitude - faceCenterPoint;
-
-            // Upper lip
-            mentorMTUL = new Vector3(faceP3D.ElementAt(7).X, faceP3D.ElementAt(7).Y, faceP3D.ElementAt(7).Z) + faceAdjustment;
-            mentorMBUL = new Vector3(faceP3D.ElementAt(87).X, faceP3D.ElementAt(87).Y, faceP3D.ElementAt(87).Z) + faceAdjustment;
-            // Lower lip
-            mentorMBLL = new Vector3(faceP3D.ElementAt(41).X, faceP3D.ElementAt(41).Y, faceP3D.ElementAt(41).Z) + faceAdjustment;
-            mentorMTLL = new Vector3(faceP3D.ElementAt(40).X, faceP3D.ElementAt(40).Y, faceP3D.ElementAt(40).Z) + faceAdjustment;
-            // Right mouth
-            mentorORCM = new Vector3(faceP3D.ElementAt(31).X, faceP3D.ElementAt(31).Y, faceP3D.ElementAt(31).Z) + faceAdjustment;
-            // Left mouth
-            mentorOLCM = new Vector3(faceP3D.ElementAt(64).X, faceP3D.ElementAt(64).Y, faceP3D.ElementAt(64).Z) + faceAdjustment;
-            // Right eye
-            mentorface19 = new Vector3(faceP3D.ElementAt(19).X, faceP3D.ElementAt(19).Y, faceP3D.ElementAt(19).Z) + faceAdjustment;
-            mentorface20 = new Vector3(faceP3D.ElementAt(20).X, faceP3D.ElementAt(20).Y, faceP3D.ElementAt(20).Z) + faceAdjustment;
-            mentorface21 = new Vector3(faceP3D.ElementAt(21).X, faceP3D.ElementAt(21).Y, faceP3D.ElementAt(21).Z) + faceAdjustment;
-            mentorface22 = new Vector3(faceP3D.ElementAt(22).X, faceP3D.ElementAt(22).Y, faceP3D.ElementAt(22).Z) + faceAdjustment;
-            mentorface23 = new Vector3(faceP3D.ElementAt(23).X, faceP3D.ElementAt(23).Y, faceP3D.ElementAt(23).Z) + faceAdjustment;
-            mentorface24 = new Vector3(faceP3D.ElementAt(24).X, faceP3D.ElementAt(24).Y, faceP3D.ElementAt(24).Z) + faceAdjustment;
-            // Right eyebrow
-            mentorface15 = new Vector3(faceP3D.ElementAt(15).X, faceP3D.ElementAt(15).Y * 1.25f, faceP3D.ElementAt(15).Z) + faceAdjustment;
-            mentorface16 = new Vector3(faceP3D.ElementAt(16).X, faceP3D.ElementAt(16).Y * 1.25f, faceP3D.ElementAt(16).Z) + faceAdjustment;
-            mentorface17 = new Vector3(faceP3D.ElementAt(17).X, faceP3D.ElementAt(17).Y * 1.25f, faceP3D.ElementAt(17).Z) + faceAdjustment;
-            mentorface18 = new Vector3(faceP3D.ElementAt(18).X, faceP3D.ElementAt(18).Y * 1.25f, faceP3D.ElementAt(18).Z) + faceAdjustment;
-            // Left eye
-            mentorface52 = new Vector3(faceP3D.ElementAt(52).X, faceP3D.ElementAt(52).Y, faceP3D.ElementAt(52).Z) + faceAdjustment;
-            mentorface53 = new Vector3(faceP3D.ElementAt(53).X, faceP3D.ElementAt(53).Y, faceP3D.ElementAt(53).Z) + faceAdjustment;
-            mentorface54 = new Vector3(faceP3D.ElementAt(54).X, faceP3D.ElementAt(54).Y, faceP3D.ElementAt(54).Z) + faceAdjustment;
-            mentorface55 = new Vector3(faceP3D.ElementAt(55).X, faceP3D.ElementAt(55).Y, faceP3D.ElementAt(55).Z) + faceAdjustment;
-            mentorface56 = new Vector3(faceP3D.ElementAt(56).X, faceP3D.ElementAt(56).Y, faceP3D.ElementAt(56).Z) + faceAdjustment;
-            mentorface57 = new Vector3(faceP3D.ElementAt(57).X, faceP3D.ElementAt(57).Y, faceP3D.ElementAt(57).Z) + faceAdjustment;
-            // Left eyebrow
-            mentorface48 = new Vector3(faceP3D.ElementAt(48).X, faceP3D.ElementAt(48).Y * 1.25f, faceP3D.ElementAt(48).Z) + faceAdjustment;
-            mentorface49 = new Vector3(faceP3D.ElementAt(49).X, faceP3D.ElementAt(49).Y * 1.25f, faceP3D.ElementAt(49).Z) + faceAdjustment;
-            mentorface50 = new Vector3(faceP3D.ElementAt(50).X, faceP3D.ElementAt(50).Y * 1.25f, faceP3D.ElementAt(50).Z) + faceAdjustment;
-            mentorface51 = new Vector3(faceP3D.ElementAt(51).X, faceP3D.ElementAt(51).Y * 1.25f, faceP3D.ElementAt(51).Z) + faceAdjustment;
-
-            //Finally, we want to lengthen face elements
-            float verticalFaceGap = 0.02f * 2.0f;
-            float horizontalFaceGap = 0.05f * 2.0f;
-            // Eyes spreading
-            lengthenSegment(ref mentorface19, ref mentorface52, horizontalFaceGap);
-            lengthenSegment(ref mentorface24, ref mentorface57, horizontalFaceGap);
-            lengthenSegment(ref mentorface23, ref mentorface56, horizontalFaceGap);
-            lengthenSegment(ref mentorface20, ref mentorface53, horizontalFaceGap);
-            lengthenSegment(ref mentorface21, ref mentorface54, horizontalFaceGap);
-            lengthenSegment(ref mentorface22, ref mentorface55, horizontalFaceGap);
-            // Eyes enlargement
-            lengthenSegment(ref mentorface23, ref mentorface20, horizontalFaceGap);
-            lengthenSegment(ref mentorface22, ref mentorface21, verticalFaceGap);
-            lengthenSegment(ref mentorface19, ref mentorface24, verticalFaceGap);
-            lengthenSegment(ref mentorface53, ref mentorface56, horizontalFaceGap);
-            lengthenSegment(ref mentorface54, ref mentorface55, verticalFaceGap);
-            lengthenSegment(ref mentorface52, ref mentorface57, verticalFaceGap);
-            // Eyebrows spreading
-            lengthenSegment(ref mentorface15, ref mentorface48, horizontalFaceGap);
-            lengthenSegment(ref mentorface16, ref mentorface49, horizontalFaceGap);
-            lengthenSegment(ref mentorface18, ref mentorface51, horizontalFaceGap);
-            lengthenSegment(ref mentorface49, ref mentorface51, verticalFaceGap / 3);
-            lengthenSegment(ref mentorface16, ref mentorface18, verticalFaceGap / 3);
-            // Mouth enlargement
-            lengthenSegment(ref mentorMTUL, ref mentorMBLL, verticalFaceGap);
-            lengthenSegment(ref mentorORCM, ref mentorOLCM, horizontalFaceGap * 1.5f);
-
-            for (int i = 0; i < faceP.Count; i++)
-            {
-                faceModelPts.Add(new Vector2(faceP[i].X, faceP[i].Y));
-                faceModelPtsDraw.Add(new Vector2(faceP[i].X, faceP[i].Y));
-            }
-
-            foreach (var t in faceT)
-            {
-                var triangle = new FaceModelTriangle();
-                triangle.P1 = faceModelPtsDraw[t.First];
-                triangle.P2 = faceModelPtsDraw[t.Second];
-                triangle.P3 = faceModelPtsDraw[t.Third];
-                faceModel.Add(triangle);
-            }
-        }
 
         /// <summary>
         /// Function which displays the face's mesh. It calculates positions, there is no display yet.
@@ -842,6 +672,11 @@ namespace LecturerTrainer.Model
         public void forceDraw(Skeleton avatar, bool faceT)
         {
             drawAvatar(avatar, faceT);
+        }
+
+        public void drawAvatarReplay(Skeleton sk)
+        {
+            display();
         }
 
 
@@ -983,41 +818,58 @@ namespace LecturerTrainer.Model
                     GL.Vertex3(MTLL);
                     GL.End();
 
-                    //                    GL.LineWidth(2.0f);
                     // Drawing of the right eye
-                    Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
+                    Gl.glPushMatrix();
                     {
-                        float alpha;
+
                         float beta;
-                        float alphaStep = (float)(Math.PI) / (float)generalSlices;
+                        EyesAlignment.X = face53.X - face20.X;
+                        EyesAlignment.Y = face53.Y - face20.Y;
+                        EyesAlignment.Z = face53.Z - face20.Z;
+                        Vector3 test1;
+                        Vector3 test2;
+
+                        test1.X = EyesAlignment.X + headCenterPoint.X;
+                        test1.Y = EyesAlignment.Y + headCenterPoint.Y;
+                        test1.Z = EyesAlignment.Z + headCenterPoint.Z;
+
+                        test2.X = -EyesAlignment.X + headCenterPoint.X;
+                        test2.Y = -EyesAlignment.Y + headCenterPoint.Y;
+                        test2.Z = -EyesAlignment.Z + headCenterPoint.Z;
+
                         float betaStep = (float)(Math.PI) / (float)generalStacks;
-                        
+                        Vector2[] ellipsePoints = new Vector2[20];
+                        Vector3[] eyesPoints = new Vector3[20];
                         float RVert = (float)Math.Sqrt(Math.Pow((face21.X - face22.X), 2) + Math.Pow((face21.Y - face22.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
                         float RHori = (float)Math.Sqrt(Math.Pow((face23.X - face20.X), 2) + Math.Pow((face23.Y - face20.Y), 2)) / 2; //Vertical semi-axis of the ellipse
+                        int cnt = 0;
 
-                        Gl.glVertex3f(face23.X, face23.Y, face23.Z);
-                        for (alpha = -(float)Math.PI / 2; alpha < (float)Math.PI / 2; alpha += alphaStep)
+                        for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
                         {
-                            for (beta = 0 ; beta < (float)2*Math.PI; beta += alphaStep)
-                            {
 
-                                Gl.glVertex3f(face23.X + (float)Math.Cos(alpha) * (float)Math.Cos(beta) * RHori - RHori,
-                                    face21.Y + (float)Math.Sin(beta) * (float)Math.Cos(alpha) * RVert-RVert, face22.Z);
+                            eyesPoints[cnt] = ((float)Math.Cos(beta) * RHori) * test1 + (float)Math.Sin(beta) * RVert * headCenterPoint;
 
-                                Gl.glVertex3f(face23.X + RHori * (float)Math.Cos(alpha + alphaStep) * (float)Math.Cos(beta) - RHori,
-                                    face21.Y + RVert * (float)Math.Cos(alpha + alphaStep) * (float)Math.Sin(beta) - RVert, face22.Z);
-   
-                                
-                            }
+                            cnt++;
                         }
-                         Gl.glVertex3f(face23.X, face23.Y, face23.Z);
+
+                        Gl.glColor4f(0, 0, 0, 1);
+                        Gl.glTranslatef(face23.X - RHori, face21.Y - RVert, test1.Z);
+                        Gl.glScalef(2, 4, 1);
+                        Gl.glRotatef(-(float)Math.PI / 7 * (180 / (float)Math.PI), face23.X - RHori, face21.Y - RVert, test1.Z); // Math.PI/7 is a flat value found after several testing
+                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
+
+                        for (cnt = 0; cnt < ellipsePoints.Length; cnt++)
+                        {
+                            Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
+                        }
+                        Gl.glEnd();
 
                         //Gl.glVertex3f(face22.X, face22.Y, face22.Z);
                         //Gl.glVertex3f(face20.X, face20.Y, face20.Z);
                         //Gl.glVertex3f(face21.X, face21.Y, face21.Z);
 
                     }
-                    Gl.glEnd();
+                    Gl.glPopMatrix();
 
                     // Drawing of the right eyebrow
                     GL.Begin(PrimitiveType.Polygon);
@@ -1028,31 +880,52 @@ namespace LecturerTrainer.Model
                     GL.End();
 
                     // Drawing of the left eye
-                    Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
-
-                    float LVert = (float)Math.Sqrt(Math.Pow((face54.X - face55.X), 2) + Math.Pow((face54.Y - face55.Y), 2)) / 2;
-                    float LHori = (float)Math.Sqrt(Math.Pow((face56.X - face53.X), 2) + Math.Pow((face56.Y - face53.Y), 2)) / 2;
-
-                    float theta;
-                    float phi;
-                    float thetaStep = (float)(Math.PI) / (float)generalSlices;
-                    float phiStep = (float)(Math.PI) / (float)generalStacks;
-                    for (theta = -(float)Math.PI / 2; theta < (float)Math.PI / 2; theta += thetaStep)
+                    Gl.glPushMatrix();
                     {
-                        for (phi = -(float)Math.PI; phi < (float)Math.PI; phi += phiStep)
+
+                        float beta;
+                        EyesAlignment.X = face53.X - face20.X;
+                        EyesAlignment.Y = face53.Y - face20.Y;
+                        EyesAlignment.Z = face53.Z - face20.Z;
+                        Vector3 test1;
+                        Vector3 test2;
+
+                        test1.X = EyesAlignment.X + headCenterPoint.X;
+                        test1.Y = EyesAlignment.Y + headCenterPoint.Y;
+                        test1.Z = EyesAlignment.Z + headCenterPoint.Z;
+
+                        test2.X = -EyesAlignment.X + headCenterPoint.X;
+                        test2.Y = -EyesAlignment.Y + headCenterPoint.Y;
+                        test2.Z = -EyesAlignment.Z + headCenterPoint.Z;
+
+                        float betaStep = (float)(Math.PI) / (float)generalStacks;
+                        Vector2[] ellipsePoints = new Vector2[20];
+                        Vector3[] eyesPoints = new Vector3[20];
+                        float LVert = (float)Math.Sqrt(Math.Pow((face54.X - face51.X), 2) + Math.Pow((face54.Y - face51.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
+                        float LHori = (float)Math.Sqrt(Math.Pow((face56.X - face53.X), 2) + Math.Pow((face56.Y - face53.Y), 2)) / 2; //Vertical semi-axis of the ellipse
+                        int cnt = 0;
+
+                        for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
                         {
 
-                            Gl.glVertex3f(face56.X + (float)Math.Cos(theta) * (float)Math.Cos(phi) * LHori + LHori,
-                                face56.Y + (float)Math.Sin(phi) * (float)Math.Cos(theta) * LVert, face56.Z);
+                            eyesPoints[cnt] = ((float)Math.Cos(beta) * LHori) * test1 + (float)Math.Sin(beta) * LVert * headCenterPoint;
 
-                            Gl.glVertex3f(face56.X + LHori + LHori * (float)Math.Cos(theta + thetaStep) * (float)Math.Cos(phi),
-                                face56.Y + LVert * (float)Math.Cos(theta + thetaStep) * (float)Math.Sin(phi), face56.Z);
+                            cnt++;
                         }
 
-                    }
+                        Gl.glColor4f(0, 0, 0, 1);
+                        Gl.glTranslatef(face56.X + LHori, face54.Y - LVert, test1.Z);
+                        Gl.glScalef(3, 6, 1);
+                        Gl.glRotatef(-(float)Math.PI / 4 * (180 / (float)Math.PI), face56.X + LHori, face54.Y - LVert, test1.Z); // Math.PI/4 is a flat value found after several testing
+                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 
-                    
-                    Gl.glEnd();
+                        for (cnt = 0; cnt < ellipsePoints.Length; cnt++)
+                        {
+                            Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
+                        }
+                        Gl.glEnd();
+                    }
+                    Gl.glPopMatrix();
 
                     // Drawing of the left eyebrow
                     GL.Begin(PrimitiveType.Polygon);
@@ -1064,123 +937,6 @@ namespace LecturerTrainer.Model
                 }
                 GL.PopMatrix();
 
-            }
-        }
-
-        
-        /// <summary>
-        /// Draw the mentor Avatar
-        /// </summary>
-        /// <param name="mentor"></param>
-        /// <param name="facePath"></param>
-        private void DrawMentor(Skeleton mentor, String facePath, int currentSkeleton, bool draw)
-        {
-            if (mentor.TrackingState == SkeletonTrackingState.Tracked)
-                this.DrawBonesAndJointsMentor(mentor);
-
-            if (draw)
-            {
-                FaceDataWrapper fdw = ReplayAvatar.loadFaceWFrame(facePath, currentSkeleton);
-                drawFaceMentor(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
-
-                GL.PushMatrix();
-                {
-                    OpenTK.Vector4 faceColor = new OpenTK.Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-                    GL.Color4(faceColor);
-                    GL.Normal3(0.0f, 0.0f, 1.0f);
-                    GL.LineWidth(3.0f);
-                    GL.Begin(PrimitiveType.LineLoop);
-                    GL.Vertex3(mentorMTUL);
-                    GL.Vertex3(mentorORCM);
-                    GL.Vertex3(mentorMBUL);
-                    GL.Vertex3(mentorOLCM);
-                    GL.Vertex3(mentorMTUL);
-                    GL.End();
-
-                    GL.Begin(PrimitiveType.LineLoop);
-                    GL.Vertex3(mentorMTLL);
-                    GL.Vertex3(mentorORCM);
-                    GL.Vertex3(mentorMBLL);
-                    GL.Vertex3(mentorOLCM);
-                    GL.Vertex3(mentorMTLL);
-                    GL.End();
-
-                    //                    GL.LineWidth(2.0f);
-                    // Drawing of the right eye
-                    Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
-                    {
-                        float alpha;
-                        float beta;
-                        float alphaStep = (float)(Math.PI) / (float)generalSlices;
-                        float betaStep = (float)(Math.PI) / (float)generalStacks;
-
-                        float RVert = (float)Math.Sqrt(Math.Pow((mentorface21.X - mentorface22.X), 2) + Math.Pow((mentorface21.Y - mentorface22.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
-                        float RHori = (float)Math.Sqrt(Math.Pow((mentorface23.X - mentorface20.X), 2) + Math.Pow((mentorface23.Y - mentorface20.Y), 2)) / 2; //Vertical semi-axis of the ellipse
-
-                        Gl.glVertex3f(mentorface23.X, mentorface23.Y, mentorface23.Z);
-                        for (alpha = -(float)Math.PI / 2; alpha < (float)Math.PI / 2; alpha += alphaStep)
-                        {
-                            for (beta = 0; beta < (float)2 * Math.PI; beta += alphaStep)
-                            {
-                                Gl.glVertex3f(mentorface23.X + (float)Math.Cos(alpha) * (float)Math.Cos(beta) * RHori - RHori,
-                                    mentorface21.Y + (float)Math.Sin(beta) * (float)Math.Cos(alpha) * RVert - RVert, mentorface22.Z);
-
-                                Gl.glVertex3f(mentorface23.X + RHori * (float)Math.Cos(alpha + alphaStep) * (float)Math.Cos(beta) - RHori,
-                                    mentorface21.Y + RVert * (float)Math.Cos(alpha + alphaStep) * (float)Math.Sin(beta) - RVert, mentorface22.Z);
-                            }
-                        }
-                        Gl.glVertex3f(mentorface23.X, mentorface23.Y, mentorface23.Z);
-
-                        //Gl.glVertex3f(face22.X, face22.Y, face22.Z);
-                        //Gl.glVertex3f(face20.X, face20.Y, face20.Z);
-                        //Gl.glVertex3f(face21.X, face21.Y, face21.Z);
-
-                    }
-                    Gl.glEnd();
-
-                    // Drawing of the right eyebrow
-                    GL.Begin(PrimitiveType.Polygon);
-                    GL.Vertex3(mentorface15);
-                    GL.Vertex3(mentorface16);
-                    GL.Vertex3(mentorface17);
-                    GL.Vertex3(mentorface18);
-                    GL.End();
-
-                    // Drawing of the left eye
-                    Gl.glBegin(Gl.GL_TRIANGLE_STRIP);
-
-                    float LVert = (float)Math.Sqrt(Math.Pow((mentorface54.X - mentorface55.X), 2) + Math.Pow((mentorface54.Y - mentorface55.Y), 2)) / 2;
-                    float LHori = (float)Math.Sqrt(Math.Pow((mentorface56.X - mentorface53.X), 2) + Math.Pow((mentorface56.Y - mentorface53.Y), 2)) / 2;
-
-                    float theta;
-                    float phi;
-                    float thetaStep = (float)(Math.PI) / (float)generalSlices;
-                    float phiStep = (float)(Math.PI) / (float)generalStacks;
-                    for (theta = -(float)Math.PI / 2; theta < (float)Math.PI / 2; theta += thetaStep)
-                    {
-                        for (phi = -(float)Math.PI; phi < (float)Math.PI; phi += phiStep)
-                        {
-
-                            Gl.glVertex3f(mentorface56.X + (float)Math.Cos(theta) * (float)Math.Cos(phi) * LHori + LHori,
-                                mentorface56.Y + (float)Math.Sin(phi) * (float)Math.Cos(theta) * LVert, mentorface56.Z);
-
-                            Gl.glVertex3f(mentorface56.X + LHori + LHori * (float)Math.Cos(theta + thetaStep) * (float)Math.Cos(phi),
-                                mentorface56.Y + LVert * (float)Math.Cos(theta + thetaStep) * (float)Math.Sin(phi), mentorface56.Z);
-                        }
-
-                    }
-
-                    Gl.glEnd();
-
-                    // Drawing of the left eyebrow
-                    GL.Begin(PrimitiveType.Polygon);
-                    GL.Vertex3(mentorface48);
-                    GL.Vertex3(mentorface49);
-                    GL.Vertex3(mentorface50);
-                    GL.Vertex3(mentorface51);
-                    GL.End();
-                }
-                GL.PopMatrix();
             }
         }
 
@@ -1322,7 +1078,8 @@ namespace LecturerTrainer.Model
                 /*The way feedback is displayed changes wether we are in normal mode or replay mode*/
 
                 /* Normal mode feedback display */
-                if(!ReplayViewModel.Get().isReplaying)
+
+                if (!ReplayViewModel.isReplaying)
                 {
                     /*OpenGL feedback of the hands crossed*/
                     if(Model.HandsJoined.hands)
@@ -1391,11 +1148,13 @@ namespace LecturerTrainer.Model
                 /* Replay Mode feedback display */
                 else{
                     /* List containing all the feedbacks that must be displayed during the current frame */
-                    List<String> feedbacksToDisplay = ReplayViewModel.Get().feedbacksAtTime();
-                    
+                    List<String> feedbacksToDisplay = ReplayViewModel.Get().currentFeedbackList;
+
                     /* Iterating through the list to see which feedback to display */
                     foreach (String message in feedbacksToDisplay)
                     {
+                        /*ServerFeedback tempFeedback = new ServerFeedback(message);
+                        ReplayViewModel.Get().manageFeedback(tempFeedback.eventName);*/
                         switch(message)
                         {
                             /*OpenGL feedback of the hands crossed*/
@@ -1554,7 +1313,7 @@ namespace LecturerTrainer.Model
                 GL.Vertex3(x - w, y - h, 0);
                 GL.End();
             }
-            catch(Exception)
+            catch(Exception e)
             {
 
             }
@@ -1722,91 +1481,6 @@ namespace LecturerTrainer.Model
 
             }
         }
-
-
-        private void DrawBonesAndJointsMentor(Skeleton sk)
-        {
-            if (sk != null)
-            {
-                // Head and Shoulders
-                // Here, the generalAjustment is set
-                this.DrawBoneMentor(sk, JointType.Head, JointType.ShoulderCenter, trackedBoneColor);
-                specificAdjustment = new Vector3(0, 0, 0);
-
-                // Left Arm
-                this.DrawBoneMentor(sk, JointType.ShoulderCenter, JointType.ShoulderLeft, trackedBoneColor);
-                this.DrawBoneMentor(sk, JointType.ShoulderLeft, JointType.ElbowLeft, trackedBoneColor);
-                this.DrawBoneMentor(sk, JointType.ElbowLeft, JointType.WristLeft, trackedBoneColor);
-                this.DrawBoneMentor(sk, JointType.WristLeft, JointType.HandLeft, trackedBoneColor);
-                specificAdjustment = new Vector3(0, 0, 0);
-
-                // Right Arm
-                this.DrawBoneMentor(sk, JointType.ShoulderCenter, JointType.ShoulderRight, trackedBoneColor);
-                this.DrawBoneMentor(sk, JointType.ShoulderRight, JointType.ElbowRight, trackedBoneColor);
-                this.DrawBoneMentor(sk, JointType.ElbowRight, JointType.WristRight, trackedBoneColor);
-                this.DrawBoneMentor(sk, JointType.WristRight, JointType.HandRight, trackedBoneColor);
-                specificAdjustment = new Vector3(0, 0, 0);
-
-                // Render Torso
-                // Here, the generalAjustment is set
-                this.DrawBoneMentor(sk, JointType.ShoulderCenter, JointType.Spine, trackedBoneColor);
-                this.DrawBoneMentor(sk, JointType.Spine, JointType.HipCenter, trackedBoneColor);
-                specificAdjustment = new Vector3(0, 0, 0);
-
-                legTracked = false;
-                //Modified by Baptiste Germond
-                //If the legs are tracked, we draw the avatar as usual
-                if (sk.Joints[JointType.KneeRight].TrackingState == JointTrackingState.Tracked &&
-                    sk.Joints[JointType.KneeLeft].TrackingState == JointTrackingState.Tracked)
-                {
-                    // Left Leg
-                    legTracked = true;
-                    this.DrawBoneMentor(sk, JointType.HipCenter, JointType.HipLeft, trackedBoneColor);
-                    this.DrawBoneMentor(sk, JointType.HipLeft, JointType.KneeLeft, trackedBoneColor);
-                    this.DrawBoneMentor(sk, JointType.KneeLeft, JointType.AnkleLeft, trackedBoneColor);
-                    this.DrawBoneMentor(sk, JointType.AnkleLeft, JointType.FootLeft, trackedBoneColor);
-                    specificAdjustment = new Vector3(0, 0, 0);
-
-                    // Right Leg
-                    this.DrawBoneMentor(sk, JointType.HipCenter, JointType.HipRight, trackedBoneColor);
-                    this.DrawBoneMentor(sk, JointType.HipRight, JointType.KneeRight, trackedBoneColor);
-                    this.DrawBoneMentor(sk, JointType.KneeRight, JointType.AnkleRight, trackedBoneColor);
-                    this.DrawBoneMentor(sk, JointType.AnkleRight, JointType.FootRight, trackedBoneColor);
-                }
-                //If not, the legs are drawn using simulated points
-                //It drawing the legs straight, like with the initial avatar
-                else if (sk.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Tracked)
-                {
-                    Joint joint0 = sk.Joints[JointType.HipCenter];
-                    Vector3 tempSpec = specificAdjustment;
-                    Vector3 tempGen = generalAdjustment;
-
-                    Vector3 point0 = new Vector3(joint0.Position.X, joint0.Position.Y, joint0.Position.Z);
-                    Vector3 pointTemp = drawAvatarNotTracked(JointType.HipRight, point0);
-                    pointTemp = drawAvatarNotTracked(JointType.KneeRight, pointTemp);
-                    pointTemp = drawAvatarNotTracked(JointType.AnkleRight, pointTemp);
-                    pointTemp = drawAvatarNotTracked(JointType.FootRight, pointTemp);
-
-                    specificAdjustment = tempSpec;
-                    generalAdjustment = tempGen;
-
-                    point0 = new Vector3(joint0.Position.X, joint0.Position.Y, joint0.Position.Z);
-                    pointTemp = drawAvatarNotTracked(JointType.HipLeft, point0);
-                    pointTemp = drawAvatarNotTracked(JointType.KneeLeft, pointTemp);
-                    pointTemp = drawAvatarNotTracked(JointType.AnkleLeft, pointTemp);
-                    pointTemp = drawAvatarNotTracked(JointType.FootLeft, pointTemp);
-                }
-                //Reinitialize adjustment
-                specificAdjustment = new Vector3(0, 0, 0);
-                generalAdjustment = new Vector3(0, 0, 0);
-            }
-        }
-
-
-
-
-
-
         /// <summary>
         /// Draw the legs of the avatar when they are not tracked
         /// </summary>
@@ -2102,178 +1776,6 @@ namespace LecturerTrainer.Model
                 }
                 GL.PopMatrix();
             }
-        }
-
-
-        private void DrawBoneMentor(Skeleton skeleton, JointType jointType0, JointType jointType1, OpenTK.Vector4 color)
-        {
-            Joint joint0 = skeleton.Joints[jointType0];
-            Joint joint1 = skeleton.Joints[jointType1];
-            Vector3 point0 = new Vector3(joint0.Position.X, joint0.Position.Y, joint0.Position.Z);
-            Vector3 point1 = new Vector3(joint1.Position.X, joint1.Position.Y, joint1.Position.Z);
-
-            Vector3 currentBone = new Vector3();
-            Vector3.Subtract(ref point0, ref point1, out currentBone);
-
-            // Points are moved according to the old adjustment
-            addAdjustmentsToPoints(ref point0, ref point1);
-
-            // adjustment applicated on the edge Point
-            Vector3 currentAdjustment;
-
-            // Drawing of the top joint
-            drawJoint(joint0, point0);
-            // Alban's idea
-            /*
-            if (joint0.JointType == JointType.ShoulderCenter && joint1.JointType == JointType.Spine)
-            {
-                Console.Out.WriteLine("-- " + joint0.JointType.ToString() + " -- " + joint1.JointType.ToString());
-                Console.Out.WriteLine(Math.Sqrt((point0.X - point1.X) * (point0.X - point1.X) +
-                    (point0.Y - point1.Y) * (point0.Y - point1.Y) +
-                    (point0.Z - point1.Z) * (point0.Z - point1.Z)) + "\n--");
-            }*/
-            if (IsBoneDrawable(joint0, joint1))
-            {
-                // We assume all drawn bones are inferred unless BOTH joints are tracked
-                OpenTK.Vector4 drawColor = this.inferredBoneColor;
-                if (joint0.TrackingState == JointTrackingState.Tracked && joint1.TrackingState == JointTrackingState.Tracked)
-                {
-                    drawColor = color;
-                }
-                // Draw the bone according to the concerned body part
-                GL.PushMatrix();
-                {
-                    if ((jointType0 == JointType.ShoulderLeft && jointType1 == JointType.ElbowLeft) ||
-                        (jointType0 == JointType.ShoulderRight && jointType1 == JointType.ElbowRight))
-                    {
-                        // Then, the edge point is moved according to the new adjustment
-                        currentAdjustment = calculateAdjustment(currentBone, properShoulderEndToElbow);
-                        specificAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        DrawArm(point0, point1, drawColor);
-                    }
-
-                    else if ((jointType0 == JointType.AnkleLeft && jointType1 == JointType.FootLeft) ||
-                             (jointType0 == JointType.AnkleRight && jointType1 == JointType.FootRight))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properAnkleToFoot);
-                        specificAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        if (jointType1 == JointType.FootLeft)
-                            DrawFoot(point0, point1, drawColor, true);
-                        else
-                            DrawFoot(point0, point1, drawColor, false);
-
-                        // Drawing of the second joint (foot is an extremity)
-                        drawJoint(joint1, point1);
-                    }
-
-                    else if ((jointType0 == JointType.ElbowLeft && jointType1 == JointType.WristLeft) ||
-                             (jointType0 == JointType.ElbowRight && jointType1 == JointType.WristRight))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properElbowToWrist);
-                        specificAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        DrawForeArm(point0, point1, drawColor);
-                    }
-
-                    else if ((jointType0 == JointType.WristLeft && jointType1 == JointType.HandLeft) ||
-                             (jointType0 == JointType.WristRight && jointType1 == JointType.HandRight))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properWristToHand);
-                        specificAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        if (jointType1 == JointType.HandLeft)
-                            DrawHand(point0, point1, drawColor, true);
-                        else
-                            DrawHand(point0, point1, drawColor, false);
-
-                        // Drawing of the second joint (hand is an extremity)
-                        drawJoint(joint1, point1);
-                    }
-
-                    else if ((jointType0 == JointType.Head && jointType1 == JointType.ShoulderCenter))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properHeadToShoulderCenter);
-                        generalAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        mentorheadCenterPoint = new Vector3(point0);
-                        mentorheadTilt = point0 - point1;
-                        DrawHead(point0, point1, drawColor);
-                    }
-
-                    else if ((jointType0 == JointType.ShoulderCenter && jointType1 == JointType.Spine))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properShoulderCenterToSpine);
-                        generalAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        DrawUpperTorso(point0, point1, drawColor);
-                    }
-
-                    else if ((jointType0 == JointType.Spine && jointType1 == JointType.HipCenter))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properSpineToHipCenter);
-                        generalAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        // we must align the hipCenter with the spine, else it dispalys the avatar twisted
-                        point1.X = point0.X; point1.Z = point0.Z;
-                        DrawLowerTorso(point0, point1, drawColor);
-                    }
-
-                    else if ((jointType0 == JointType.HipCenter) &&
-                             (jointType1 == JointType.HipLeft || jointType1 == JointType.HipRight))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properHipCenterToHipEnd);
-                        specificAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        DrawHip(point0, point1, drawColor);
-                    }
-
-                    else if ((jointType0 == JointType.KneeLeft && jointType1 == JointType.AnkleLeft) ||
-                             (jointType0 == JointType.KneeRight && jointType1 == JointType.AnkleRight))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properKneeToAnkle);
-                        specificAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        DrawLeg(point0, point1, drawColor);
-                    }
-
-                    else if ((jointType0 == JointType.ShoulderCenter) &&
-                             (jointType1 == JointType.ShoulderLeft || jointType1 == JointType.ShoulderRight))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properShoulderCenterToShoulderEnd);
-                        specificAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        DrawShoulder(point0, point1, drawColor);
-                    }
-
-                    else if ((jointType0 == JointType.HipLeft && jointType1 == JointType.KneeLeft) ||
-                             (jointType0 == JointType.HipRight && jointType1 == JointType.KneeRight))
-                    {
-                        currentAdjustment = calculateAdjustment(currentBone, properHipEndToKnee);
-                        specificAdjustment += currentAdjustment;
-                        point1 += currentAdjustment;
-                        DrawThigh(point0, point1, drawColor);
-                    }
-                }
-                GL.PopMatrix();
-            }
-        }
-
-
-        private void DisplayText(String text, double x, double y)
-        {
-            GL.PushMatrix();
-            {
-                GL.Color4(pixelFeedbackColor.R, pixelFeedbackColor.G, pixelFeedbackColor.B, pixelFeedbackColor.A);
-                GL.Disable(EnableCap.Lighting);
-                
-                GL.RasterPos2(x, y);
-                Glut.glutBitmapString(Glut.GLUT_BITMAP_TIMES_ROMAN_24, text);
-               
-                GL.Enable(EnableCap.Lighting);
-            }
-            GL.PopMatrix();
         }
 
         /// <summary>

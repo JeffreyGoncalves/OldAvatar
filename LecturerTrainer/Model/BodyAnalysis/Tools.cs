@@ -5,6 +5,7 @@ using Microsoft.Kinect;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -166,7 +167,7 @@ namespace LecturerTrainer.Model
         {
             time = 0;
             correctTime = 0;
-            clock = 200; //don't put below 200 millisec because it isn't the correct value
+            clock = 1; //don't put below 200 millisec because it isn't the correct value
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Interval = TimeSpan.FromMilliseconds(clock);
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
@@ -192,13 +193,55 @@ namespace LecturerTrainer.Model
 
         private static void dispatcherTimer_Tick(object sender, EventArgs e)
         {
+            //Console.Out.WriteLine("-- " + getTimer());
             time++;
             if (TrainingSideToolViewModel.Get().IsReplayingMode == true) //used only in the replay mode
             {
-                ReplayViewModel.Get().raiseFeedbacksOnTime();
                 DrawingSheetStreamViewModel.Get(View.DrawingSheetView.Get()).ShowFeedbacksOnVideoStream();
             }
         }
+        #endregion
+
+        #region stopwatch
+        /// <summary>
+        /// StopWatch is more accurate than other Timer, so we use that when we're recording the avatar
+        /// It's also used for test in the replay mode
+        /// </summary>
+        /// <author>Alban Descottes 2018</author>
+        private static Stopwatch stopWatch;
+
+        public static void startStopWatch()
+        {
+            stopWatch.Start();
+        }
+
+        public static void restartStopWatch()
+        {
+            stopWatch.Restart();
+            stopWatch.Stop();
+        }
+
+        public static void stopStopWatch()
+        {
+            if (stopWatch.IsRunning)
+                stopWatch.Stop();
+        }
+
+        public static void initStopWatch()
+        {
+            stopWatch = new Stopwatch();
+        }
+
+        public static long getStopWatch()
+        {
+            return stopWatch.ElapsedMilliseconds;
+        }
+
+        public static bool getStateStopWatch()
+        {
+            return stopWatch.IsRunning;
+        }
+
         #endregion
 
         #region methods for the charts
