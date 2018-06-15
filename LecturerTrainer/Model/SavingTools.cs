@@ -230,7 +230,6 @@ namespace LecturerTrainer.Model
 
         public static void StartSavingXMLSkeleton()
         {
-			Console.Out.WriteLine("here");
             Tools.initStopWatch();
             Tools.startStopWatch();
             int nbSkFrame = 0;
@@ -269,7 +268,6 @@ namespace LecturerTrainer.Model
 
                 }, () =>
                 {
-                    //Console.Out.WriteLine("-end- " + getTimer() + " -end-");
                     xmlSkeletonWriter.WriteEndElement();
                     xmlSkeletonWriter.WriteEndDocument();
                     xmlSkeletonWriter.Flush();
