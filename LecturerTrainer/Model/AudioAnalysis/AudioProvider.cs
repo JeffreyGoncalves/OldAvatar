@@ -1136,11 +1136,12 @@ namespace LecturerTrainer.Model.AudioAnalysis
             catch (Exception) { }
             return false;
         }
+
         private void speechRateCallback(object sender, WaveInEventArgs e)
         {
             new Thread(() => this.speechRate(e.Buffer, e.BytesRecorded)).Start();
-            
         }
+
         public void speechRate(byte[] buffer, int bytesRecorded)
         {
 

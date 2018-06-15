@@ -43,6 +43,7 @@ namespace LecturerTrainer.ViewModel
         }
 
         public string folderPath;
+        public static string faceDataPath = "";
 
         /// <summary>
         /// The dictionary contains videos name in key and path in value
@@ -506,7 +507,27 @@ namespace LecturerTrainer.ViewModel
 
         public static void FaceTraining_GestureRecognized(object sender, EventArgs e)
         {
+            faceDataPath = "";//TODO Test
+            string facePath = "";
+            bool complete = ((FaceTraining)sender).Complete;
 
+            if (complete)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+
+                facePath = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.xml");
+
+                if (File.Exists(facePath))
+                {
+                    faceDataPath = facePath;
+                }
+                else
+                {
+                    faceDataPath = "";
+                }
+            }
         }
     }
 }
