@@ -82,7 +82,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// <summary>
         /// Class used to recognize the words.
         /// </summary>
-        private SpeechRecognitionEngine speechEngine; 
+        private SpeechRecognitionEngine speechEngine;
 
         private bool voiceCommand;
 
@@ -196,7 +196,9 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// <summary>
         /// Speech rate
         /// </summary>
-        int speechSpeed=0;
+        public static Dictionary<int, double> syllablesInTime = null;
+        public static Dictionary<int, double> levelOfSpeech = null;
+
         int nbSyllables = 0;
         int numberOfPeaks = 0;
 
@@ -213,13 +215,13 @@ namespace LecturerTrainer.Model.AudioAnalysis
             set
             {
                 _deviceNumber = value;
-                    this._waveIn.StopRecording();
-                    this._waveIn.DeviceNumber = value;
-                    this._waveIn.StartRecording();
+                this._waveIn.StopRecording();
+                this._waveIn.DeviceNumber = value;
+                this._waveIn.StartRecording();
             }
         }
 
-        
+
         public FFT _fft { get; private set; }
         public Pitch _pitch { get; private set; }
         public List<RecognizedWordUnit> WordsRecognized
@@ -292,7 +294,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 }
 
                 // Continue to use the prompter
-                if(TrackingSideToolViewModel.get().TeleprompterUsed)
+                if (TrackingSideToolViewModel.get().TeleprompterUsed)
                 {
                     speechEngine.SpeechRecognized += nextLinePrompteur;
                     speechEngine.SpeechRecognitionRejected += nextLinePrompteur;
@@ -313,7 +315,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// </summary>
         public ObservableCollection<String> PossibleLanguage
         {
-            get { return _PossibleLanguage; }  
+            get { return _PossibleLanguage; }
         }
 
         #endregion
@@ -383,7 +385,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
 
             this._badReflex = false;
             this.isRecording = false;
- 
+
             this._waveIn = new WaveIn();
             this._recordingFormat = new WaveFormat(44100, 1);
             this._waveIn.WaveFormat = this._recordingFormat;
@@ -396,7 +398,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             timer.Interval = TimeSpan.FromMilliseconds(refreshTimer);
             timer.Tick += new EventHandler(speechRateDetection);
             // initialize the array used for the wpm
-            nbWordByHypo = new double[sizeNbWord]; 
+            nbWordByHypo = new double[sizeNbWord];
             for (int i = 0; i < sizeNbWord; i++)
             {
                 nbWordByHypo[i] = 0;
@@ -422,7 +424,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 keyword.Add(s.ToUpper(), 0);
             // load the tics from the file and initialize counter
             tics = new Dictionary<string, int>();
-            String [] tabTics = takeWordFile(@"../../Grammar/tics.txt");
+            String[] tabTics = takeWordFile(@"../../Grammar/tics.txt");
             foreach (String s in tabTics)
                 tics.Add(s.ToUpper(), 0);
             // Get all the dictionaries used on your computer
@@ -443,6 +445,8 @@ namespace LecturerTrainer.Model.AudioAnalysis
             speechEngine.SpeechRecognized += SpeechRecognizedKeyword;
 
             dicWpm = new Dictionary<int, double>();
+            syllablesInTime = new Dictionary<int, double>();
+            levelOfSpeech = new Dictionary<int, double>();
         }
 
 
@@ -475,11 +479,11 @@ namespace LecturerTrainer.Model.AudioAnalysis
             {
                 // suppress all special characters
                 test = Regex.Replace(s, "[^a-zA-Z '0-9]+", "", RegexOptions.Compiled);
-                
+
                 if (test != "")
                     result.Add(test.ToUpper());
             }
-            
+
             return result.ToArray();
         }
 
@@ -539,7 +543,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 // Search all tics said
                 for (int ind = 0; ind < tics.Count; ind++)
                 {
-                    if(e.Result.Text.ToUpper().IndexOf(tics.ElementAt(ind).Key) >= 0)
+                    if (e.Result.Text.ToUpper().IndexOf(tics.ElementAt(ind).Key) >= 0)
                     {
                         // increase the value of the tic found
                         int currentCount;
@@ -565,7 +569,6 @@ namespace LecturerTrainer.Model.AudioAnalysis
         public void startRecText()
         {
             textRecorded = new List<string>();
-            Console.Out.WriteLine("Text is Being recorded!"); // Verifying when the text is being recorded
             speechEngine.SpeechRecognized += saveWordRecognized;
             speechEngine.SpeechRecognitionRejected += saveWordRecognized;
         }
@@ -576,7 +579,6 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// <returns>All the words recognized during the recording</returns>
         public List<string> stopRecText()
         {
-            Console.Out.WriteLine("Text Stopped Being recorded!"); // Verifying when the text stops from being recorded
             speechEngine.SpeechRecognized -= saveWordRecognized;
             speechEngine.SpeechRecognitionRejected -= saveWordRecognized;
 
@@ -640,7 +642,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
         {
             // initialise with the language choosen
             Trace.WriteLine(SelectedLanguage.ToString());
-            speechEngine = new SpeechRecognitionEngine(new CultureInfo(_PossibleLanguage.ElementAt(SelectedLanguage > 0 ? SelectedLanguage : 0 )));
+            speechEngine = new SpeechRecognitionEngine(new CultureInfo(_PossibleLanguage.ElementAt(SelectedLanguage > 0 ? SelectedLanguage : 0)));
             speechEngine.LoadGrammar(new DictationGrammar());
 
             // We can't use speechEngine.SetInputToDefaultAudioDevice();
@@ -692,6 +694,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             // The speed value is stored in the message
             int iValue;
             int.TryParse(feedback.feedbackMessage, out iValue);
+            Console.Out.WriteLine("Feedback message : " + feedback.feedbackMessage);
             speedEvent(null, new ValuedFeedback(feedback.feedbackMessage, feedback.display, iValue));
         }
 
@@ -785,7 +788,8 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// <returns>True if the service stopped well.</returns>
         public bool stopPitchDetection()
         {
-            try { 
+            try
+            {
                 this._waveIn.DataAvailable -= PitchCallback;
                 return true;
             }
@@ -933,48 +937,48 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// </summary>
         /// <param name="source">Source of the caller.</param>
         /// <param name="e">Information about the ellapsed time.</param>
-         private void TimeElapsed(object source, EventArgs e)
-         {
-            
-             // If the user stop speaking, we count it.
-             // It's <= 2  because the microphone can get some noise.
-             if (nbWordByHypo[indNbWord] <= 2)
-             {
-                 stopSpeaking++;
-             }
-             else
-             {
-                 stopSpeaking = 0;
-             }
+        private void TimeElapsed(object source, EventArgs e)
+        {
+
+            // If the user stop speaking, we count it.
+            // It's <= 2  because the microphone can get some noise.
+            if (nbWordByHypo[indNbWord] <= 2)
+            {
+                stopSpeaking++;
+            }
+            else
+            {
+                stopSpeaking = 0;
+            }
 
 
-             int mult = 60000 / (refreshTimer * sizeNbWord); // used to convert the result in Word per Minute (wpm)
-             int secondMult = 60000 / refreshTimer; // used to convert the bonus in WPM
+            int mult = 60000 / (refreshTimer * sizeNbWord); // used to convert the result in Word per Minute (wpm)
+            int secondMult = 60000 / refreshTimer; // used to convert the bonus in WPM
 
-             double averageWpm = 0;
+            double averageWpm = 0;
 
-             // Count all the words recorded in the array
-             foreach (double i in nbWordByHypo)
-             {
-                 averageWpm += i;
-             }
+            // Count all the words recorded in the array
+            foreach (double i in nbWordByHypo)
+            {
+                averageWpm += i;
+            }
 
-             // convert in WPM
-             averageWpm *= mult;
-             dicWpm.Add(refreshTimer * dicWpm.Count, averageWpm);
-             // If you stop speaking more than 1.5 seconds,
-             // we don't look at the WPM. me just put the feedback at 0
-             if (stopSpeaking * refreshTimer >= 1500)
-             {
-                 speedEvent(this, new ValuedFeedback("", true, 0));
-             }
-             else
-             {
-                 if (TrackingSideToolViewModel.get().SpeedRate && !replayMode)
-                 {
+            // convert in WPM
+            averageWpm *= mult;
+            dicWpm.Add(refreshTimer * dicWpm.Count, averageWpm);
+            // If you stop speaking more than 1.5 seconds,
+            // we don't look at the WPM. me just put the feedback at 0
+            if (stopSpeaking * refreshTimer >= 1500)
+            {
+                speedEvent(this, new ValuedFeedback("", true, 0));
+            }
+            else
+            {
+                if (TrackingSideToolViewModel.get().SpeedRate && !replayMode)
+                {
 
-                     double bonusSpeed = nbWordByHypo[indNbWord] * secondMult - averageWpm;
-                     if (averageWpm < 60)//Word by minute (wpm) < 60, equal to 2 words per 2 seconds
+                    double bonusSpeed = nbWordByHypo[indNbWord] * secondMult - averageWpm;
+                    if (averageWpm < 60)//Word by minute (wpm) < 60, equal to 2 words per 2 seconds
                     {
                         // The difference between the entire array and the last element is bigger than 150
                         // It's mean in this case you spoke very slow and just after you speak really fast
@@ -983,133 +987,133 @@ namespace LecturerTrainer.Model.AudioAnalysis
                             speedEvent(this, new ValuedFeedback("", true, 3));
                         }
                         else if (bonusSpeed > 150)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 2));
-                         }
-                         // You speak a little bit faster
-                         else if (bonusSpeed > 60)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 1));
-                         }
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 2));
+                        }
+                        // You speak a little bit faster
+                        else if (bonusSpeed > 60)
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 1));
+                        }
                         // Case where you speak in a constant speed or the difference is too small.
                         else
                         {
-                             speedEvent(this, new ValuedFeedback("", true, 0));
-                         }
-                     }
-                     else if (averageWpm < 120) // 2 < words per 2 seconds < 4
-                     {
-                         // You spoke very faster than previously
-                         if (bonusSpeed > 180)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 4));
-                         }
-                         else if(bonusSpeed > 120)
+                            speedEvent(this, new ValuedFeedback("", true, 0));
+                        }
+                    }
+                    else if (averageWpm < 120) // 2 < words per 2 seconds < 4
+                    {
+                        // You spoke very faster than previously
+                        if (bonusSpeed > 180)
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 4));
+                        }
+                        else if (bonusSpeed > 120)
                         {
                             speedEvent(this, new ValuedFeedback("", true, 3));
                         }
-                         // You spoke a little bit faster tahn previously
-                         else if (bonusSpeed > 60)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 2));
-                         }
-                         // Case where you speak in a constant speed or the difference is too small.
-                         else
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 1));
-                         }
-                     }
-                     else if (averageWpm < 200) // 4 < words per 2 seconds < 7
-                     {
-                         // You spoke a lot faster than previously
-                         if(bonusSpeed > 120)
+                        // You spoke a little bit faster tahn previously
+                        else if (bonusSpeed > 60)
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 2));
+                        }
+                        // Case where you speak in a constant speed or the difference is too small.
+                        else
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 1));
+                        }
+                    }
+                    else if (averageWpm < 200) // 4 < words per 2 seconds < 7
+                    {
+                        // You spoke a lot faster than previously
+                        if (bonusSpeed > 120)
                         {
                             speedEvent(this, new ValuedFeedback("", true, 4));
                         }
                         // You spoke a bit faster than previously
                         else if (bonusSpeed > 50)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 3));
-                         }
-                         // you spoke a little bit slower than previously
-                         else if (bonusSpeed < -150)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 1));
-                         }
-                         // Case where you speak in a constant speed or the difference is too small
-                         else
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 2));
-                         }
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 3));
+                        }
+                        // you spoke a little bit slower than previously
+                        else if (bonusSpeed < -150)
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 1));
+                        }
+                        // Case where you speak in a constant speed or the difference is too small
+                        else
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 2));
+                        }
 
-                     }
-                     else if (averageWpm < 250) // 7 < Words per 2 seconds < 10
-                     {
-                         // You spoke very slower than previously
-                         if (bonusSpeed < -240)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 1));
-                         }
-                         // You spoke a little bit slower than previously
-                         else if (bonusSpeed < -180)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 2));
-                         }
-                         else if(bonusSpeed > 60)
+                    }
+                    else if (averageWpm < 250) // 7 < Words per 2 seconds < 10
+                    {
+                        // You spoke very slower than previously
+                        if (bonusSpeed < -240)
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 1));
+                        }
+                        // You spoke a little bit slower than previously
+                        else if (bonusSpeed < -180)
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 2));
+                        }
+                        else if (bonusSpeed > 60)
                         {
                             speedEvent(this, new ValuedFeedback("", true, 4));
                         }
-                         // Case where you speak in a constant speed or the difference is too small
-                         else
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 3));
-                         }
+                        // Case where you speak in a constant speed or the difference is too small
+                        else
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 3));
+                        }
 
-                     }
-                     else // wpm > 300  = more than 10 words per 2 seconds
-                     {
-                         // You spoke very slower than previously
-                         if (bonusSpeed < -180)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 2));
-                         }
-                         // You spoke a little bit slower than previously
-                         else if (bonusSpeed < -90)
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 3));
-                         }
-                         // Case where you speak in a constant speed or the difference is too small
-                         else
-                         {
-                             speedEvent(this, new ValuedFeedback("", true, 4));
-                             // Make a feedback
-                             tooFastEvent(this, new LongFeedback(tooFastText, true));
-                         }
+                    }
+                    else // wpm > 300  = more than 10 words per 2 seconds
+                    {
+                        // You spoke very slower than previously
+                        if (bonusSpeed < -180)
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 2));
+                        }
+                        // You spoke a little bit slower than previously
+                        else if (bonusSpeed < -90)
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 3));
+                        }
+                        // Case where you speak in a constant speed or the difference is too small
+                        else
+                        {
+                            speedEvent(this, new ValuedFeedback("", true, 4));
+                            // Make a feedback
+                            tooFastEvent(this, new LongFeedback(tooFastText, true));
+                        }
 
-                     }
+                    }
 
-                     // make a feedback if you say too many tics
-                     if (counterTicTmp >= 2)
-                     {
-                         ticEvent(null, new InstantFeedback("Too many tics!"));
-                         using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\Public\TestFolder\testTicsDetected.txt", true))
-                         {
-                             file.WriteLine("You said too many tic words in a little amount of time -- " + counterTicTmp);
-                         }
-                     }
-                 }
-             }
+                    // make a feedback if you say too many tics
+                    if (counterTicTmp >= 2)
+                    {
+                        ticEvent(null, new InstantFeedback("Too many tics!"));
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\Public\TestFolder\testTicsDetected.txt", true))
+                        {
+                            file.WriteLine("You said too many tic words in a little amount of time -- " + counterTicTmp);
+                        }
+                    }
+                }
+            }
 
-             // go to the next element of the array
-             indNbWord++;
-             // Just to stay in the array
-             if (indNbWord >= sizeNbWord)
-             {
-                 indNbWord = 0;
-             }
-             // reset the last element used
-             nbWordByHypo[indNbWord] = 0;
-         }
+            // go to the next element of the array
+            indNbWord++;
+            // Just to stay in the array
+            if (indNbWord >= sizeNbWord)
+            {
+                indNbWord = 0;
+            }
+            // reset the last element used
+            nbWordByHypo[indNbWord] = 0;
+        }
         private void speechRateDetection(object source, EventArgs e)
         {
             getSpeedRate();
@@ -1139,8 +1143,12 @@ namespace LecturerTrainer.Model.AudioAnalysis
         private void speechRateCallback(object sender, WaveInEventArgs e)
         {
             new Thread(() => this.speechRate(e.Buffer, e.BytesRecorded)).Start();
-            
+
         }
+        ///<summary>
+        /// The speechRate function is called every 100ms and calculates the number of syllables using the praat way of calculating the syllables
+        /// The result is stored in a variable that is initialized every 1 second
+        /// </summary>
         public void speechRate(byte[] buffer, int bytesRecorded)
         {
 
@@ -1178,30 +1186,31 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 }
             }
             // let's find the 0.99 quantile to get the maximumwithout influence of of non-speech sound bursts
+            float[] intensity2 = new float[nbIntensities];
             float[] sortedIntensity = new float[nbIntensities];
             for (int i = 0; i < nbIntensities; i++)
             {
-                intensity[i] = (float)(20 * Math.Log10(Math.Abs(intensity[i])/0.000001));
-                
+                intensity2[i] = (float)(20 * Math.Log10(Math.Abs(intensity[i]) / 0.000001));
+
             }
             for (int i = 0; i < nbIntensities; i++)
             {
-                sortedIntensity[i] = intensity[i];
+                sortedIntensity[i] = intensity2[i];
             }
             bubbleSort(sortedIntensity);
             // We estimate the intensity threshold
             max99int = (int)0.99 * (sortedIntensity.Length + 1);
             threshold = (int)((sortedIntensity[max99int] / 100000) + silencedb);
-            threshold2 = (int)(intensity[maxint] - sortedIntensity[sortedIntensity.Length - max99int - 1]);
+            threshold2 = (int)(intensity2[maxint] - sortedIntensity[sortedIntensity.Length - max99int - 1]);
             threshold3 = silencedb - threshold2;
-            if (threshold < (int)intensity[minint])
+            if (threshold < (int)intensity2[minint])
             {
-                threshold = (int)intensity[minint];
+                threshold = (int)intensity2[minint];
             }
             // Estimate where are the voiced parts and the silence parts in the buffer
             for (int i = 0; i < nbIntensities; i++)
             {
-                if (intensity[i] < threshold3)
+                if (intensity2[i] < threshold3)
                 {
                     speaking[i] = 0;
                     timestampSilence += timeByIntensity;
@@ -1237,19 +1246,19 @@ namespace LecturerTrainer.Model.AudioAnalysis
             // Estimate the position of the peaks
             for (int i = 0; i < nbIntensities; i++)
             {
-                if (i == 0 && intensity[i] > intensity[i + 1])
+                if (i == 0 && intensity2[i] > intensity2[i + 1])
                 {
                     nbPeaks++;
                     peaks[i] = 1;
                 }
-                else if (i == nbIntensities - 1 && intensity[i] > intensity[i - 1])
+                else if (i == nbIntensities - 1 && intensity2[i] > intensity2[i - 1])
                 {
                     nbPeaks++;
                     peaks[i] = 1;
                 }
                 else if (i > 0 && i < (nbIntensities - 1))
                 {
-                    if (intensity[i] > intensity[i - 1] && intensity[i] > intensity[i + 1])
+                    if (intensity2[i] > intensity2[i - 1] && intensity2[i] > intensity2[i + 1])
                     {
                         nbPeaks++;
                         peaks[i] = 1;
@@ -1268,7 +1277,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 {
                     j++;
                 }
-                valueOfPeaks[i] = intensity[j];
+                valueOfPeaks[i] = intensity2[j];
                 idOfPeaks[i] = j;
                 timeOfPeaks[i] = j * timeByIntensity;
             }
@@ -1278,53 +1287,73 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 int nextID = idOfPeaks[i + 1];
                 float dip = MinValue(intensity, actualID, nextID);
                 float diffDip = Math.Abs(valueOfPeaks[i] - dip);
-                if (diffDip > mindip && speaking[actualID] == 1 && valueOfPeaks[i] >70 && (timeOfPeaks[i+1] - timeOfPeaks[i]>0.02))
+                if (diffDip > mindip && speaking[actualID] == 1 && valueOfPeaks[i] > 80)
                 {
                     validNbPeaks++;
                 }
 
             }
-            Console.Out.WriteLine("Example of intensities : " + sortedIntensity[5] + sortedIntensity[0]);
             this.nbSyllables += validNbPeaks;
             // ValidNbPeaks is the number of syllables during 
-            // the timestamp which is 3 seconds
+            // the timestamp which is 1 second
         }
-        public void getSpeedRate() {
+        /// <summary>
+        /// The getSpeedRate takes the incremented variable of the speechRate and chooses which case it is : Not Speaking/Low/MidLow/MidHigh/High speech rate
+        /// </summary>
+        public void getSpeedRate()
+        {
             Console.Out.WriteLine("\nNumber of syllables in 1 second : " + nbSyllables);
             Console.Out.WriteLine("Number of peaks in general in 1 second : " + numberOfPeaks);
-            Console.Out.WriteLine("Time : " + DateTime.Now);
+            int level = 0;
             if (this.nbSyllables <= 2)
             {
-                speedEvent(this, new ValuedFeedback("", true, 0));
+                level = 0;
             }
             else if (this.nbSyllables <= 4)
             {
-                speedEvent(this, new ValuedFeedback("", true, 1));
+                level = 1;
             }
-            else if(this.nbSyllables <= 6)
+            else if (this.nbSyllables <= 6)
             {
-                speedEvent(this, new ValuedFeedback("", true, 2));
+                level = 2;
             }
-            else if(this.nbSyllables <= 8)
+            else if (this.nbSyllables <= 8)
             {
-                speedEvent(this, new ValuedFeedback("", true, 3));
+                level = 3;
             }
             else
             {
-                speedEvent(this, new ValuedFeedback("", true, 4));
+                level = 4;
+            }
+            speedEvent(this, new ValuedFeedback("", true, level));
+            if (levelOfSpeech.Count == 0)
+            {
+                levelOfSpeech.Add(0, level);
+            }
+            else
+            {
+                levelOfSpeech.Add(levelOfSpeech.Count * 1000, level);
+            }
+            if (syllablesInTime.Count == 0)
+            {
+                syllablesInTime.Add(0, this.nbSyllables);
+            }
+            else
+            {
+                syllablesInTime.Add(syllablesInTime.Count * 1000, this.nbSyllables);
             }
             this.nbSyllables = 0;
             this.numberOfPeaks = 0;
         }
         public int[] initTable(int[] buffer)
         {
-            for(int i = 0; i < buffer.Length; i++) { buffer[i] = 0; }
+            for (int i = 0; i < buffer.Length; i++) { buffer[i] = 0; }
             return buffer;
         }
         public float MinValue(float[] buffer, int l, int h)
         {
             float min = 100;
-            for(int i = l; i <= h; i++)
+            for (int i = l; i <= h; i++)
             {
                 if (buffer[i] < min) { min = buffer[i]; }
             }
@@ -1332,7 +1361,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
         }
         public int findIDofValue(float[] buf, float x)
         {
-            for(int i = 0; i < buf.Length; i++)
+            for (int i = 0; i < buf.Length; i++)
             {
                 if (buf[i] == x) { return i; }
             }
@@ -1347,16 +1376,29 @@ namespace LecturerTrainer.Model.AudioAnalysis
         }
         public void bubbleSort(float[] buf)
         {
-            for(int i=buf.Length -1; i > 0; i--)
+            for (int i = buf.Length - 1; i > 0; i--)
             {
-                for(int j = 0; j < i; j++)
+                for (int j = 0; j < i; j++)
                 {
-                    if (buf[j] - buf[j + 1]<0)
+                    if (buf[j] - buf[j + 1] < 0)
                     {
                         swap(buf, j, j + 1);
                     }
                 }
             }
+        }
+        public int averageSpeechRateInSession(List<int> levels)
+        {
+            int result = 0;
+            for (int i = 0; i < levels.Count; i++)
+            {
+                result += levels.ElementAt(i);
+            }
+            if (result != 0)
+            {
+                result = result / levels.Count;
+            }
+            return result;
         }
         /// <summary>
         /// Called when a word has been recognized.
@@ -1370,7 +1412,6 @@ namespace LecturerTrainer.Model.AudioAnalysis
             // which is equal to the number of word says
             // With a small margin of error
             nbWordByHypo[indNbWord]++;
-      
         }
 
         /// <summary>
@@ -1454,7 +1495,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
         public void setDeviceNumber(int n)
         {
             this._deviceNumber = n;
-        }      
+        }
 
         /// <summary>
         /// Start the audio recording
@@ -1474,7 +1515,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 {
                     recorder = new AudioRecorder(path, name, _waveIn);
                     recorder.startRecording();
-                    
+
                 });
             }
         }
@@ -1486,7 +1527,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
         {
             this.isRecording = false;
             Task.Factory.StartNew(() =>
-            { 
+            {
                 if (recorder != null)
                     recorder.stopRecording();
             });
@@ -1534,7 +1575,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
         public void getTextToShow(object sender, SpeechRecognizedEventArgs e)
         {
             textToShowEvent(this, new Feedback(e.Result.Text));
-            
+
         }
 
         /// <summary>
@@ -1569,9 +1610,12 @@ namespace LecturerTrainer.Model.AudioAnalysis
             List<IGraph> list = new List<IGraph>();
 
             var chart = new CartesianGraph();
-            chart.title = "Speech rate (in wpm)";
+            chart.title = "Speech rate (in syllables per second)";
             chart.subTitle = Tools.ChooseTheCorrectUnitTime();
-
+            var chart2 = new CartesianGraph();
+            chart2.title = "Speech rate (Level Of Speaking per second)";
+            chart2.subTitle = Tools.ChooseTheCorrectUnitTime();
+            /*
             Dictionary<int, double> dictemp = new Dictionary<int, double>();
             int max = dicWpm.Count;
 
@@ -1591,10 +1635,21 @@ namespace LecturerTrainer.Model.AudioAnalysis
             if (!Tools.addKeyValuePairSeriesToCharts(chart, new LineSeries(), "Words / minute", dicSort, "", false))
                 list.Add(Tools.createEmptyGraph("No estimate of words per minute"));
             else
+                list.Add(chart);*/
+
+            if (!Tools.addKeyValuePairSeriesToCharts(chart, new LineSeries(), "Syllables per Second", syllablesInTime, "", false))
+                list.Add(Tools.createEmptyGraph("No estimate of syllables per second"));
+            else
                 list.Add(chart);
+
+            if (!Tools.addKeyValuePairSeriesToCharts(chart2, new LineSeries(), "Level Of Speaking per Second", levelOfSpeech, "", false))
+                list.Add(Tools.createEmptyGraph("No estimate of level of speaking per second"));
+            else
+                list.Add(chart2);
 
             return list;
         }
+
         #endregion
 
         #region Teleprompter Methods
@@ -1641,8 +1696,8 @@ namespace LecturerTrainer.Model.AudioAnalysis
                     subString = result.Substring(start, 25);
 
                     // Used to display only full word.
-                    stop = subString.LastIndexOf(" ") ;
-                    resultList.Add(result.Substring(start, stop ));
+                    stop = subString.LastIndexOf(" ");
+                    resultList.Add(result.Substring(start, stop));
                     start += stop + 1;
                 }
             }
@@ -1681,11 +1736,11 @@ namespace LecturerTrainer.Model.AudioAnalysis
             List<String> test = textSaid.Split(' ').ToList();
 
             // Used to get the number of words in the four first sentences displayed by the prompter
-            int[] nbWord = { -1, -1, -1, -1, -1};
+            int[] nbWord = { -1, -1, -1, -1, -1 };
             // Saad's update : syllables instead of word
             //int[] nbSyllables = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
             String tempString;
-            for(int i = 0; i < 5; i ++)
+            for (int i = 0; i < 5; i++)
             {
                 if (linePrompter + i < textTeleprompter.Count)
                 {
@@ -1699,23 +1754,23 @@ namespace LecturerTrainer.Model.AudioAnalysis
             // nbWord initializes at -1. If it's > 0, mean that linePrompter + i < textTeleprompter.Count not go out of the prompter text
             foreach (String i in test)
             {
-                if(nbWord[0] > 0 && 
+                if (nbWord[0] > 0 &&
                     textTeleprompter[linePrompter].ToUpper().IndexOf(i.ToUpper()) >= 0)
                 {
                     nbWordLinePrompter[0]++;
                 }
-                
-                else if (nbWord[1] > 0 && 
+
+                else if (nbWord[1] > 0 &&
                     textTeleprompter[linePrompter + 1].ToUpper().IndexOf(i.ToUpper()) >= 0)
                 {
                     nbWordLinePrompter[1]++;
                 }
-                else if(nbWord[2] > 0 && 
+                else if (nbWord[2] > 0 &&
                     textTeleprompter[linePrompter + 2].ToUpper().IndexOf(i.ToUpper()) >= 0)
                 {
                     nbWordLinePrompter[2]++;
                 }
-                else if(nbWord[3] > 0 && 
+                else if (nbWord[3] > 0 &&
                     textTeleprompter[linePrompter + 3].ToUpper().IndexOf(i.ToUpper()) >= 0)
                 {
                     nbWordLinePrompter[3]++;
@@ -1772,7 +1827,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 linePrompterEvent(this, new IntFeedback(linePrompter));// send for DrawingSheetAvatarViewModel to change line of prompter
             }
             // If more of 50 % of the words said are in a the first line display the next one
-            else if ((nbWordLinePrompter[0] * 100) / nbWord[0]> 50)
+            else if ((nbWordLinePrompter[0] * 100) / nbWord[0] > 50)
             {
                 linePrompter++;
                 nbWordLinePrompter[0] = nbWordLinePrompter[1];
@@ -1782,7 +1837,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 nbWordLinePrompter[4] = 0;
 
                 linePrompterEvent(this, new IntFeedback(linePrompter));// send for DrawingSheetAvatarViewModel to change line of prompter
-            }      
+            }
         }
 
         /// <summary>
