@@ -18,6 +18,7 @@ using System.Drawing.Imaging;
 using OpenTK.Graphics;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 using System.Text.RegularExpressions;
+using LecturerTrainer.Model;
 
 
 // TO NOTE : the z axis has been reversed for a better visibility of the avatar
@@ -704,20 +705,26 @@ namespace LecturerTrainer.Model
             z = avatar.Joints[JointType.Head].Position.Z;
 
 
-            float xw, yw, yw1;
             //OpenGL of the sound bar
             //Added by Baptiste Germond using value and code of Alistair Sutherland
-            if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true)
+            if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true && !ReplayViewModel.isReplaying)
             {
+				SavingTools.PeakRecord = true;
+				float xw, yw, yw1;
+
                 GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name.Count() > 0 && actualTheme.SN.Contains(p.name) select p.idTextureOpenGL).First());
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+				
+				//xmlSkeletonWriter.WriteAttributeString("PeakValue", Model.AudioAnalysis.Pitch.wiggle[Model.AudioAnalysis.Pitch.wiggle.Length].ToString());
+                //if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true && TrainingSideToolViewModel.Get().ToggleAudioRecording) 
+				//System.Diagnostics.Debug.WriteLine(TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked+" - "+TrainingSideToolViewModel.Get().ToggleAudioRecording);
 
-                GL.PushAttrib(AttribMask.ColorBufferBit);
+				GL.PushAttrib(AttribMask.ColorBufferBit);
                 for (i = 0; i < 299; i++)
                 {
-                    yw = +0.6f + (float)Model.AudioAnalysis.Pitch.wiggle[i] / 500.0f;
-                    yw1 = +0.6f + (float)Model.AudioAnalysis.Pitch.wiggle[i + 1] / 500.0f;
+                    yw = +0.6f + Model.AudioAnalysis.Pitch.wiggle[i] / 500.0f; 
+                    yw1 = +0.6f + Model.AudioAnalysis.Pitch.wiggle[i + 1] / 500.0f;
 
                     xw = -2.5f + i / 60.0f;
                     float xw1 = -2.5f + (i + 1) / 60.0f;
@@ -740,6 +747,10 @@ namespace LecturerTrainer.Model
                 GL.PopAttrib();
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
+			else if(ReplayViewModel.isReplaying){
+				SavingTools.PeakRecord = false;
+				ReplayAvatar.drawWiggle();
+			}
 
             //Added by Baptiste Germond
             //OpenGL of the Trainer watch
@@ -898,7 +909,7 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Draws the avatar's body
+        /// Draws the avatar's body (among other things)
         /// </summary>
         /// <param name="evt"></param>
         private void drawAvatar(EventArgs evt)
@@ -2608,6 +2619,8 @@ namespace LecturerTrainer.Model
         }
         #endregion
 
+        #region Text Display Methods
+
         /// <summary>
         /// Display the text during the training
         /// </summary>
@@ -2646,8 +2659,6 @@ namespace LecturerTrainer.Model
             GL.Enable(EnableCap.Lighting);
 
         }
-
-        #region Text Display Methods
 
         // Timothée
         /// <summary>

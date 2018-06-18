@@ -15,6 +15,11 @@ using Microsoft.Kinect.Toolkit.FaceTracking;
 using LecturerTrainer.Model.EmotionRecognizer;
 using System.Windows.Threading;
 using System.Diagnostics;
+using LecturerTrainer.View;
+using LecturerTrainer.ViewModel;
+using LecturerTrainer.Model.AudioAnalysis;
+
+
 
 namespace LecturerTrainer.Model
 {
@@ -26,6 +31,18 @@ namespace LecturerTrainer.Model
     {
         private static DateTime localDate = DateTime.Now;
         public static string pathFolder ="";
+
+		private static bool peakRecord = false;
+		public static bool PeakRecord{
+			get
+			{
+				return peakRecord;
+			}
+			set
+			{
+				peakRecord = value;
+			}	
+		}
 
         #region PCQueueFields
         /// <summary>
@@ -226,7 +243,7 @@ namespace LecturerTrainer.Model
                 Console.WriteLine(ex.ToString());
             }
         }
-        
+
 
         public static void StartSavingXMLSkeleton()
         {
@@ -235,6 +252,9 @@ namespace LecturerTrainer.Model
             Tools.startStopWatch();
             int nbSkFrame = 0;
             int count = 0;
+			int oldPitchListSize = 0;
+
+
             try
             {
                 XmlWriterSettings settings = new XmlWriterSettings()
@@ -253,7 +273,17 @@ namespace LecturerTrainer.Model
                         xmlSkeletonWriter.WriteStartElement("Skeleton_" + count++);
 						xmlSkeletonWriter.WriteAttributeString("TimeElapse", Tools.getStopWatch().ToString());
                         xmlSkeletonWriter.WriteAttributeString("TrackingState", sk.TrackingState.ToString());
-                        List<Joint> lJoints = sk.Joints.ToList();
+						if (TrainingSideToolViewModel.Get().ToggleAudioRecording && peakRecord){ 
+							System.Diagnostics.Debug.WriteLine(Pitch.Get().getPitch().Count - oldPitchListSize);
+							oldPitchListSize = Pitch.Get().getPitch().Count;
+							/*xmlSkeletonWriter.WriteAttributeString("PeakValue", Model.AudioAnalysis.Pitch.wiggle[Model.AudioAnalysis.Pitch.wiggle.Length-1].ToString());
+							xmlSkeletonWriter.WriteAttributeString("PeakValue2", Model.AudioAnalysis.Pitch.wiggle[Model.AudioAnalysis.Pitch.wiggle.Length-2].ToString());
+							xmlSkeletonWriter.WriteAttributeString("PeakValue3", Model.AudioAnalysis.Pitch.wiggle[Model.AudioAnalysis.Pitch.wiggle.Length-3].ToString());
+							xmlSkeletonWriter.WriteAttributeString("PeakValue", Pitch.Get().getPitch().ElementAt(Pitch.Get().getPitch().Length-1).ToString());
+							xmlSkeletonWriter.WriteAttributeString("PeakValue2", Pitch.Get().getPitch().ElementAt(Pitch.Get().getPitch()..Length-2).ToString());
+							xmlSkeletonWriter.WriteAttributeString("PeakValue3", Pitch.Get().getPitch().ElementAt(Pitch.Get().getPitch().Length-3).ToString());*/
+						}
+						List<Joint> lJoints = sk.Joints.ToList();
                         lJoints.ForEach(joint =>
                         {
                             xmlSkeletonWriter.WriteStartElement(joint.JointType.ToString());
@@ -269,7 +299,6 @@ namespace LecturerTrainer.Model
 
                 }, () =>
                 {
-                    //Console.Out.WriteLine("-end- " + getTimer() + " -end-");
                     xmlSkeletonWriter.WriteEndElement();
                     xmlSkeletonWriter.WriteEndDocument();
                     xmlSkeletonWriter.Flush();
@@ -282,9 +311,7 @@ namespace LecturerTrainer.Model
                     Tools.stopStopWatch();
                 Console.WriteLine(ex.ToString());
             }
-            
-            //stopWatch.Stop();
-        }
+		}
 
         public static void StartSavingXMLFace()
         {
@@ -360,6 +387,8 @@ namespace LecturerTrainer.Model
                 Console.WriteLine(ex.ToString());
             }
         }
+
+
         #endregion
 
         public static void StartSavingBinaryFace()

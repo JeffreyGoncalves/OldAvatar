@@ -52,7 +52,13 @@ namespace LecturerTrainer.ViewModel
         private string statisticsPath = "";
 
         private ReplayAvatar skeletonScrolling;
-
+		public ReplayAvatar SkeletonScrolling
+		{
+			get
+			{
+				return skeletonScrolling;
+			}
+		}
 
         /// <summary>
         /// Time elapsed in the video, textual version
@@ -616,6 +622,7 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void avatarDisplay()
         {
+			Console.Out.WriteLine("here");
             if (filePathAvatar != null)
             {
                 filePath = filePathVideoAvatar;
