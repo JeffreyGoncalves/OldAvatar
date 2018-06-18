@@ -219,7 +219,7 @@ namespace Microsoft.Kinect.Toolkit.FaceTracking
                 Marshal.Copy(animUnitCoeffPtr, animUnitCoeff, 0, animUnitCoeff.Length);
             }
 
-            return new EnumIndexableCollection<AnimationUnit, float>(animUnitCoeff);
+            return new EnumIndexableCollection<AnimationUnit, float>(animUnitCoeff);            
         }
 
         /// <summary>
