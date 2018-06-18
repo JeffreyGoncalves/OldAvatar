@@ -249,16 +249,16 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// Create all elements in the comboBox
         /// </summary>
-        private List<KeyValuePairPerso<string, string>> getDate()
+        private List<Tuple<string, string>> getDate()
         {
-            List<KeyValuePairPerso<string, string>> list = new List<KeyValuePairPerso<string, string>>();
-            list.Add(new KeyValuePairPerso<string, string>("Name", "Last Record"));
-            list.Add(new KeyValuePairPerso<string, string>("Name", "Today"));
-            list.Add(new KeyValuePairPerso<string, string>("Name", "Yesterday"));
-            list.Add(new KeyValuePairPerso<string, string>("Name", "7 last days"));
-            list.Add(new KeyValuePairPerso<string, string>("Name", "15 last days"));
-            list.Add(new KeyValuePairPerso<string, string>("Name", "Last month"));
-            list.Add(new KeyValuePairPerso<string, string>("Name", "Personalized"));
+            List<Tuple<string, string>> list = new List<Tuple<string, string>>();
+            list.Add(new Tuple<string, string>("Name", "Last Record"));
+            list.Add(new Tuple<string, string>("Name", "Today"));
+            list.Add(new Tuple<string, string>("Name", "Yesterday"));
+            list.Add(new Tuple<string, string>("Name", "7 last days"));
+            list.Add(new Tuple<string, string>("Name", "15 last days"));
+            list.Add(new Tuple<string, string>("Name", "Last month"));
+            list.Add(new Tuple<string, string>("Name", "Personalized"));
             
             return list;
         }
@@ -465,9 +465,9 @@ namespace LecturerTrainer.ViewModel
 
         public void ValueOfComboBoxChanged(string newValue)
         {
-            var item = choiceResultView.cmbDate.SelectedValue as KeyValuePairPerso<string, string>;
+            var item = choiceResultView.cmbDate.SelectedValue as Tuple<string, string>;
             if (item != null)
-                SetDate(item.Value);
+                SetDate(item.Item2);
         }
 
         /// <summary>
