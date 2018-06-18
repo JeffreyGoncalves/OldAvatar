@@ -36,14 +36,13 @@ namespace LecturerTrainer.ViewModel
             set
             {
                 pathFile = value;
-                skeletonsList = ReplayAvatar.LoadSkeletonsFromXML(pathFile);
+                SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
                 skeletonNumber = 0;
                 launchTraining();
             }
         }
 
         public string folderPath;
-        public static string faceDataPath = "";
 
         /// <summary>
         /// The dictionary contains videos name in key and path in value
@@ -75,16 +74,8 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
-        public int skeletonNumber = 0;
-
-        private SortedList<int, Tuple<int, Skeleton>> skeletonsList;
-        public SortedList<int, Tuple<int, Skeleton>> SkeletonList
-        {
-            get
-            {
-                return skeletonsList;
-            }
-        }
+        private int skeletonNumber = 0;
+        public SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> SkeletonList { get; private set; }
 
         public static WaveGesture _gesture = new WaveGesture();
         public static HandTraining _handgesture = new HandTraining();
@@ -92,7 +83,6 @@ namespace LecturerTrainer.ViewModel
         public static WelcomeTraining _welcomegesture = new WelcomeTraining();
         public static SaluteTraining _salutegesture = new SaluteTraining();
         public static HypeTraining _hypegesture = new HypeTraining();
-        public static FaceTraining _facegesture = new FaceTraining();
 
         public static string AvatarGesture;
 
@@ -115,7 +105,6 @@ namespace LecturerTrainer.ViewModel
             _welcomegesture.GestureRecognized += WelcomeTraining_GestureRecognized;
             _salutegesture.GestureRecognized += SaluteTraining_GestureRecognized;
             _hypegesture.GestureRecognized += HypeTraining_GestureRecognized;
-            _facegesture.GestureRecognized += FaceTraining_GestureRecognized;
         }
 
         public void initialize()
@@ -192,7 +181,7 @@ namespace LecturerTrainer.ViewModel
             string curItem = twav.VideosList.SelectedItem.ToString();
             //AvatarGesture = curItem;
             pathFile = videosMap[curItem] + "/" + curItem + ".skd";
-            skeletonsList = ReplayAvatar.LoadSkeletonsFromXML(pathFile);
+            SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
             skeletonNumber = 0;
             launchTraining();
         }
@@ -236,7 +225,7 @@ namespace LecturerTrainer.ViewModel
             (TrainingSideTool.Get().FindResource("StopVideoTraining") as Storyboard).Begin();
             VideosNameList = new List<string>();
             DrawingSheetAvatarViewModel.Get().isTraining = false;
-            skeletonsList = null;
+            SkeletonList = null;
         }
         /// <summary>
         /// Create the video dictionary with readable files
@@ -269,7 +258,7 @@ namespace LecturerTrainer.ViewModel
                 twav.VideoName.Text = curItem;
                 AvatarGesture = curItem;
                 pathFile = videosMap[curItem] + "/" + curItem + ".skd";
-                skeletonsList = ReplayAvatar.LoadSkeletonsFromXML(pathFile);
+                SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
                 skeletonNumber = 0;
                 launchTraining();
             } 
@@ -279,7 +268,7 @@ namespace LecturerTrainer.ViewModel
         public Skeleton chooseSkeletonToDisplay()
         {           
             Skeleton skToReturn = null;
-            if (skeletonsList != null)
+            if (SkeletonList != null)
             {
                 if (playMode)
                 {
@@ -303,35 +292,6 @@ namespace LecturerTrainer.ViewModel
                 }
             }
             return skToReturn;
-        }
-
-        public String PathSkdAvatar()
-        {
-            String returnPath = "";
-
-            if (pathFile != "")
-            {
-                string curItem = twav.VideosList.SelectedItem.ToString();
-                returnPath = videosMap[curItem] + "/" + curItem + ".skd";
-            }
-
-            return returnPath;
-        }
-
-        public String PathFaceAvatar()
-        {
-            String returnPath = "";
-
-            if (pathFile != "")
-            {
-                string curItem = twav.VideosList.SelectedItem.ToString();
-                returnPath = videosMap[curItem] + "/" + curItem + ".xml";
-
-                if (!File.Exists(returnPath))
-                    returnPath = "";
-            }
-
-            return returnPath;
         }
 
         //When the waving gesture is recognized, we determine what file should be played to respond to the user
@@ -502,31 +462,6 @@ namespace LecturerTrainer.ViewModel
                 string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Raise_your_arms.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
-            }
-        }
-
-        public static void FaceTraining_GestureRecognized(object sender, EventArgs e)
-        {
-            faceDataPath = "";//TODO Test
-            string facePath = "";
-            bool complete = ((FaceTraining)sender).Complete;
-
-            if (complete)
-            {
-                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
-                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
-                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
-
-                facePath = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.xml");
-
-                if (File.Exists(facePath))
-                {
-                    faceDataPath = facePath;
-                }
-                else
-                {
-                    faceDataPath = "";
-                }
             }
         }
     }

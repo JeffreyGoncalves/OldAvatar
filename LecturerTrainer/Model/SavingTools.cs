@@ -48,6 +48,8 @@ namespace LecturerTrainer.Model
         /// </summary>
         private static PCQueue<FaceDataWrapper> xmlFaceQueue;
 
+
+        private static int countSk = 0;
         #endregion
 
         /// <summary>
@@ -178,14 +180,7 @@ namespace LecturerTrainer.Model
         /// <param name="fdw"></param>
         public static void EnqueueXMLFace(FaceDataWrapper fdw)
         {
-            try
-            {
-                xmlFaceQueue.EnqueueItem(fdw);
-            }
-            catch(Exception e)
-            {
-                 Console.WriteLine(e.ToString());
-            }
+            xmlFaceQueue.EnqueueItem(fdw);
         }
 
         #endregion
@@ -240,7 +235,7 @@ namespace LecturerTrainer.Model
             Tools.initStopWatch();
             Tools.startStopWatch();
             int nbSkFrame = 0;
-            int count = 0;
+            
             try
             {
                 XmlWriterSettings settings = new XmlWriterSettings()
@@ -256,7 +251,8 @@ namespace LecturerTrainer.Model
                     nbSkFrame++;
                     if(nbSkFrame % 2 == 1 || nbSkFrame == 0)
                     {
-                        xmlSkeletonWriter.WriteStartElement("Skeleton_" + count++);
+                        Console.Out.WriteLine("-- ske : " + countSk);
+                        xmlSkeletonWriter.WriteStartElement("Skeleton_" + countSk++);
 						xmlSkeletonWriter.WriteAttributeString("TimeElapse", Tools.getStopWatch().ToString());
                         xmlSkeletonWriter.WriteAttributeString("TrackingState", sk.TrackingState.ToString());
                         List<Joint> lJoints = sk.Joints.ToList();
@@ -287,13 +283,14 @@ namespace LecturerTrainer.Model
                     Tools.stopStopWatch();
                 Console.WriteLine(ex.ToString());
             }
-            
-            //stopWatch.Stop();
+
+            //Tools.stopStopWatch();
         }
 
         public static void StartSavingXMLFace()
         {
-            int nbFaceFrame = 0;
+            int count = 0;
+            int oldCount = countSk;
             try
             {
                 XmlWriterSettings settings = new XmlWriterSettings()
@@ -306,147 +303,93 @@ namespace LecturerTrainer.Model
                 xmlFaceWriter.WriteStartElement("Faces");
                 
                 xmlFaceQueue = new PCQueue<FaceDataWrapper>( fdw =>
-               {
-                   xmlFaceWriter.WriteStartElement("Face_" + nbFaceFrame++);
-                   xmlFaceWriter.WriteStartElement("FacePoints3D");
-                   for(int i = 0; i < fdw.depthPointsList.Count; ++i)
-                   {
-                       switch(i)
-                       {
-                           case 7: case 8: case 15: case 16: case 17: case 18: 
-                           case 19: case 20: case 21: case 22: case 23: case 24:
-                           case 31: case 40: case 41: case 48: case 49: case 50:
-                           case 51: case 52: case 53: case 54: case 55: case 56:
-                           case 57: case 64: case 87:
-                               {
-                                   xmlFaceWriter.WriteStartElement("Point3D_" + i);
-                                   xmlFaceWriter.WriteAttributeString("X", fdw.depthPointsList.ElementAt(i).X.ToString());
-                                   xmlFaceWriter.WriteAttributeString("Y", fdw.depthPointsList.ElementAt(i).Y.ToString());
-                                   xmlFaceWriter.WriteAttributeString("Z", fdw.depthPointsList.ElementAt(i).Z.ToString());
-                                   xmlFaceWriter.WriteEndElement();
-                               }
-                               break;
-                       }
-                   }
-                   xmlFaceWriter.WriteEndElement();
-                   xmlFaceWriter.WriteStartElement("FacePoints");
-                   for(int i = 0; i < fdw.colorPointsList.Count; ++i)
-                   {
-                       xmlFaceWriter.WriteStartElement("Point_" + i);
-                       xmlFaceWriter.WriteAttributeString("X", fdw.colorPointsList.ElementAt(i).X.ToString());
-                       xmlFaceWriter.WriteAttributeString("Y", fdw.colorPointsList.ElementAt(i).Y.ToString());
-                       xmlFaceWriter.WriteEndElement();
-                   }
-                   xmlFaceWriter.WriteEndElement();
+                {
+                    if (count == 0 || oldCount != countSk)
+                    {
+                        Console.Out.WriteLine("-- fac : " + count);
+                        xmlFaceWriter.WriteStartElement("Face_" + count++);
+                        xmlFaceWriter.WriteAttributeString("TimeElapse", Tools.getStopWatch().ToString());
+                        xmlFaceWriter.WriteStartElement("FacePoints3D");
+                        for (int i = 0; i < fdw.depthPointsList.Count; ++i)
+                        {
+                            switch (i)
+                            {
+                                case 7:
+                                case 8:
+                                case 15:
+                                case 16:
+                                case 17:
+                                case 18:
+                                case 19:
+                                case 20:
+                                case 21:
+                                case 22:
+                                case 23:
+                                case 24:
+                                case 31:
+                                case 40:
+                                case 41:
+                                case 48:
+                                case 49:
+                                case 50:
+                                case 51:
+                                case 52:
+                                case 53:
+                                case 54:
+                                case 55:
+                                case 56:
+                                case 57:
+                                case 64:
+                                case 87:
+                                    {
+                                        xmlFaceWriter.WriteStartElement("Point3D_" + i);
+                                        xmlFaceWriter.WriteAttributeString("X", fdw.depthPointsList.ElementAt(i).X.ToString());
+                                        xmlFaceWriter.WriteAttributeString("Y", fdw.depthPointsList.ElementAt(i).Y.ToString());
+                                        xmlFaceWriter.WriteAttributeString("Z", fdw.depthPointsList.ElementAt(i).Z.ToString());
+                                        xmlFaceWriter.WriteEndElement();
+                                    }
+                                    break;
+                            }
+                        }
+                        xmlFaceWriter.WriteEndElement();
+                        xmlFaceWriter.WriteStartElement("FacePoints");
+                        for (int i = 0; i < fdw.colorPointsList.Count; ++i)
+                        {
+                            xmlFaceWriter.WriteStartElement("Point_" + i);
+                            xmlFaceWriter.WriteAttributeString("X", fdw.colorPointsList.ElementAt(i).X.ToString());
+                            xmlFaceWriter.WriteAttributeString("Y", fdw.colorPointsList.ElementAt(i).Y.ToString());
+                            xmlFaceWriter.WriteEndElement();
+                        }
+                        xmlFaceWriter.WriteEndElement();
 
-                   xmlFaceWriter.WriteStartElement("FaceTriangles");
-                   for(int i = 0; i < fdw.faceTriangles.Count(); ++i)
-                   {
-                       // Amirali
-                       xmlFaceWriter.WriteStartElement("FaceTriangle_" + i);
-                       xmlFaceWriter.WriteAttributeString("Vertex_1", fdw.faceTriangles.ElementAt(i).First.ToString());
-                       xmlFaceWriter.WriteAttributeString("Vertex_2", fdw.faceTriangles.ElementAt(i).Second.ToString());
-                       xmlFaceWriter.WriteAttributeString("Vertex_3", fdw.faceTriangles.ElementAt(i).Third.ToString());
-                       xmlFaceWriter.WriteEndElement();
-                   }
-                   xmlFaceWriter.WriteEndElement();
-                   xmlFaceWriter.WriteEndElement();
-
-               }, () =>
-               {
-                   xmlFaceWriter.Flush();
-                   xmlFaceWriter.WriteEndElement();
-                   xmlFaceWriter.WriteEndDocument();
-                   xmlFaceWriter.Close();
-
-               }, "XMLFaceRecordingTask");
+                        xmlFaceWriter.WriteStartElement("FaceTriangles");
+                        for (int i = 0; i < fdw.faceTriangles.Count(); ++i)
+                        {
+                            // Amirali
+                            xmlFaceWriter.WriteStartElement("FaceTriangle_" + i);
+                            xmlFaceWriter.WriteAttributeString("Vertex_1", fdw.faceTriangles.ElementAt(i).First.ToString());
+                            xmlFaceWriter.WriteAttributeString("Vertex_2", fdw.faceTriangles.ElementAt(i).Second.ToString());
+                            xmlFaceWriter.WriteAttributeString("Vertex_3", fdw.faceTriangles.ElementAt(i).Third.ToString());
+                            xmlFaceWriter.WriteEndElement();
+                        }
+                        xmlFaceWriter.WriteEndElement();
+                        xmlFaceWriter.WriteEndElement();
+                        oldCount = countSk;
+                    }
+                }, () =>
+                {
+                    xmlFaceWriter.Flush();
+                    xmlFaceWriter.WriteEndElement();
+                    xmlFaceWriter.WriteEndDocument();
+                    xmlFaceWriter.Close();
+                }, "XMLFaceRecordingTask");
             } catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
         }
         #endregion
-
-        ///<summary>
-        ///Save the face data in a binary file (don't work yet)
-        ///</summary>
-        public static void StartSavingBinaryFace()
-        {
-            string fileName = SavingTools.pathFolder + "/" + "faceData.dat";
-
-            using (BinaryWriter writer = new BinaryWriter(File.Open(fileName, FileMode.Create)))
-            {
-                PCQueue<FaceDataWrapper> binaryFaceQueue = new PCQueue<FaceDataWrapper>(fdw =>
-                {
-                    //writer.Write("Face_" + nbFaceFrame++);
-                    //writer.Write("FacePoints3D");
-                    for (int i = 0; i < fdw.depthPointsList.Count; ++i)
-                    {
-                        switch (i)
-                        {
-                            case 7:
-                            case 8:
-                            case 15:
-                            case 16:
-                            case 17:
-                            case 18:
-                            case 19:
-                            case 20:
-                            case 21:
-                            case 22:
-                            case 23:
-                            case 24:
-                            case 31:
-                            case 40:
-                            case 41:
-                            case 48:
-                            case 49:
-                            case 50:
-                            case 51:
-                            case 52:
-                            case 53:
-                            case 54:
-                            case 55:
-                            case 56:
-                            case 57:
-                            case 64:
-                            case 87:
-                                {
-                                    writer.Write(i);
-                                    writer.Write(fdw.depthPointsList.ElementAt(i).X);
-                                    writer.Write(fdw.depthPointsList.ElementAt(i).Y);
-                                    writer.Write(fdw.depthPointsList.ElementAt(i).Z);
-                                }
-                                break;
-                        }
-                    }
-
-                    //writer.Write("FacePoints");
-
-                    for (int i = 0; i < fdw.colorPointsList.Count; ++i)
-                    {
-                        writer.Write(i);
-                        writer.Write(fdw.colorPointsList.ElementAt(i).X);
-                        writer.Write(fdw.colorPointsList.ElementAt(i).Y);
-                    }
-
-                    //writer.Write("FaceTriangles");
-
-                    for (int i = 0; i < fdw.faceTriangles.Count(); ++i)
-                    {
-                        writer.Write(i);
-                        writer.Write(fdw.faceTriangles.ElementAt(i).First);
-                        writer.Write(fdw.faceTriangles.ElementAt(i).Second);
-                        writer.Write(fdw.faceTriangles.ElementAt(i).Third);
-                    }
-
-                }, () => 
-                {
-                    writer.Close();
-                }, "BinaryFaceRecordingTask");
-            }
-        }
-
+        
         /// <summary>
         /// Functions disposing the different queue when their recordings ended 
         /// </summary>
@@ -480,7 +423,7 @@ namespace LecturerTrainer.Model
     /// Data wrapper class to ease the writing/ loading of the face data
     /// </summary>
     /// <author> Amirali Ghazi </author>
-    struct FaceDataWrapper
+    public struct FaceDataWrapper
     {
         public List<Vector3DF> depthPointsList;
         public List<Microsoft.Kinect.Toolkit.FaceTracking.PointF> colorPointsList;

@@ -67,6 +67,15 @@ namespace LecturerTrainer.ViewModel
 
         public static int initTime = 0;
 
+        private static bool skdRead = false;
+        public static bool SkRead
+        {
+            get
+            {
+                return skdRead;
+            }
+        }
+
         /// <summary>
         /// Time elapsed in the video, textual version
         /// </summary>
@@ -215,8 +224,6 @@ namespace LecturerTrainer.ViewModel
             instance = this;
             performanceSoundCommand = new RelayCommand(performanceSound);
             playPerformanceCommand = new RelayCommand(Play);
-            //speedUpPerformanceCommand = new RelayCommand(SpeedUp);
-            //slowDownPerformanceCommand = new RelayCommand(SlowDown);
             pausePerformanceCommand = new RelayCommand(Pause);
             stopPerformanceCommand = new RelayCommand(Stop);
             //videoAvatarDisplayCommand = new RelayCommand(videoAvatarDisplay);
@@ -234,6 +241,8 @@ namespace LecturerTrainer.ViewModel
             //ManageSpeedElements();
             Mute();
             pauseButtonCommand();
+            if (!skdRead)
+                throw new Exception(".skd file is not correct\nPlease try with one avatarSkeletonData.skd file correct");
         }
 
 
@@ -249,7 +258,14 @@ namespace LecturerTrainer.ViewModel
 
         public static void Set(String file)
         {
-            instance = new ReplayViewModel(file);
+            try
+            {
+                instance = new ReplayViewModel(file);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         /// <summary>
@@ -399,23 +415,30 @@ namespace LecturerTrainer.ViewModel
                 }
                 else if (Path.GetFileName(filePath) == "avatarSkeletonData.skd")
                 {
-                    DrawingSheetView.Get().Show3DSheet();
-                    filePathAvatar = filePath;
-                    activate(ReplayView.Get().Avatar, GeneralSideTool.Get().Avatar);
-                    deactivateOther(ReplayView.Get().Stream, ReplayView.Get().VideoAvatar);
+                    try
+                    {
+                        skdRead = true;
+                        DrawingSheetView.Get().Show3DSheet();
+                        filePathAvatar = filePath;
+                        activate(ReplayView.Get().Avatar, GeneralSideTool.Get().Avatar);
+                        deactivateOther(ReplayView.Get().Stream, ReplayView.Get().VideoAvatar);
 
-                    var faceData = filePath.Replace("avatarSkeletonData.skd", "faceData.xml");
-                    if(File.Exists(faceData))
-                    {
-                        skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, this, 0);
-                        tryAddOtherSources("avatarSkeletonData.skd");
-                        isReplaying = true;
+                        var faceData = filePath.Replace("avatarSkeletonData.skd", "faceData.xml");
+                        if(File.Exists(faceData))
+                        {
+                            skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, this, 0);
+                            tryAddOtherSources("avatarSkeletonData.skd");
+                            isReplaying = true;
+                        }
+                        else
+                        {
+                            skeletonScrolling = new ReplayAvatar(filePathAvatar, this, 0);
+                            tryAddOtherSources("avatarSkeletonData.skd");
+                            isReplaying = true;
+                        }
                     }
-                    else
-                    {
-                        skeletonScrolling = new ReplayAvatar(filePathAvatar, this, 0);
-                        tryAddOtherSources("avatarSkeletonData.skd");
-                        isReplaying = true;
+                    catch (ArgumentException e) {
+                        throw e;
                     }
                 }
                 if (isReplaying)
@@ -441,7 +464,7 @@ namespace LecturerTrainer.ViewModel
         private void activate(RadioButton replayViewRadio, RadioButton generalSideToolButton)
         {
             replayViewRadio.IsChecked = true;
-            replayViewRadio.Command.Execute(null);
+            //replayViewRadio.Command.Execute(null);
             generalSideToolButton.IsChecked = true;
             replayViewRadio.IsEnabled = true;
             replayViewRadio.Opacity = 1;
@@ -475,6 +498,7 @@ namespace LecturerTrainer.ViewModel
                     {
                         // the replay needs an instance of ReplayAvatar, so if the first file chose is not the .skd
                         // we have to create one
+                        skdRead = true;
                         skeletonScrolling = new ReplayAvatar(s, this, 0);
                         addOtherVideoSources(ReplayView.Get().Avatar);
                         filePathAvatar = s;
