@@ -220,8 +220,6 @@ namespace LecturerTrainer.Model
                 // We only draw the last skeleton
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
                 setDisplayedTime();
-
-
             }
             else
             {
