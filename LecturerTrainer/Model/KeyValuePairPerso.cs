@@ -2,6 +2,8 @@
 
 namespace LecturerTrainer.Model
 {
+
+    // Alban 
     /// <summary>
     /// Class that allows to modelize a KeyValuePair
     /// </summary>

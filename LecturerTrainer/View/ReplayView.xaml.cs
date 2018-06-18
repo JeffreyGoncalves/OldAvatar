@@ -33,8 +33,8 @@ namespace LecturerTrainer.View
         {
             InitializeComponent();
             instance = this;
-
-            this.DataContext = ReplayViewModel.Get();
+            Console.Out.WriteLine("ReplayView");
+            //this.DataContext = ReplayViewModel.Get();
             this.FeedbackLabel1.DataContext = TrainingSideToolViewModel.Get();
             this.FeedbackLabel2.DataContext = TrainingSideToolViewModel.Get();
             this.FeedbackLabel3.DataContext = TrainingSideToolViewModel.Get();
@@ -72,9 +72,11 @@ namespace LecturerTrainer.View
             ReplayAvatar.offset += ReplayViewModel.localOffset;
             if(Stream.IsChecked == true)
             {
-                DrawingSheetView.Get().ReplayVideo.Play();
+                if(isPlayed)
+                    DrawingSheetView.Get().ReplayVideo.Play();
                 DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
-                DrawingSheetView.Get().ReplayAudio.Play();
+                if(isPlayed)
+                    DrawingSheetView.Get().ReplayAudio.Play();
                 DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
             }
             if (isPlayed)
