@@ -890,6 +890,8 @@ namespace LecturerTrainer.ViewModel
                 {
                     DrawingSheetAvatarViewModel.backgroundXMLFaceRecordingEventStream += backgroundFaceXMLRecording;
                     SavingTools.StartSavingXMLFace();
+                    //Binary change
+                    //SavingTools.StartSavingBinaryFace();
                 }
 
 				if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true){
@@ -1198,7 +1200,6 @@ namespace LecturerTrainer.ViewModel
         public void UpdateChrono(object source, ElapsedEventArgs e)
         {
             Chrono = stopwatch.ToString();
-            Console.Out.WriteLine(Chrono);
             if (_isTimeLimited && _limitedTimeSum > 0)
             {
                 // remaining time 

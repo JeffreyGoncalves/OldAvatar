@@ -166,7 +166,6 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                                 }
                             }
                             countR++;
-
                         }
                         //Test if the user is looking at the extrem right area
                         else if (rightEye.Z - leftEye.Z < -0.057)
