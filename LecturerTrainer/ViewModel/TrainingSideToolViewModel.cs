@@ -820,6 +820,11 @@ namespace LecturerTrainer.ViewModel
             SavingTools.EnqueueXMLFace(fdw);
         }
 
+		private void backgroundVoiceXMLRecording(object sender, float value)
+        {
+            SavingTools.EnqueueXMLVoice(value);
+        }
+
         // begins the video recording and set it up 
         private void BeginVideoAndAudioRecording()
         {
@@ -887,6 +892,11 @@ namespace LecturerTrainer.ViewModel
                     SavingTools.StartSavingXMLFace();
                 }
 
+				if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true){
+					DrawingSheetAvatarViewModel.backgroundXMLVoiceRecordingEventStream += backgroundVoiceXMLRecording;
+					SavingTools.startSavingTonePeak();
+				}
+
             }
             if (_ToggleAvatarVideoRecording)
             {
@@ -946,6 +956,10 @@ namespace LecturerTrainer.ViewModel
                 MainWindow.main.audioProvider.stopSpeechRateDetection();
                 MainWindow.main.audioProvider.stopPeakDetection();
             }
+				if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true){
+					DrawingSheetAvatarViewModel.backgroundXMLVoiceRecordingEventStream -= backgroundVoiceXMLRecording;
+					SavingTools.XMLVoiceDispose();
+				}
             if (storingFeedbackThreadData != null)
             {
                 storingFeedbackThreadData.Processing = false;
@@ -1093,9 +1107,20 @@ namespace LecturerTrainer.ViewModel
             fbd.Title = "Select the file of the performance you want to replay";
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                ReplayViewModel.Set(fbd.FileName);
-                replayViewModel = ReplayViewModel.Get();
-                replayMode();
+                try
+                {
+                    ReplayViewModel.Set(fbd.FileName);
+                    replayViewModel = ReplayViewModel.Get();
+                    replayMode();
+                }
+                catch(ArgumentException e)
+                {
+                    System.Windows.Forms.MessageBox.Show("impossible to open: " + e.ParamName);
+                }
+                catch(Exception e)
+                {
+                    System.Windows.Forms.MessageBox.Show(e.Message);
+                }
             }
         }
 
@@ -1173,29 +1198,13 @@ namespace LecturerTrainer.ViewModel
         public void UpdateChrono(object source, ElapsedEventArgs e)
         {
             Chrono = stopwatch.ToString();
+            Console.Out.WriteLine(Chrono);
             if (_isTimeLimited && _limitedTimeSum > 0)
             {
-                int residualH, residualM, residualS;
-                string residualTimeString = "";
                 // remaining time 
                 Double floatting = 360 - ((360 * (_limitedTimeSum - stopwatch.NowSeconds())) / (float)_limitedTimeSum);
 
-                residualH = (_limitedTimeSum - stopwatch.NowSeconds()) / 3600;
-                if (residualH < 10)
-                    residualTimeString += "0";
-                residualTimeString += residualH + ":";
-
-                residualM = ((_limitedTimeSum - stopwatch.NowSeconds()) % 3600) / 60;
-                if (residualM < 10)
-                    residualTimeString += "0";
-                residualTimeString += residualM + ":";
-
-                residualS = ((_limitedTimeSum - stopwatch.NowSeconds()) % 3600) % 60;
-                if (residualS < 10)
-                    residualTimeString += "0";
-                residualTimeString += residualS;
-
-                IconViewModel.get().ResidualTimeText = residualTimeString;
+                IconViewModel.get().ResidualTimeText = Tools.FormatTime((_limitedTimeSum - stopwatch.NowSeconds()) * 1000);
 
                 TrainerStopwatchViewModel.Get().update((int)floatting);
                 if (floatting >= 360)

@@ -1287,7 +1287,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 int nextID = idOfPeaks[i + 1];
                 float dip = MinValue(intensity, actualID, nextID);
                 float diffDip = Math.Abs(valueOfPeaks[i] - dip);
-                if (diffDip > mindip && speaking[actualID] == 1 && valueOfPeaks[i] > 80)
+                if (diffDip > mindip && speaking[actualID] == 1 && valueOfPeaks[i] > 89)
                 {
                     validNbPeaks++;
                 }

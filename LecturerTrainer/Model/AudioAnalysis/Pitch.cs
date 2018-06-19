@@ -31,6 +31,10 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// List containing the pitch evolution in the time.
         /// </summary>
         private List<float> pitchList;
+		private static Pitch instance = null;
+		public static Pitch Get(){
+			return instance;
+		}
 
         /// <summary>
         /// Used to record data
@@ -169,6 +173,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             ThresholdVariation = 50.0;
             minFrequency = 10.0;
             maxFrequency = 130.0;
+			instance = this;
         }
 
         #endregion
@@ -257,7 +262,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                     to a change in facial expression.
                     */
 
-                    // Big variation
+                    // Too much variation
                     /*        if (sd > ThresholdVariation && !this.sent && pitchList.Last() > 0)
                            {
                                 BoringEvent(this, new LongFeedback(tooMuchVariationText, true));
@@ -322,8 +327,9 @@ namespace LecturerTrainer.Model.AudioAnalysis
             volume *= 10;
             volume = Convert.ToInt32(volume);
 
-
-            if (pitchList.Count > 300) for (i = 0; i < 300; i++) wiggle[i] = pitchList[pitchList.Count - 301 + i];
+            if (pitchList.Count > 300){
+				for (i = 0; i < 300; i++) wiggle[i] = pitchList[pitchList.Count - 301 + i]; //wiggle = the 300 last elenents from pitchList
+			}
 
             this.PitchSmoothing();
             if (canSendEvent)

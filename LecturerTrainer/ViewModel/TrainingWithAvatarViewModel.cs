@@ -36,7 +36,7 @@ namespace LecturerTrainer.ViewModel
             set
             {
                 pathFile = value;
-                skeletonsList = ReplayAvatar.LoadSkeletonsFromXML(pathFile);
+                SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
                 skeletonNumber = 0;
                 launchTraining();
             }
@@ -75,15 +75,7 @@ namespace LecturerTrainer.ViewModel
         }
 
         private int skeletonNumber = 0;
-
-        private SortedList<int, Tuple<int, Skeleton>> skeletonsList;
-        public SortedList<int, Tuple<int, Skeleton>> SkeletonList
-        {
-            get
-            {
-                return skeletonsList;
-            }
-        }
+        public SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> SkeletonList { get; private set; }
 
         public static WaveGesture _gesture = new WaveGesture();
         public static HandTraining _handgesture = new HandTraining();
@@ -189,7 +181,7 @@ namespace LecturerTrainer.ViewModel
             string curItem = twav.VideosList.SelectedItem.ToString();
             //AvatarGesture = curItem;
             pathFile = videosMap[curItem] + "/" + curItem + ".skd";
-            skeletonsList = ReplayAvatar.LoadSkeletonsFromXML(pathFile);
+            SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
             skeletonNumber = 0;
             launchTraining();
         }
@@ -233,7 +225,7 @@ namespace LecturerTrainer.ViewModel
             (TrainingSideTool.Get().FindResource("StopVideoTraining") as Storyboard).Begin();
             VideosNameList = new List<string>();
             DrawingSheetAvatarViewModel.Get().isTraining = false;
-            skeletonsList = null;
+            SkeletonList = null;
         }
         /// <summary>
         /// Create the video dictionary with readable files
@@ -266,7 +258,7 @@ namespace LecturerTrainer.ViewModel
                 twav.VideoName.Text = curItem;
                 AvatarGesture = curItem;
                 pathFile = videosMap[curItem] + "/" + curItem + ".skd";
-                skeletonsList = ReplayAvatar.LoadSkeletonsFromXML(pathFile);
+                SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
                 skeletonNumber = 0;
                 launchTraining();
             } 
@@ -276,7 +268,7 @@ namespace LecturerTrainer.ViewModel
         public Skeleton chooseSkeletonToDisplay()
         {           
             Skeleton skToReturn = null;
-            if (skeletonsList != null)
+            if (SkeletonList != null)
             {
                 if (playMode)
                 {

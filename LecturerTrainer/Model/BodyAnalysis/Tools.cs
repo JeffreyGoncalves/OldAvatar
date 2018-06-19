@@ -242,6 +242,36 @@ namespace LecturerTrainer.Model
             return stopWatch.IsRunning;
         }
 
+        public static string FormatTime(int time)
+        {
+            int h, m, s/*, ms*/;
+            string stringTime = "";
+
+            h = time / 3600000;
+            if (h < 10)
+                stringTime += "0";
+            stringTime += h + ":";
+
+            m = (time % 3600000) / 60000;
+            if (m < 10)
+                stringTime += "0";
+            stringTime += m + ":";
+
+            s = ((time % 3600000) % 60000) / 1000;
+            if (s < 10)
+                stringTime += "0";
+            stringTime += s;
+            // not very usefull to display on the UI
+            /*stringTime += ".";
+            ms = ((time % 3600000) % 60000) % 1000;
+            if (ms < 100)
+                stringTime += "0";
+            if (ms < 10)
+                stringTime += "0";
+            stringTime += ms;*/
+            return stringTime;
+        }
+
         #endregion
 
         #region methods for the charts

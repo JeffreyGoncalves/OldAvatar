@@ -15,6 +15,11 @@ using Microsoft.Kinect.Toolkit.FaceTracking;
 using LecturerTrainer.Model.EmotionRecognizer;
 using System.Windows.Threading;
 using System.Diagnostics;
+using LecturerTrainer.View;
+using LecturerTrainer.ViewModel;
+using LecturerTrainer.Model.AudioAnalysis;
+
+
 
 namespace LecturerTrainer.Model
 {
@@ -26,6 +31,18 @@ namespace LecturerTrainer.Model
     {
         private static DateTime localDate = DateTime.Now;
         public static string pathFolder ="";
+
+		private static bool peakRecord = false;
+		public static bool PeakRecord{
+			get
+			{
+				return peakRecord;
+			}
+			set
+			{
+				peakRecord = value;
+			}	
+		}
 
         #region PCQueueFields
         /// <summary>
@@ -48,6 +65,10 @@ namespace LecturerTrainer.Model
         /// </summary>
         private static PCQueue<FaceDataWrapper> xmlFaceQueue;
 
+        /// <summary>
+        /// PCQueue for the openGL Avatar data recording (voice)
+        /// </summary>		
+		private static PCQueue<float> xmlVoiceQueue;
         #endregion
 
         /// <summary>
@@ -58,6 +79,7 @@ namespace LecturerTrainer.Model
         private static VideoFileWriter avatarVideoStreamWriter;
         private static XmlWriter xmlSkeletonWriter;
         private static XmlWriter xmlFaceWriter;
+		private static XmlWriter xmlVoiceWriter;
         #endregion
 
         //private static XmlReader xmlSkeletonReader;
@@ -181,6 +203,15 @@ namespace LecturerTrainer.Model
             xmlFaceQueue.EnqueueItem(fdw);
         }
 
+		/// <summary>
+        /// Enqueue a voice data wrapper to the voice recording queue
+        /// </summary>
+        /// <param name="fdw"></param>
+        public static void EnqueueXMLVoice(float value)
+        {
+            xmlVoiceQueue.EnqueueItem(value);
+        }
+
         #endregion
 
 
@@ -226,14 +257,16 @@ namespace LecturerTrainer.Model
                 Console.WriteLine(ex.ToString());
             }
         }
-        
+
 
         public static void StartSavingXMLSkeleton()
         {
+			Console.Out.WriteLine("here");
             Tools.initStopWatch();
             Tools.startStopWatch();
             int nbSkFrame = 0;
             int count = 0;
+
             try
             {
                 XmlWriterSettings settings = new XmlWriterSettings()
@@ -252,7 +285,7 @@ namespace LecturerTrainer.Model
                         xmlSkeletonWriter.WriteStartElement("Skeleton_" + count++);
 						xmlSkeletonWriter.WriteAttributeString("TimeElapse", Tools.getStopWatch().ToString());
                         xmlSkeletonWriter.WriteAttributeString("TrackingState", sk.TrackingState.ToString());
-                        List<Joint> lJoints = sk.Joints.ToList();
+						List<Joint> lJoints = sk.Joints.ToList();
                         lJoints.ForEach(joint =>
                         {
                             xmlSkeletonWriter.WriteStartElement(joint.JointType.ToString());
@@ -280,9 +313,7 @@ namespace LecturerTrainer.Model
                     Tools.stopStopWatch();
                 Console.WriteLine(ex.ToString());
             }
-            
-            //stopWatch.Stop();
-        }
+		}
 
         public static void StartSavingXMLFace()
         {
@@ -358,6 +389,46 @@ namespace LecturerTrainer.Model
                 Console.WriteLine(ex.ToString());
             }
         }
+
+		public static void startSavingTonePeak()
+		{
+			int valueIndex = 0;
+			try
+            {
+                XmlWriterSettings settings = new XmlWriterSettings()
+                {
+                    ConformanceLevel = ConformanceLevel.Auto,
+                    Indent = true
+                };
+                xmlVoiceWriter = XmlWriter.Create(SavingTools.pathFolder + "/" + "tonePeakData.xml", settings);
+                xmlVoiceWriter.WriteStartDocument();
+                xmlVoiceWriter.WriteStartElement("PeakValues");
+                xmlVoiceQueue = new PCQueue<float>(value =>
+                {
+						System.Diagnostics.Debug.WriteLine("write");
+                        xmlVoiceWriter.WriteStartElement("PeakValue_" + valueIndex++);
+                        xmlVoiceWriter.WriteAttributeString("Value", value.ToString());
+						xmlVoiceWriter.WriteAttributeString("TimeElapse", Tools.getStopWatch().ToString());
+						xmlVoiceWriter.WriteEndElement();
+                }, () =>
+                {
+                    xmlVoiceWriter.WriteEndElement();
+                    xmlVoiceWriter.WriteEndDocument();
+                    xmlVoiceWriter.Flush();
+                    xmlVoiceWriter.Close();
+					System.Diagnostics.Debug.WriteLine("close");
+                }, "XMLVoiceRecordingTask");
+            }
+            catch (Exception ex)
+            {
+                if (Tools.getStateStopWatch())
+                    Tools.stopStopWatch();
+                Console.WriteLine(ex.ToString());
+            }
+		}
+		
+
+
         #endregion
 
         public static void StartSavingBinaryFace()
@@ -459,6 +530,11 @@ namespace LecturerTrainer.Model
             xmlFaceQueue?.Dispose();
         }
 
+		public static void XMLVoiceDispose()
+        {
+            xmlVoiceQueue?.Dispose();
+        }
+
         #endregion
         
     }
@@ -467,7 +543,7 @@ namespace LecturerTrainer.Model
     /// Data wrapper class to ease the writing/ loading of the face data
     /// </summary>
     /// <author> Amirali Ghazi </author>
-    struct FaceDataWrapper
+    public struct FaceDataWrapper
     {
         public List<Vector3DF> depthPointsList;
         public List<Microsoft.Kinect.Toolkit.FaceTracking.PointF> colorPointsList;

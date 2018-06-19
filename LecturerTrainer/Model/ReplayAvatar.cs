@@ -17,6 +17,8 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using OpenTK.Graphics.OpenGL;
+
 
 namespace LecturerTrainer.Model
 {
@@ -93,15 +95,18 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// The sorted list (the key being the frame number) of loaded skeletons
         /// </summary>
-        private static SortedList<int, Tuple<int, Skeleton>> skeletonsList;
+        private static SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> skeletonsList;
 
-        public static SortedList<int, Tuple<int, Skeleton>> SkeletonList
+        public static SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> SkeletonList
         {
             get
             {
                 return skeletonsList;
             }
         }
+
+		private static List<float> replayWiggle = null;
+		private static int wiggleIndex = 0;
       
         #endregion
 
@@ -112,40 +117,40 @@ namespace LecturerTrainer.Model
 
         public ReplayAvatar(string avDir, string fDir, ReplayViewModel rvm, int num)
         {
-            //Console.Out.WriteLine("replayavatar constructor");
-            avatarDir = avDir;
-            faceDir = fDir;
-            replayViewModel = rvm;
-            faceTracking = false;
-            DrawingSheetAvatarViewModel.Get().drawFaceInReplay = false;
+            try
+            {
+                avatarDir = avDir;
+                faceDir = fDir;
+                replayViewModel = rvm;
+                faceTracking = false;
+                DrawingSheetAvatarViewModel.Get().drawFaceInReplay = false;
 
-            //Load the list of the skeletons
-            // TODO fix this
-            currentSkeletonNumber = num;
-
-            skeletonsList = new SortedList<int, Tuple<int, Skeleton>>();
-            skeletonsList = LoadSkeletonsFromXML(avatarDir);
-            
-            //Initilise the first skeleton to be displayed, depending if the replay is on play or stop
-            if (currentSkeletonNumber > skeletonsList.Count)
-                currentSkeleton = skeletonsList[skeletonsList.Count - 1].Item2;
-            else
-                currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
-
-            // draw the first avatar
-            DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
-            DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
-
-            // init of the DispatcherTimer that is used for the replay
-            Tools.initStopWatch();
-            timeToUpdate = new DispatcherTimer();
-            timeToUpdate.Interval = TimeSpan.FromMilliseconds(31.2);
-            timeToUpdate.IsEnabled = true;
-            timeToUpdate.Stop();
-            timeToUpdate.Tick += nextSkeleton;
-            timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
-            timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
-            timeToUpdate.Tick += changeSlider;
+                //Load the list of the skeletons
+                currentSkeletonNumber = num;
+                skeletonsList = new SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>>();
+                skeletonsList = LoadSkeletonsFromXML(avatarDir, faceDir);
+                //Initilise the first skeleton to be displayed, depending if the replay is on play or stop
+                if (currentSkeletonNumber > skeletonsList.Count)
+                    currentSkeleton = skeletonsList[skeletonsList.Count - 1].Item2;
+                else
+                    currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
+                // draw the first avatar
+                DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
+                DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
+                // init of the DispatcherTimer that is used for the replay
+                Tools.initStopWatch();
+                timeToUpdate = new DispatcherTimer();
+                timeToUpdate.Interval = TimeSpan.FromMilliseconds(31.2);
+                timeToUpdate.IsEnabled = true;
+                timeToUpdate.Stop();
+                timeToUpdate.Tick += nextSkeleton;
+                timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
+                timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
+                timeToUpdate.Tick += changeSlider;
+            }catch(ArgumentException e)
+            {
+                throw e;
+            }
         }
         /// <summary>
         /// Constructor for skeleton scrolling without face elements
@@ -164,182 +169,70 @@ namespace LecturerTrainer.Model
             else
                 ReplayView.Get().changeValueOfSlider((int)Tools.getStopWatch() - offset);
         }
-        
-        /// <summary>
-        /// Deserializes an object, can return null if an exception occured 
-        /// </summary>
-        /// <typeparam name="T">A serializable type</typeparam>
-        /// <param name="fileName"></param>
-        /// <returns>An object T that can be null</returns>
-        /*public static T DeserializeObject<T>(string fileName)
-        {
-            try
-            {
-                Stream stream = File.Open(fileName, FileMode.Open);
-                IFormatter formatter = new BinaryFormatter();
-                T temp = (T)formatter.Deserialize(stream);
-                stream.Close();
-                return temp;
-            }
-            catch (IOException ex)
-            {
-                Console.WriteLine("Exception thrown :" + ex.Message);
-                return default(T);
-            }
-        }*/
 
+        private static int replayFace = 0;
         /// <summary>
         /// update the current skeleton in the folder
         /// </summary>
         /// <returns></returns>
         private void nextSkeleton(object sender, EventArgs evt)
         {
-            if (currentSkeletonNumber < skeletonsList.Count)
+			bool face = (faceDir == "") ? false : true;
+            if (currentSkeletonNumber < skeletonsList.Count && (replayFace % 2 )== 0 && face)
             {
                 currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
             }
-            else
+			else if(currentSkeletonNumber < skeletonsList.Count  && !face)
+			{
+				currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
+			}
+            else if (currentSkeletonNumber == skeletonsList.Count)
+            {
                 currentSkeleton = null;
+                Console.Out.WriteLine("here");
+            }
+            /*if((replayFace % 2) == 1)
+            {
+                Console.Out.WriteLine(" -- cur " + skeletonsList[(int)currentSkeletonNumber].Item1);
+                Console.Out.WriteLine(" -- stw " + Tools.getStopWatch() + "\n");
+            }*/
 
             if (currentSkeleton != null)
             {
                 if (faceDir != "")
                 {
-                    try
-                    {
-                        FaceDataWrapper fdw = loadFaceWFrame(faceDir, currentSkeletonNumber);
-                        DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
-                        DrawingSheetAvatarViewModel.Get().drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
+                    DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
+                    DrawingSheetAvatarViewModel.Get().drawFace(skeletonsList[(int)currentSkeletonNumber].Item3.depthPointsList,
+                        skeletonsList[(int)currentSkeletonNumber].Item3.colorPointsList,
+                        skeletonsList[(int)currentSkeletonNumber].Item3.faceTriangles);
                 }
-
                 // We only draw the last skeleton
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
                 setDisplayedTime();
-
-
             }
             else
             {
                 replayViewModel.stopButtonCommand();
             }
-            currentSkeletonNumber += 1;
+			if(face)
+			{
+				if((replayFace % 2) == 1)
+					currentSkeletonNumber += 1;
+				replayFace++;
+			}
+			else
+			{
+				currentSkeletonNumber += 1;
+			}
         }
-                /*
-        private static int count = 0;
-        /// <summary>
-        /// update the current skeleton in the folder
-        /// </summary>
-        /// <returns></returns>
-        private void nextSkeleton(object sender, EventArgs evt)
-        {
-            count++;
-
-            elapsedVideoTime += (ReplayViewModel.normalSpeed);
-            setDisplayedTime();
-
-            if (faceDir != "" && count % 2 == 0)
-            {
-                if (currentSkeletonNumber < skeletonsList.Count)
-                    currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
-                else
-                    currentSkeleton = null;
-
-                if (currentSkeleton != null)
-                {
-                    try
-                    {
-                        FaceDataWrapper fdw = loadFaceWFrame(faceDir, (int)currentSkeletonNumber);
-                        DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
-                        DrawingSheetAvatarViewModel.Get().drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-                else
-                {
-                    replayViewModel.stopButtonCommand();
-                }
-
-                currentSkeletonNumber += 1;
-            }
-            else if(faceDir == "") 
-            {
-                if (currentSkeletonNumber < skeletonsList.Count)
-                    currentSkeleton = skeletonsList[(int)currentSkeletonNumber];
-                else
-                    currentSkeleton = null;
-
-                if (currentSkeleton != null)
-                {
-                    try
-                    {
-                        FaceDataWrapper fdw = loadFaceWFrame(faceDir, (int)currentSkeletonNumber);
-                        DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
-                        DrawingSheetAvatarViewModel.Get().drawFace(fdw.depthPointsList, fdw.colorPointsList, fdw.faceTriangles);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-                else
-                {
-                    replayViewModel.stopButtonCommand();
-                }
-
-                currentSkeletonNumber += 1;
-            }
-
-            // We only draw the last skeleton
-            DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
-}*/
 
         /// <summary>
         /// Updates the displayed time
         /// </summary>
         public static void setDisplayedTime()
         {
-            ReplayViewModel.Get().ElapsedTime = FormatTime(Tools.getStopWatch() - offset);
+            ReplayViewModel.Get().ElapsedTime = Tools.FormatTime((int)Tools.getStopWatch() - offset);
         }
-
-        private static  string FormatTime(long time)
-        {
-            var _timeMS = (int)time;
-            int h, m, s/*, ms*/;
-            string stringTime = "";
-
-            h = _timeMS / 3600000;
-            if (h < 10)
-                stringTime += "0";
-            stringTime += h + ":";
-            
-            m = (_timeMS % 3600000) / 60000;
-            if (m < 10)
-                stringTime += "0";
-            stringTime += m + ":";
-
-            s = ((_timeMS % 3600000) % 60000) / 1000;
-            if (s < 10)
-                stringTime += "0";
-            stringTime += s;
-            // not very usefull to display on the UI
-            /*stringTime += ".";
-            ms = ((_timeMS % 3600000) % 60000) % 1000;
-            if (ms < 100)
-                stringTime += "0";
-            if (ms < 10)
-                stringTime += "0";
-            stringTime += ms;*/
-            return stringTime;
-        }
-        
 
         /// <summary>
         /// Starts the scrolling
@@ -376,7 +269,60 @@ namespace LecturerTrainer.Model
 
         #region XmlSkeletonLoading
 
-        private static int skCount = 0;
+		private static void initReplayWiggle()
+		{
+			replayWiggle = new List<float>();
+			for (int i = 0; i < 300; i++)
+			{
+				replayWiggle.Add(0);
+			}
+		}
+
+		private static void endReplayWiggle()
+		{
+			for (int i = 0; i < 300; i++)
+			{
+				replayWiggle.Add(0);
+			}
+		}
+		
+		public static void drawWiggle()
+		{
+			float  xw, xw1, yw, yw1;
+
+            GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name.Count() > 0 && DrawingSheetAvatarViewModel.Get().actualTheme.SN.Contains(p.name) select p.idTextureOpenGL).First());
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+			
+			GL.PushAttrib(AttribMask.ColorBufferBit);
+            for (int i = 0;  i < 299; i++)
+            {
+				yw = +0.6f + replayWiggle[i + wiggleIndex] / 500.0f; 
+				yw1 = +0.6f + replayWiggle[i + 1 + wiggleIndex] / 500.0f;
+				
+                xw = -2.5f + i / 60.0f;
+                xw1 = -2.5f + (i + 1) / 60.0f;
+
+                GL.PushMatrix();
+                GL.Begin(PrimitiveType.Lines);
+                GL.Color4(0.5, 0.5, 0.5, 1.0);
+                GL.Normal3(0.0f, 0.0f, 1.0f);
+                GL.LineWidth(1.0f);
+
+                GL.TexCoord2((xw + 2.5f) / 5.0, (yw - 0.6) / 1.15);
+                GL.Vertex3(xw, yw, 1.0f);
+
+                GL.TexCoord2((xw1 + 2.5f) / 5.0, (yw1 - 0.6) / 1.15);
+                GL.Vertex3(xw1, yw1, 1.0f);
+
+                GL.End();
+                GL.PopMatrix();
+            }
+			System.Diagnostics.Debug.WriteLine(wiggleIndex);
+            GL.PopAttrib();
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+			wiggleIndex+=2;
+		}
 
         /// <summary>
         /// Load all the skeletons from a file
@@ -384,161 +330,112 @@ namespace LecturerTrainer.Model
         /// <param name="path">The path of the skeletonData</param>
         /// <returns>The sorted list of skeletons</returns>
         /// <author>Amirali Ghazi, modified by Alban Descottes</author>
-        public static SortedList<int, Tuple<int, Skeleton>> LoadSkeletonsFromXML(String path)
+        public static SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> LoadSkeletonsFromXML(String path, string pathFace)
         {
-            skCount = 0;
-            var skeletonSortedListWithTime = new SortedList<int, Tuple<int, Skeleton>>();
-            SortedList<int, Skeleton> skeletonsSortedList = new SortedList<int, Skeleton>();
-            XmlReaderSettings settings = new XmlReaderSettings { IgnoreWhitespace = true, CheckCharacters = true };
-            xmlSkeletonReader = XmlReader.Create(path, settings);
-
-            xmlSkeletonReader.MoveToContent();
-            while (xmlSkeletonReader.Read())
+            try
             {
-                if (xmlSkeletonReader.NodeType == XmlNodeType.Element)
+                int skCount = 0;
+                var skeletonSortedListWithTime = new SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>>();
+                XmlReaderSettings settings = new XmlReaderSettings { IgnoreWhitespace = true, CheckCharacters = true };
+                xmlSkeletonReader = XmlReader.Create(path, settings);
+
+                xmlSkeletonReader.MoveToContent();
+                while (xmlSkeletonReader.Read())
                 {
-                    if (xmlSkeletonReader.Name == "Skeleton_" + skCount)
+                    if (xmlSkeletonReader.NodeType == XmlNodeType.Element)
                     {
-                        Skeleton sk = new Skeleton();
-                        xmlSkeletonReader.MoveToAttribute(0);
-                        int timeElapsed = Convert.ToInt32(xmlSkeletonReader.Value);
-                        xmlSkeletonReader.MoveToAttribute(1);
-                        SkeletonTrackingState skTrackingState = (SkeletonTrackingState)Enum.Parse(typeof(SkeletonTrackingState), xmlSkeletonReader.Value);
-                        xmlSkeletonReader.MoveToContent();
-                        sk.TrackingState = skTrackingState;
+                        if (xmlSkeletonReader.Name == "Skeleton_" + skCount)
+                        {
+                            Skeleton sk = new Skeleton();
+                            xmlSkeletonReader.MoveToAttribute(0);
+                            int timeElapsed = Convert.ToInt32(xmlSkeletonReader.Value);
+                            xmlSkeletonReader.MoveToAttribute(1);
+                            SkeletonTrackingState skTrackingState = (SkeletonTrackingState)Enum.Parse(typeof(SkeletonTrackingState), xmlSkeletonReader.Value);
+							if(xmlSkeletonReader.MoveToAttribute("PeakValue"))
+							{
+								if (replayWiggle == null){
+									initReplayWiggle();
+								}
+								replayWiggle.Add(Convert.ToSingle(xmlSkeletonReader.Value));
+								xmlSkeletonReader.MoveToAttribute("PeakValue2");
+								replayWiggle.Add(Convert.ToSingle(xmlSkeletonReader.Value));
+								xmlSkeletonReader.MoveToAttribute("PeakValue3");
+								replayWiggle.Add(Convert.ToSingle(xmlSkeletonReader.Value));
+							}
+                            xmlSkeletonReader.MoveToContent();
+                            sk.TrackingState = skTrackingState;
                         
-                        Joint currentJoint = new Joint();
-                        XmlReader xmlSkeletonJointsReader = xmlSkeletonReader.ReadSubtree();
-                        xmlSkeletonJointsReader.MoveToContent();
-                        while (xmlSkeletonJointsReader.Read())
-                        {
-                            if (xmlSkeletonJointsReader.IsStartElement())
+                            Joint currentJoint = new Joint();
+                            XmlReader xmlSkeletonJointsReader = xmlSkeletonReader.ReadSubtree();
+                            xmlSkeletonJointsReader.MoveToContent();
+                            while (xmlSkeletonJointsReader.Read())
                             {
-                                string jointName = xmlSkeletonJointsReader.Name;
-                                SkeletonPoint jointPoints = new SkeletonPoint();
-
-                                if (xmlSkeletonJointsReader.AttributeCount == 4)
+                                if (xmlSkeletonJointsReader.IsStartElement())
                                 {
-                                    JointType currentJointType = (JointType)Enum.Parse(typeof(JointType), jointName);
+                                    string jointName = xmlSkeletonJointsReader.Name;
+                                    SkeletonPoint jointPoints = new SkeletonPoint();
 
-                                    currentJoint = sk.Joints[currentJointType];
-
-                                    xmlSkeletonJointsReader.MoveToAttribute(0);
-                                    JointTrackingState trackingState = (JointTrackingState)Enum.Parse(typeof(JointTrackingState), xmlSkeletonJointsReader.Value);
-                                    currentJoint.TrackingState = trackingState;
-
-                                    for (int attInd = 1; attInd < xmlSkeletonJointsReader.AttributeCount; ++attInd)
+                                    if (xmlSkeletonJointsReader.AttributeCount == 4)
                                     {
-                                        xmlSkeletonJointsReader.MoveToAttribute(attInd);
-                                        switch (xmlSkeletonJointsReader.Name)
+                                        JointType currentJointType = (JointType)Enum.Parse(typeof(JointType), jointName);
+
+                                        currentJoint = sk.Joints[currentJointType];
+
+                                        xmlSkeletonJointsReader.MoveToAttribute(0);
+                                        JointTrackingState trackingState = (JointTrackingState)Enum.Parse(typeof(JointTrackingState), xmlSkeletonJointsReader.Value);
+                                        currentJoint.TrackingState = trackingState;
+
+                                        for (int attInd = 1; attInd < xmlSkeletonJointsReader.AttributeCount; ++attInd)
                                         {
-                                            case "X":
-                                                jointPoints.X = float.Parse(xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
-                                                break;
-                                            case "Y":
-                                                jointPoints.Y = float.Parse(xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
-                                                break;
-                                            case "Z":
-                                                jointPoints.Z = float.Parse(xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
-                                                break;
-                                            default:
-                                                //Console.WriteLine("Error: " + xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
-                                                break;
+                                            xmlSkeletonJointsReader.MoveToAttribute(attInd);
+                                            switch (xmlSkeletonJointsReader.Name)
+                                            {
+                                                case "X":
+                                                    jointPoints.X = float.Parse(xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
+                                                    break;
+                                                case "Y":
+                                                    jointPoints.Y = float.Parse(xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
+                                                    break;
+                                                case "Z":
+                                                    jointPoints.Z = float.Parse(xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
+                                                    break;
+                                                default:
+                                                    //Console.WriteLine("Error: " + xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
+                                                    break;
+                                            }
                                         }
+                                        currentJoint.Position = jointPoints;
+                                        sk.Joints[currentJointType] = currentJoint;
+                                        xmlSkeletonJointsReader.MoveToElement();
                                     }
-                                    currentJoint.Position = jointPoints;
-                                    sk.Joints[currentJointType] = currentJoint;
-                                    xmlSkeletonJointsReader.MoveToElement();
                                 }
                             }
+
+                            if(pathFace != "")
+                            {
+                                var tu = new Tuple<int, Skeleton, FaceDataWrapper>(timeElapsed , sk, loadFaceWFrame(pathFace, skCount));
+                                skeletonSortedListWithTime.Add(skCount++, tu);
+                            }
+                            else{
+                                var tu = new Tuple<int, Skeleton, FaceDataWrapper>(timeElapsed, sk, new FaceDataWrapper(null, null, null));
+                                skeletonSortedListWithTime.Add(skCount++, tu);
+                            }
                         }
-                        var tu = new Tuple<int, Skeleton>(timeElapsed , sk);
-                        skeletonSortedListWithTime.Add(skCount++, tu);
                     }
                 }
-            }
-            ReplayViewModel.timeEnd = skeletonSortedListWithTime[skeletonSortedListWithTime.Count - 1].Item1;
-            return skeletonSortedListWithTime;
-        }
-
-        /// <summary>
-        /// Load the skeleton 'frame' 
-        /// </summary>
-        /// <param name="path">The path of the skeleton data</param>
-        /// <param name="frame">the frame number of the skeleton</param>
-        /// <returns></returns>
-        /// <author> Amirali Ghazi </author>
-        public static Skeleton GetXMLSkeleton(string path, int frame)
-        {
-            if (frame <= 0)
-                throw new XmlLoadingException("Cannot load this file", "The savefile" + path + " is incorrectly written.");
-            Skeleton sk = new Skeleton();
-            XmlReaderSettings settings = new XmlReaderSettings { IgnoreWhitespace = true, CheckCharacters = true };
-            xmlSkeletonReader = XmlReader.Create(path, settings);
-
-            xmlSkeletonReader.MoveToContent();
-            while (xmlSkeletonReader.Read())
+                ReplayViewModel.timeEnd = skeletonSortedListWithTime[skeletonSortedListWithTime.Count - 1].Item1;
+				endReplayWiggle();
+                return skeletonSortedListWithTime;
+            }catch(Exception)
             {
-                if (xmlSkeletonReader.NodeType == XmlNodeType.Element)
-                {
-                    if (xmlSkeletonReader.Name == "Skeleton_" + frame)
-                    {
-                        xmlSkeletonReader = xmlSkeletonReader.ReadSubtree();
-                        xmlSkeletonReader.MoveToContent();
-
-                        Joint currentJoint = new Joint();
-                        while (xmlSkeletonReader.Read())
-                        {
-                            if (xmlSkeletonReader.IsStartElement())
-                            {
-                                string jointName = xmlSkeletonReader.Name;
-                                SkeletonPoint jointPoints = new SkeletonPoint();
-
-                                if (xmlSkeletonReader.AttributeCount == 3)
-                                {
-                                    JointType currentJointType = (JointType)Enum.Parse(typeof(JointType), jointName);
-                                    //Console.WriteLine(currentJointType);
-
-                                    currentJoint = sk.Joints[currentJointType];
-
-                                    for (int attInd = 0; attInd < xmlSkeletonReader.AttributeCount; ++attInd)
-                                    {
-                                        xmlSkeletonReader.MoveToAttribute(attInd);
-                                        switch (xmlSkeletonReader.Name)
-                                        {
-                                            case "X":
-                                                jointPoints.X = float.Parse(xmlSkeletonReader.Value, CultureInfo.InvariantCulture);
-                                                break;
-                                            case "Y":
-                                                jointPoints.Y = float.Parse(xmlSkeletonReader.Value, CultureInfo.InvariantCulture);
-                                                break;
-                                            case "Z":
-                                                jointPoints.Z = float.Parse(xmlSkeletonReader.Value, CultureInfo.InvariantCulture);
-                                                break;
-                                            default:
-                                                //Console.WriteLine("Error: " + xmlSkeletonReader.Value, CultureInfo.InvariantCulture);
-                                                break;
-                                        }
-                                    }
-                                    currentJoint.Position = jointPoints;
-                                    sk.Joints[currentJointType] = currentJoint;
-                                    xmlSkeletonReader.MoveToElement();
-                                }
-                            }
-                        }
-                        xmlSkeletonReader.Close();
-                        return sk;
-                    }
-                }
+                throw new ArgumentException("Impossible to read ", path);
             }
-            throw new XmlLoadingException("Cannot load this file", "The skeleton n°" + frame + "cannot be found in " + path);
+
         }
 
         #endregion
 
         #region XmlfaceLoading
-
-        #region FaceLoadingByFrame
 
         /// <summary>
         /// Load the faceData of the 'frame' frame   
@@ -547,7 +444,7 @@ namespace LecturerTrainer.Model
         /// <param name="frame">The frame number</param>
         /// <returns>The faceDataWrapper containing the data needed to display the face</returns>
         /// <author> Amirali Ghazi </author>
-        public FaceDataWrapper loadFaceWFrame(string path, int frame)
+        public static FaceDataWrapper loadFaceWFrame(string path, int frame)
         {
             System.Xml.XmlReaderSettings settings = new System.Xml.XmlReaderSettings { IgnoreWhitespace = true, CheckCharacters = true };
             XmlReader xmlFaceReader;
@@ -630,7 +527,7 @@ namespace LecturerTrainer.Model
                                 xmlFacePoints3DReader.MoveToNextAttribute();
                                 var y = float.Parse(xmlFacePointsReader.Value);
 
-                                var buffer = new Microsoft.Kinect.Toolkit.FaceTracking.PointF(x, y);
+                                var buffer = new PointF(x, y);
                                 colorPointsList[nbPoint] = buffer;
 
                             }
@@ -694,60 +591,6 @@ namespace LecturerTrainer.Model
                                         "The savefile is wrongly written");
         }
         #endregion
-
-        public FaceDataWrapper LoadBinaryFaceFrame(string fileName, int frame)
-        {
-            if (File.Exists(fileName))
-            {
-                var depthPointsList = new List<Vector3DF>(121);
-                var colorPointsList = new List<Microsoft.Kinect.Toolkit.FaceTracking.PointF>(121);
-                var faceTrianglesList = new List<FaceTriangle>(206);
-
-                int nbPoint;
-
-                using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
-                {
-                    for(int i = 0; i < 121; ++i)
-                    {
-                        nbPoint = reader.ReadInt32();
-
-                        Vector3DF vector3df = new Vector3DF();
-                        vector3df.X = reader.ReadSingle();
-                        vector3df.Y = reader.ReadSingle();
-                        vector3df.Z = reader.ReadSingle();
-
-                        depthPointsList[nbPoint] = vector3df;
-                    }
-
-                    for(int i = 0; i < 121; ++i)
-                    {
-                        nbPoint = reader.ReadInt32();
-
-                        var buffer = new Microsoft.Kinect.Toolkit.FaceTracking.PointF(reader.ReadSingle(), reader.ReadSingle());
-
-                        colorPointsList[nbPoint] = buffer;
-                    }
-
-                    while(reader.PeekChar() != -1)
-                    {
-                        FaceTriangle ft = new FaceTriangle
-                        {
-                            First = reader.ReadInt32(),
-                            Second = reader.ReadInt32(),
-                            Third = reader.ReadInt32()
-                        };
-
-                        faceTrianglesList.Add(ft);
-                    }
-
-                    return new FaceDataWrapper(depthPointsList, colorPointsList, faceTrianglesList.ToArray());
-                }
-            }         
-            else
-            {
-                throw new Exception("Error while loading the file");
-            }
-        }
 
         //These uses in the end too much memory to be used
         #region SlowerAlternateVersionsOfFaceLoading
@@ -1294,6 +1137,5 @@ namespace LecturerTrainer.Model
 
         #endregion
 
-        #endregion
     }
 }
