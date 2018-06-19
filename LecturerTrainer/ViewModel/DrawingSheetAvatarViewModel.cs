@@ -18,6 +18,7 @@ using System.Drawing.Imaging;
 using OpenTK.Graphics;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 using System.Text.RegularExpressions;
+using LecturerTrainer.Model;
 
 
 // TO NOTE : the z axis has been reversed for a better visibility of the avatar
@@ -51,6 +52,12 @@ namespace LecturerTrainer.Model
         /// </summary>
         /// <author> Amirali Ghazi </author>
         public static EventHandler<FaceDataWrapper> backgroundXMLFaceRecordingEventStream;
+
+		/// <summary>
+        /// Raise an event when we want to transfer a frame to the recorder
+        /// </summary>
+        /// <author> Amirali Ghazi </author>
+        public static EventHandler<float> backgroundXMLVoiceRecordingEventStream;
 
         /// <summary>
         /// Boolean representing the state of the video recording 
@@ -313,6 +320,8 @@ namespace LecturerTrainer.Model
                 return legTracked;
             }
         }
+
+
         #endregion
 
         #region constructor and Get()
@@ -712,20 +721,26 @@ namespace LecturerTrainer.Model
             z = avatar.Joints[JointType.Head].Position.Z;
 
 
-            float xw, yw, yw1;
             //OpenGL of the sound bar
             //Added by Baptiste Germond using value and code of Alistair Sutherland
-            if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true)
+            if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true && !ReplayViewModel.isReplaying)
             {
+				SavingTools.PeakRecord = true;
+				float xw, yw, yw1;
+
                 GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name.Count() > 0 && actualTheme.SN.Contains(p.name) select p.idTextureOpenGL).First());
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+				
+				//xmlSkeletonWriter.WriteAttributeString("PeakValue", Model.AudioAnalysis.Pitch.wiggle[Model.AudioAnalysis.Pitch.wiggle.Length].ToString());
+                //if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true && TrainingSideToolViewModel.Get().ToggleAudioRecording) 
+				//System.Diagnostics.Debug.WriteLine(TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked+" - "+TrainingSideToolViewModel.Get().ToggleAudioRecording);
 
-                GL.PushAttrib(AttribMask.ColorBufferBit);
+				GL.PushAttrib(AttribMask.ColorBufferBit);
                 for (i = 0; i < 299; i++)
                 {
-                    yw = +0.6f + (float)Model.AudioAnalysis.Pitch.wiggle[i] / 500.0f;
-                    yw1 = +0.6f + (float)Model.AudioAnalysis.Pitch.wiggle[i + 1] / 500.0f;
+                    yw = +0.6f + Model.AudioAnalysis.Pitch.wiggle[i] / 500.0f; 
+                    yw1 = +0.6f + Model.AudioAnalysis.Pitch.wiggle[i + 1] / 500.0f;
 
                     xw = -2.5f + i / 60.0f;
                     float xw1 = -2.5f + (i + 1) / 60.0f;
@@ -748,6 +763,10 @@ namespace LecturerTrainer.Model
                 GL.PopAttrib();
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
+			else if(ReplayViewModel.isReplaying){
+				SavingTools.PeakRecord = false;
+				ReplayAvatar.drawWiggle();
+			}
 
             //Added by Baptiste Germond
             //OpenGL of the Trainer watch
@@ -798,6 +817,11 @@ namespace LecturerTrainer.Model
             {
                 GL.PushMatrix();
                 {
+                    
+
+                    
+                  
+
                     OpenTK.Vector4 faceColor = new OpenTK.Vector4(0.0f, 0.0f, 0.0f, 1.0f);
                     GL.Color4(faceColor);
                     GL.Normal3(0.0f, 0.0f, 1.0f);
@@ -823,51 +847,45 @@ namespace LecturerTrainer.Model
                     {
 
                         float beta;
-                        EyesAlignment.X = face53.X - face20.X;
-                        EyesAlignment.Y = face53.Y - face20.Y;
-                        EyesAlignment.Z = face53.Z - face20.Z;
-                        Vector3 test1;
-                        Vector3 test2;
+                        Vector3 HeadX = EyesAlignment;
+                        Vector3 HeadY = headTilt;
+                        Vector3 HeadZ;
 
-                        test1.X = EyesAlignment.X + headCenterPoint.X;
-                        test1.Y = EyesAlignment.Y + headCenterPoint.Y;
-                        test1.Z = EyesAlignment.Z + headCenterPoint.Z;
+                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
+                        HeadZ = Vector3.Cross(HeadX, HeadY);
 
-                        test2.X = -EyesAlignment.X + headCenterPoint.X;
-                        test2.Y = -EyesAlignment.Y + headCenterPoint.Y;
-                        test2.Z = -EyesAlignment.Z + headCenterPoint.Z;
+                        HeadX.Normalize();
+                        HeadY.Normalize();
+                        HeadZ.Normalize();
+
+                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
+
+                        GL.Translate(headCenterPoint);
+                        GL.MultMatrix(HeadM);
 
                         float betaStep = (float)(Math.PI) / (float)generalStacks;
-                        Vector2[] ellipsePoints = new Vector2[20];
                         Vector3[] eyesPoints = new Vector3[20];
-                        float RVert = (float)Math.Sqrt(Math.Pow((face21.X - face22.X), 2) + Math.Pow((face21.Y - face22.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
-                        float RHori = (float)Math.Sqrt(Math.Pow((face23.X - face20.X), 2) + Math.Pow((face23.Y - face20.Y), 2)) / 2; //Vertical semi-axis of the ellipse
+                        float RVert = 0.02f; // Size of the horizontal semi-axis of the ellipse
+                        float RHori = 0.07f; //Size of the vertical semi-axis of the ellipse
                         int cnt = 0;
 
                         for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
                         {
-
-                            eyesPoints[cnt] = ((float)Math.Cos(beta) * RHori) * test1 + (float)Math.Sin(beta) * RVert * headCenterPoint;
-
+                            eyesPoints[cnt].X = (float)Math.Cos(beta) * RHori;
+                            eyesPoints[cnt].Y = (float)Math.Sin(beta) * RVert;
+                            eyesPoints[cnt].Z = -0.1f;
                             cnt++;
                         }
 
                         Gl.glColor4f(0, 0, 0, 1);
-                        Gl.glTranslatef(face23.X - RHori, face21.Y - RVert, test1.Z);
-                        Gl.glScalef(2, 4, 1);
-                        Gl.glRotatef(-(float)Math.PI / 7 * (180 / (float)Math.PI), face23.X - RHori, face21.Y - RVert, test1.Z); // Math.PI/7 is a flat value found after several testing
+                        Gl.glTranslatef(-RHori, -0.01f, -0.1f);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 
-                        for (cnt = 0; cnt < ellipsePoints.Length; cnt++)
+                        for (cnt = 0; cnt < eyesPoints.Length; cnt++)
                         {
                             Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
                         }
                         Gl.glEnd();
-
-                        //Gl.glVertex3f(face22.X, face22.Y, face22.Z);
-                        //Gl.glVertex3f(face20.X, face20.Y, face20.Z);
-                        //Gl.glVertex3f(face21.X, face21.Y, face21.Z);
-
                     }
                     Gl.glPopMatrix();
 
@@ -884,6 +902,63 @@ namespace LecturerTrainer.Model
                     {
 
                         float beta;
+                        Vector3 HeadX = EyesAlignment;
+                        Vector3 HeadY = headTilt;
+                        Vector3 HeadZ;
+
+                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
+                        HeadZ = Vector3.Cross(HeadX, HeadY);
+
+                        HeadX.Normalize();
+                        HeadY.Normalize();
+                        HeadZ.Normalize();
+
+                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
+
+                        GL.Translate(headCenterPoint);
+                        GL.MultMatrix(HeadM);
+
+                        float betaStep = (float)(Math.PI) / (float)generalStacks;
+                        Vector3[] eyesPoints = new Vector3[20];
+                        float RVert = 0.02f; // Size of the horizontal semi-axis of the ellipse
+                        float RHori = 0.07f; //Size of the vertical semi-axis of the ellipse
+                        int cnt = 0;
+
+                        for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
+                        {
+                            eyesPoints[cnt].X = (float)Math.Cos(beta) * RHori;
+                            eyesPoints[cnt].Y = (float)Math.Sin(beta) * RVert;
+                            eyesPoints[cnt].Z = -0.1f;
+                            cnt++;
+                        }
+
+                        Gl.glColor4f(0, 0, 0, 1);
+                        Gl.glTranslatef(RHori, -0.01f, -0.1f);
+                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
+
+                        for (cnt = 0; cnt < eyesPoints.Length; cnt++)
+                        {
+                            Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
+                        }
+                        Gl.glEnd();
+                    }
+                    Gl.glPopMatrix();
+
+                    // Drawing of the left eyebrow
+                    GL.Begin(PrimitiveType.Polygon);
+                    GL.Vertex3(face48);//Left
+                    GL.Vertex3(face49);//Top
+                    GL.Vertex3(face50);//Right
+                    GL.Vertex3(face51);//Bottom
+                    GL.End();
+
+                    Gl.glPushMatrix();
+                    {
+                        float LHScale = (float)Math.Sqrt(Math.Pow(face50.X - face48.X,2) + Math.Pow(face50.Y - face48.Y,2));
+                        float LVScale = (float)Math.Sqrt(Math.Pow(face51.X - face49.X,2) + Math.Pow(face51.Y - face49.Y,2));
+
+                        float angle = 0;
+                        int cnt = 0;
                         EyesAlignment.X = face53.X - face20.X;
                         EyesAlignment.Y = face53.Y - face20.Y;
                         EyesAlignment.Z = face53.Z - face20.Z;
@@ -898,42 +973,20 @@ namespace LecturerTrainer.Model
                         test2.Y = -EyesAlignment.Y + headCenterPoint.Y;
                         test2.Z = -EyesAlignment.Z + headCenterPoint.Z;
 
-                        float betaStep = (float)(Math.PI) / (float)generalStacks;
-                        Vector2[] ellipsePoints = new Vector2[20];
-                        Vector3[] eyesPoints = new Vector3[20];
-                        float LVert = (float)Math.Sqrt(Math.Pow((face54.X - face51.X), 2) + Math.Pow((face54.Y - face51.Y), 2)) / 2; //Horizontal semi-axis of the ellipse
-                        float LHori = (float)Math.Sqrt(Math.Pow((face56.X - face53.X), 2) + Math.Pow((face56.Y - face53.Y), 2)) / 2; //Vertical semi-axis of the ellipse
-                        int cnt = 0;
+                        Vector3[] eyebrowPoints = new Vector3[10];
 
-                        for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
+                        while(angle < (float)Math.PI)
                         {
-
-                            eyesPoints[cnt] = ((float)Math.Cos(beta) * LHori) * test1 + (float)Math.Sin(beta) * LVert * headCenterPoint;
-
+                            eyebrowPoints[cnt] = (LHScale * (float)Math.Sin(angle)) * test1 + (LHScale * (float)Math.Cos(angle)) * headCenterPoint;
                             cnt++;
+                            angle += (float)(Math.PI) / 10;
                         }
 
-                        Gl.glColor4f(0, 0, 0, 1);
-                        Gl.glTranslatef(face56.X + LHori, face54.Y - LVert, test1.Z);
-                        Gl.glScalef(3, 6, 1);
-                        Gl.glRotatef(-(float)Math.PI / 4 * (180 / (float)Math.PI), face56.X + LHori, face54.Y - LVert, test1.Z); // Math.PI/4 is a flat value found after several testing
-                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
-
-                        for (cnt = 0; cnt < ellipsePoints.Length; cnt++)
-                        {
-                            Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
-                        }
-                        Gl.glEnd();
+                   
                     }
                     Gl.glPopMatrix();
-
-                    // Drawing of the left eyebrow
-                    GL.Begin(PrimitiveType.Polygon);
-                    GL.Vertex3(face48);
-                    GL.Vertex3(face49);
-                    GL.Vertex3(face50);
-                    GL.Vertex3(face51);
-                    GL.End();
+                    
+                    
                 }
                 GL.PopMatrix();
 
@@ -941,7 +994,7 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Draws the avatar's body
+        /// Draws the avatar's body (among other things)
         /// </summary>
         /// <param name="evt"></param>
         private void drawAvatar(EventArgs evt)
@@ -2651,6 +2704,8 @@ namespace LecturerTrainer.Model
         }
         #endregion
 
+        #region Text Display Methods
+
         /// <summary>
         /// Display the text during the training
         /// </summary>
@@ -2689,8 +2744,6 @@ namespace LecturerTrainer.Model
             GL.Enable(EnableCap.Lighting);
 
         }
-
-        #region Text Display Methods
 
         // Timothée
         /// <summary>

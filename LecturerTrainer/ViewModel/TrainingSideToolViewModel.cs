@@ -820,6 +820,11 @@ namespace LecturerTrainer.ViewModel
             SavingTools.EnqueueXMLFace(fdw);
         }
 
+		private void backgroundVoiceXMLRecording(object sender, float value)
+        {
+            SavingTools.EnqueueXMLVoice(value);
+        }
+
         // begins the video recording and set it up 
         private void BeginVideoAndAudioRecording()
         {
@@ -887,6 +892,11 @@ namespace LecturerTrainer.ViewModel
                     SavingTools.StartSavingXMLFace();
                 }
 
+				if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true){
+					DrawingSheetAvatarViewModel.backgroundXMLVoiceRecordingEventStream += backgroundVoiceXMLRecording;
+					SavingTools.startSavingTonePeak();
+				}
+
             }
             if (_ToggleAvatarVideoRecording)
             {
@@ -946,6 +956,10 @@ namespace LecturerTrainer.ViewModel
                 MainWindow.main.audioProvider.stopSpeechRateDetection();
                 MainWindow.main.audioProvider.stopPeakDetection();
             }
+				if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true){
+					DrawingSheetAvatarViewModel.backgroundXMLVoiceRecordingEventStream -= backgroundVoiceXMLRecording;
+					SavingTools.XMLVoiceDispose();
+				}
             if (storingFeedbackThreadData != null)
             {
                 storingFeedbackThreadData.Processing = false;
