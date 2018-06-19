@@ -34,6 +34,8 @@ namespace LecturerTrainer.ViewModel
         public String filePathAvatar;
         public String filePathVideoStream;
         public String filePath;
+		public String faceData;
+		public String voiceData;
 
         /// <summary>
         /// State of the replay mode
@@ -423,19 +425,23 @@ namespace LecturerTrainer.ViewModel
                         activate(ReplayView.Get().Avatar, GeneralSideTool.Get().Avatar);
                         deactivateOther(ReplayView.Get().Stream, ReplayView.Get().VideoAvatar);
 
-                        var faceData = filePath.Replace("avatarSkeletonData.skd", "faceData.xml");
-                        if(File.Exists(faceData))
+						voiceData = filePath.Replace("avatarSkeletonData.skd", "tonePeakData.xml");
+						if (!File.Exists(voiceData)) voiceData = "";
+                        faceData = filePath.Replace("avatarSkeletonData.skd", "faceData.xml");
+						if (!File.Exists(faceData)) faceData = "";
+                        /*if(File.Exists(faceData) && File.Exists(voiceData))
                         {
                             skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, this, 0);
                             tryAddOtherSources("avatarSkeletonData.skd");
                             isReplaying = true;
                         }
+						else if(File.Exists(faceData) && File.Exists(voiceData)) 
                         else
-                        {
-                            skeletonScrolling = new ReplayAvatar(filePathAvatar, this, 0);
-                            tryAddOtherSources("avatarSkeletonData.skd");
-                            isReplaying = true;
-                        }
+                        {*/
+						skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, voiceData, this, 0);
+						tryAddOtherSources("avatarSkeletonData.skd");
+                        isReplaying = true;
+                        //}
                     }
                     catch (ArgumentException e) {
                         throw e;

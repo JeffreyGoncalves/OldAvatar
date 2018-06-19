@@ -725,17 +725,12 @@ namespace LecturerTrainer.Model
             //Added by Baptiste Germond using value and code of Alistair Sutherland
             if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true && !ReplayViewModel.isReplaying)
             {
-				SavingTools.PeakRecord = true;
 				float xw, yw, yw1;
 
                 GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name.Count() > 0 && actualTheme.SN.Contains(p.name) select p.idTextureOpenGL).First());
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 				
-				//xmlSkeletonWriter.WriteAttributeString("PeakValue", Model.AudioAnalysis.Pitch.wiggle[Model.AudioAnalysis.Pitch.wiggle.Length].ToString());
-                //if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true && TrainingSideToolViewModel.Get().ToggleAudioRecording) 
-				//System.Diagnostics.Debug.WriteLine(TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked+" - "+TrainingSideToolViewModel.Get().ToggleAudioRecording);
-
 				GL.PushAttrib(AttribMask.ColorBufferBit);
                 for (i = 0; i < 299; i++)
                 {
@@ -763,8 +758,7 @@ namespace LecturerTrainer.Model
                 GL.PopAttrib();
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
-			else if(ReplayViewModel.isReplaying){
-				SavingTools.PeakRecord = false;
+			else if(ReplayViewModel.isReplaying && ReplayViewModel.Get().voiceData != ""){
 				ReplayAvatar.drawWiggle();
 			}
 
@@ -1169,63 +1163,67 @@ namespace LecturerTrainer.Model
                     /* List containing all the feedbacks that must be displayed during the current frame */
                     List<String> feedbacksToDisplay = ReplayViewModel.Get().currentFeedbackList;
 
-                    /* Iterating through the list to see which feedback to display */
-                    foreach (String message in feedbacksToDisplay)
-                    {
-                        /*ServerFeedback tempFeedback = new ServerFeedback(message);
-                        ReplayViewModel.Get().manageFeedback(tempFeedback.eventName);*/
-                        switch(message)
-                        {
-                            /*OpenGL feedback of the hands crossed*/
-                            case("Hands are joined"):
-                                HudDrawImage("Hand_Joined", 0.15f, 0.15f,
-                                    avatar.Joints[JointType.HandLeft].Position.X,
-                                    avatar.Joints[JointType.HandLeft].Position.Y);
-                                break;
+					if(feedbacksToDisplay != null)
+					{
 
-                            /*OpenGL feedback of the look at the center*/
-                            case("Look to the center"):
-                                HudDrawImage("Center_Arrow", 0.2f, 0.2f,
-                                    headX,
-                                    headY + 0.5f);
-                                break;
+						/* Iterating through the list to see which feedback to display */
+						foreach (String message in feedbacksToDisplay)
+						{
+							/*ServerFeedback tempFeedback = new ServerFeedback(message);
+							ReplayViewModel.Get().manageFeedback(tempFeedback.eventName);*/
+							switch(message)
+							{
+								/*OpenGL feedback of the hands crossed*/
+								case("Hands are joined"):
+									HudDrawImage("Hand_Joined", 0.15f, 0.15f,
+										avatar.Joints[JointType.HandLeft].Position.X,
+										avatar.Joints[JointType.HandLeft].Position.Y);
+									break;
+
+								/*OpenGL feedback of the look at the center*/
+								case("Look to the center"):
+									HudDrawImage("Center_Arrow", 0.2f, 0.2f,
+										headX,
+										headY + 0.5f);
+									break;
                             
-                            /*OpenGL feedback of the look at the left*/
-                            case("Look to the left"):
-                                HudDrawImage("Left_Arrow", 0.2f, 0.2f,
-                                    headX - 0.5f,
-                                    headY);
-                                break;
+								/*OpenGL feedback of the look at the left*/
+								case("Look to the left"):
+									HudDrawImage("Left_Arrow", 0.2f, 0.2f,
+										headX - 0.5f,
+										headY);
+									break;
                             
-                            /*OpenGL feedback of the look at the right*/
-                            case("Look to the right"):
-                                HudDrawImage("Right_Arrow", 0.2f, 0.2f,
-                                    headX + 0.5f,
-                                    headY);
-                                break;
+								/*OpenGL feedback of the look at the right*/
+								case("Look to the right"):
+									HudDrawImage("Right_Arrow", 0.2f, 0.2f,
+										headX + 0.5f,
+										headY);
+									break;
                             
-                            /*OpenGL feedback of the happy emotion*/
-                            case("Happy"):
-                                HudDrawImage("Happy", 0.2f, 0.2f,
-                                    0.75f,
-                                    0.5f);
-                                break;
+								/*OpenGL feedback of the happy emotion*/
+								case("Happy"):
+									HudDrawImage("Happy", 0.2f, 0.2f,
+										0.75f,
+										0.5f);
+									break;
                             
-                            /*OpenGL feedback of agitation*/
-                            case("Too agitated!"):
-                                HudDrawImage("Agitation", 0.2f, 0.2f,
-                                    -1f,
-                                    0);
-                                break;
+								/*OpenGL feedback of agitation*/
+								case("Too agitated!"):
+									HudDrawImage("Agitation", 0.2f, 0.2f,
+										-1f,
+										0);
+									break;
                             
-                            /*OpenGL feedback of the arms crossed*/
-                            case("Arms Crossed"):
-                                HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
-                                    0.75f,
-                                    0);
-                                break;
-                        }
-                    }
+								/*OpenGL feedback of the arms crossed*/
+								case("Arms Crossed"):
+									HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
+										0.75f,
+										0);
+									break;
+							}
+						}
+					}
 				}
 			}
             else // Training mode
