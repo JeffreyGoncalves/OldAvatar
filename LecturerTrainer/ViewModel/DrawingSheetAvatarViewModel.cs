@@ -878,7 +878,7 @@ namespace LecturerTrainer.Model
                         }
 
                         Gl.glColor4f(0, 0, 0, 1);
-                        Gl.glTranslatef(-RHori, -0.01f, -0.1f);
+                        Gl.glTranslatef(-RHori, 0.01f, -0.1f);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 
                         for (cnt = 0; cnt < eyesPoints.Length; cnt++)
@@ -890,12 +890,65 @@ namespace LecturerTrainer.Model
                     Gl.glPopMatrix();
 
                     // Drawing of the right eyebrow
-                    GL.Begin(PrimitiveType.Polygon);
+                    /*GL.Begin(PrimitiveType.Polygon);
                     GL.Vertex3(face15);
                     GL.Vertex3(face16);
                     GL.Vertex3(face17);
                     GL.Vertex3(face18);
-                    GL.End();
+                    GL.End();*/
+
+                    Gl.glPushMatrix();
+                    {
+                        float step = (float)Math.PI / 10;
+                        float scale = 0.05f;
+                        float fullness = -0.9999f;
+                        Vector3 HeadX = EyesAlignment;
+                        Vector3 HeadY = headTilt;
+                        Vector3 HeadZ;
+
+                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
+                        HeadZ = Vector3.Cross(HeadX, HeadY);
+
+                        HeadX.Normalize();
+                        HeadY.Normalize();
+                        HeadZ.Normalize();
+
+                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
+
+                        GL.Translate(headCenterPoint);
+                        GL.MultMatrix(HeadM);
+
+                        //DrawHorizontalCrescent(0.07f, 0.01f, -0.1f, (float)Math.PI / 10, 0.07f, -0.5f);
+
+
+                        Gl.glTranslatef(-0.07f, 0.07f, -0.1f);
+                        Gl.glScalef(1, 0.25f, 1);
+                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
+                        {
+                            Gl.glVertex3f(scale, 0, 0);
+                            float angle = step;
+
+                            while (angle < (float)Math.PI)
+                            {
+                                float sinAngle = (float)Math.Sin(angle);
+                                float cosAngle = (float)Math.Cos(angle);
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, 0);
+                                angle += step;
+                            }
+                            angle = step;
+                            while (angle < (float)Math.PI)
+                            {
+                                float sinAngle = (float)Math.Sin(angle);
+                                float cosAngle = (float)Math.Cos(angle);
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, 0);
+
+                                angle += step;
+                            }
+                            Gl.glVertex3f(-scale, 0, 0);
+                        }
+                        Gl.glEnd();
+                    }
+                    Gl.glPopMatrix();
 
                     // Drawing of the left eye
                     Gl.glPushMatrix();
@@ -933,7 +986,7 @@ namespace LecturerTrainer.Model
                         }
 
                         Gl.glColor4f(0, 0, 0, 1);
-                        Gl.glTranslatef(RHori, -0.01f, -0.1f);
+                        Gl.glTranslatef(RHori, 0.01f, -0.1f);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 
                         for (cnt = 0; cnt < eyesPoints.Length; cnt++)
@@ -945,46 +998,67 @@ namespace LecturerTrainer.Model
                     Gl.glPopMatrix();
 
                     // Drawing of the left eyebrow
-                    GL.Begin(PrimitiveType.Polygon);
-                    GL.Vertex3(face48);//Left
-                    GL.Vertex3(face49);//Top
-                    GL.Vertex3(face50);//Right
-                    GL.Vertex3(face51);//Bottom
-                    GL.End();
+                    /* GL.Begin(PrimitiveType.Polygon);
+                     GL.Vertex3(face48);//Left
+                     GL.Vertex3(face49);//Top
+                     GL.Vertex3(face50);//Right
+                     GL.Vertex3(face51);//Bottom
+                     GL.End();*/
 
                     Gl.glPushMatrix();
                     {
-                        float LHScale = (float)Math.Sqrt(Math.Pow(face50.X - face48.X,2) + Math.Pow(face50.Y - face48.Y,2));
-                        float LVScale = (float)Math.Sqrt(Math.Pow(face51.X - face49.X,2) + Math.Pow(face51.Y - face49.Y,2));
+                        float step = (float)Math.PI / 10;
+                        float scale = 0.05f;
+                        float fullness = -0.9999f;
+                        Vector3 HeadX = EyesAlignment;
+                        Vector3 HeadY = headTilt;
+                        Vector3 HeadZ;
 
-                        float angle = 0;
-                        int cnt = 0;
-                        EyesAlignment.X = face53.X - face20.X;
-                        EyesAlignment.Y = face53.Y - face20.Y;
-                        EyesAlignment.Z = face53.Z - face20.Z;
-                        Vector3 test1;
-                        Vector3 test2;
+                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
+                        HeadZ = Vector3.Cross(HeadX, HeadY);
 
-                        test1.X = EyesAlignment.X + headCenterPoint.X;
-                        test1.Y = EyesAlignment.Y + headCenterPoint.Y;
-                        test1.Z = EyesAlignment.Z + headCenterPoint.Z;
+                        HeadX.Normalize();
+                        HeadY.Normalize();
+                        HeadZ.Normalize();
 
-                        test2.X = -EyesAlignment.X + headCenterPoint.X;
-                        test2.Y = -EyesAlignment.Y + headCenterPoint.Y;
-                        test2.Z = -EyesAlignment.Z + headCenterPoint.Z;
+                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
 
-                        Vector3[] eyebrowPoints = new Vector3[10];
+                        GL.Translate(headCenterPoint);
+                        GL.MultMatrix(HeadM);
 
-                        while(angle < (float)Math.PI)
+                        //DrawHorizontalCrescent(0.07f, 0.01f, -0.1f, (float)Math.PI / 10, 0.07f, -0.5f);
+
+                     
+                        Gl.glTranslatef(0.07f, 0.07f, -0.1f);
+                        Gl.glScalef(1, 0.25f, 1);
+                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
                         {
-                            eyebrowPoints[cnt] = (LHScale * (float)Math.Sin(angle)) * test1 + (LHScale * (float)Math.Cos(angle)) * headCenterPoint;
-                            cnt++;
-                            angle += (float)(Math.PI) / 10;
-                        }
+                            Gl.glVertex3f(scale, 0, 0);
+                            float angle = step;
 
-                   
+                            while (angle < (float)Math.PI)
+                            {
+                                float sinAngle = (float)Math.Sin(angle);
+                                float cosAngle = (float)Math.Cos(angle);
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, 0);
+                                angle += step;
+                            }
+                            angle = step;
+                            while (angle < (float)Math.PI)
+                            {
+                                float sinAngle = (float)Math.Sin(angle);
+                                float cosAngle = (float)Math.Cos(angle);
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, 0);
+
+                                angle += step;
+                            }
+                            Gl.glVertex3f(-scale, 0, 0);
+                        }
+                        Gl.glEnd();
                     }
                     Gl.glPopMatrix();
+
+                   
                     
                     
                 }
@@ -2589,6 +2663,44 @@ namespace LecturerTrainer.Model
                 Glut.glutSolidSphere(radius, generalSlices, generalStacks);
             }
             GL.PopMatrix();
+        }
+
+        void DrawHorizontalCrescent(float X, float Y, float Z, float step, float scale, float fullness)
+        {
+            Gl.glRotatef(90, 0, 0, 0);
+            Gl.glTranslatef(X, Y, Z);
+            Draw2DCrescent(step, scale, fullness);
+        }
+
+        /// <summary>
+        /// Draws a 2D crescent 
+        /// When fullness=1 it will draw a circle of size scale 
+        /// and when fullness=-0.99 it will draw a very thin crescent
+        /// <author> Jeffrey Goncalves </author>
+        /// </summary>
+        /// <param name="step"></param>
+        /// <param name="scale"></param>
+        /// <param name="fullness"></param>
+        void Draw2DCrescent(float step, float scale, float fullness)
+        {
+            Gl.glBegin(Gl.GL_LINE_LOOP);
+            {
+                Gl.glVertex3f(0, scale, 0);
+                float angle = step;
+
+                while (angle < (float)Math.PI)
+                {
+                    float sinAngle = (float)Math.Sin(angle);
+                    float cosAngle = (float)Math.Cos(angle);
+                    Gl.glVertex3f(scale * sinAngle, scale * cosAngle, 0);
+                    Gl.glVertex3f(-fullness * scale * sinAngle, scale * cosAngle, 0);
+
+                    angle += step;
+                }
+
+                Gl.glVertex3f(0, -scale, 0);
+            }
+            Gl.glEnd();
         }
 
 
