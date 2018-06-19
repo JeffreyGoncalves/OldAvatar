@@ -235,6 +235,7 @@ namespace LecturerTrainer.Model
             Tools.initStopWatch();
             Tools.startStopWatch();
             int nbSkFrame = 0;
+            countSk = 0;
             
             try
             {

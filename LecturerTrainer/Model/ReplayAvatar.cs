@@ -172,7 +172,10 @@ namespace LecturerTrainer.Model
         /// <returns></returns>
         private void nextSkeleton(object sender, EventArgs evt)
         {
-            if (currentSkeletonNumber < skeletonsList.Count && (replayFace % 2 )== 0)
+            bool face = (faceDir == "") ? false : true;
+
+            if ((currentSkeletonNumber < skeletonsList.Count && (replayFace % 2 )== 0 && face) 
+                || (currentSkeletonNumber < skeletonsList.Count && !face))
             {
                 currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
             }
@@ -189,7 +192,7 @@ namespace LecturerTrainer.Model
 
             if (currentSkeleton != null)
             {
-                if (faceDir != "")
+                if (face)
                 {
                     DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
                     DrawingSheetAvatarViewModel.Get().drawFace(skeletonsList[(int)currentSkeletonNumber].Item3.depthPointsList,
@@ -204,9 +207,17 @@ namespace LecturerTrainer.Model
             {
                 replayViewModel.stopButtonCommand();
             }
-            if((replayFace % 2) == 1)
+
+            if (face)
+            {
+                if((replayFace % 2) == 1)
+                    currentSkeletonNumber += 1;
+                replayFace++;
+            }
+            else
+            {
                 currentSkeletonNumber += 1;
-            replayFace++;
+            }
         }
 
         /// <summary>

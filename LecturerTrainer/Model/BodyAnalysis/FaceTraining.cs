@@ -29,10 +29,10 @@ namespace LecturerTrainer.Model.BodyAnalysis
         {
             _complete = false;
 
-            var face = KinectDevice.skeletonFaceTracker.facePoints3D;
-
-            if(face != null)
+            try
             {
+                var face = KinectDevice.skeletonFaceTracker.facePoints3D;
+
                 Vector3DF rightEye = face.ElementAt(20);
                 Vector3DF leftEye = face.ElementAt(53);
 
@@ -41,7 +41,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 {
                     right = true;
 
-                    if(left)
+                    if (left)
                     {
                         right = false;
                         left = false;
@@ -72,6 +72,14 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     }
                 }
             }
+            catch(NullReferenceException) //the kinect don't catch the face
+            {
+                System.Windows.Forms.MessageBox.Show("the kinect don't catch the face !");
+            }
+            /*catch(Exception e1)
+            {
+                Console.Error.WriteLine(e1);
+            }*/
         }
     }
 }
