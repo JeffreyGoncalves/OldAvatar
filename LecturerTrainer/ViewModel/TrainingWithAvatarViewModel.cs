@@ -38,6 +38,7 @@ namespace LecturerTrainer.ViewModel
                 pathFile = value;
                 SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
                 skeletonNumber = 0;
+                faceNumber = 0;
                 launchTraining();
             }
         }
@@ -75,6 +76,7 @@ namespace LecturerTrainer.ViewModel
         }
 
         private int skeletonNumber = 0;
+        private int faceNumber;
         public SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> SkeletonList { get; private set; }
 
         public static WaveGesture _gesture = new WaveGesture();
@@ -83,6 +85,7 @@ namespace LecturerTrainer.ViewModel
         public static WelcomeTraining _welcomegesture = new WelcomeTraining();
         public static SaluteTraining _salutegesture = new SaluteTraining();
         public static HypeTraining _hypegesture = new HypeTraining();
+        public static FaceTraining _facegesture = new FaceTraining();
 
         public static string AvatarGesture;
 
@@ -105,6 +108,7 @@ namespace LecturerTrainer.ViewModel
             _welcomegesture.GestureRecognized += WelcomeTraining_GestureRecognized;
             _salutegesture.GestureRecognized += SaluteTraining_GestureRecognized;
             _hypegesture.GestureRecognized += HypeTraining_GestureRecognized;
+            _facegesture.GestureRecognized += FaceTraining_GestureRecognized;
         }
 
         public void initialize()
@@ -181,8 +185,17 @@ namespace LecturerTrainer.ViewModel
             string curItem = twav.VideosList.SelectedItem.ToString();
             //AvatarGesture = curItem;
             pathFile = videosMap[curItem] + "/" + curItem + ".skd";
-            SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
+            string pathFace = videosMap[curItem] + "/" + curItem + ".xml";
+            if(File.Exists(pathFace))
+            {
+                SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, pathFace);
+            }
+            else
+            {
+                SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
+            }
             skeletonNumber = 0;
+            faceNumber = 0;
             launchTraining();
         }
 
@@ -258,7 +271,15 @@ namespace LecturerTrainer.ViewModel
                 twav.VideoName.Text = curItem;
                 AvatarGesture = curItem;
                 pathFile = videosMap[curItem] + "/" + curItem + ".skd";
-                SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
+                string pathFace = videosMap[curItem] + "/" + curItem + ".xml";
+                if (File.Exists(pathFace))
+                {
+                    SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, pathFace);
+                }
+                else
+                {
+                    SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
+                }
                 skeletonNumber = 0;
                 launchTraining();
             } 
@@ -292,6 +313,37 @@ namespace LecturerTrainer.ViewModel
                 }
             }
             return skToReturn;
+        }
+
+        public FaceDataWrapper ChooseFaceToDisplay()
+        {
+            FaceDataWrapper fcToReturn = new FaceDataWrapper(null, null, null);
+
+            if(SkeletonList != null)
+            {
+                if (playMode)
+                {
+                    fcToReturn = SkeletonList[skeletonNumber].Item3;
+                    if (skeletonNumber != SkeletonList.Count - 1)
+                        skeletonNumber++;
+                    else
+                    {
+                        canBeInterrupted = true;
+                        StopTraining();
+                    }
+                }
+                else if (pauseMode)
+                {
+                    fcToReturn = SkeletonList[skeletonNumber].Item3;
+                }
+                else if (stopMode)
+                {
+                    skeletonNumber = 0;
+                    fcToReturn = SkeletonList[skeletonNumber].Item3;
+                }
+            }
+
+            return fcToReturn;
         }
 
         //When the waving gesture is recognized, we determine what file should be played to respond to the user
@@ -461,6 +513,19 @@ namespace LecturerTrainer.ViewModel
             {
                 string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Raise_your_arms.skd");
+                TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+            }
+        }
+
+        public static void FaceTraining_GestureRecognized(object sender, EventArgs e)
+        {
+
+            bool complete = ((FaceTraining)sender).Complete;
+
+            if (complete)
+            {
+                string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
         }

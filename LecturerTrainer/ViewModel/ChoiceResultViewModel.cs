@@ -249,17 +249,17 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// Create all elements in the comboBox
         /// </summary>
-        private List<Tuple<string, string>> getDate()
+        private List<KeyValuePair<string, string>> getDate()
         {
-            List<Tuple<string, string>> list = new List<Tuple<string, string>>();
-            list.Add(new Tuple<string, string>("Name", "Last Record"));
-            list.Add(new Tuple<string, string>("Name", "Today"));
-            list.Add(new Tuple<string, string>("Name", "Yesterday"));
-            list.Add(new Tuple<string, string>("Name", "7 last days"));
-            list.Add(new Tuple<string, string>("Name", "15 last days"));
-            list.Add(new Tuple<string, string>("Name", "Last month"));
-            list.Add(new Tuple<string, string>("Name", "Personalized"));
-            
+            List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>();
+            list.Add(new KeyValuePair<string, string>("Name", "Last Record"));
+            list.Add(new KeyValuePair<string, string>("Name", "Today"));
+            list.Add(new KeyValuePair<string, string>("Name", "Yesterday"));
+            list.Add(new KeyValuePair<string, string>("Name", "7 last days"));
+            list.Add(new KeyValuePair<string, string>("Name", "15 last days"));
+            list.Add(new KeyValuePair<string, string>("Name", "Last month"));
+            list.Add(new KeyValuePair<string, string>("Name", "Personalized"));
+
             return list;
         }
 
@@ -465,9 +465,9 @@ namespace LecturerTrainer.ViewModel
 
         public void ValueOfComboBoxChanged(string newValue)
         {
-            var item = choiceResultView.cmbDate.SelectedValue as Tuple<string, string>;
+            var item = choiceResultView.cmbDate.SelectedValue as KeyValuePair<string, string>?;
             if (item != null)
-                SetDate(item.Item2);
+                SetDate(item?.Value);
         }
 
         /// <summary>
