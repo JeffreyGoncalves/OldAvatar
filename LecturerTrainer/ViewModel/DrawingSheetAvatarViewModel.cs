@@ -970,14 +970,8 @@ namespace LecturerTrainer.Model
                     }
                     Gl.glPopMatrix();
 
-                    // Drawing of the right eyebrow
-                    /*GL.Begin(PrimitiveType.Polygon);
-                    GL.Vertex3(face15);
-                    GL.Vertex3(face16);
-                    GL.Vertex3(face17);
-                    GL.Vertex3(face18);
-                    GL.End();*/
 
+                    //Drawing of right eyebrow
                     Gl.glPushMatrix();
                     {
                         float step = (float)Math.PI / 10;
@@ -998,8 +992,6 @@ namespace LecturerTrainer.Model
 
                         GL.Translate(headCenterPoint);
                         GL.MultMatrix(HeadM);
-
-                        //DrawHorizontalCrescent(0.07f, 0.01f, -0.1f, (float)Math.PI / 10, 0.07f, -0.5f);
 
 
                         Gl.glTranslatef(-0.07f, 0.07f, -0.1f);
@@ -1079,13 +1071,6 @@ namespace LecturerTrainer.Model
                     Gl.glPopMatrix();
 
                     // Drawing of the left eyebrow
-                    /* GL.Begin(PrimitiveType.Polygon);
-                     GL.Vertex3(face48);//Left
-                     GL.Vertex3(face49);//Top
-                     GL.Vertex3(face50);//Right
-                     GL.Vertex3(face51);//Bottom
-                     GL.End();*/
-
                     Gl.glPushMatrix();
                     {
                         float step = (float)Math.PI / 10;
@@ -3193,45 +3178,6 @@ namespace LecturerTrainer.Model
             }
             GL.PopMatrix();
         }
-
-        void DrawHorizontalCrescent(float X, float Y, float Z, float step, float scale, float fullness)
-        {
-            Gl.glRotatef(90, 0, 0, 0);
-            Gl.glTranslatef(X, Y, Z);
-            Draw2DCrescent(step, scale, fullness);
-        }
-
-        /// <summary>
-        /// Draws a 2D crescent 
-        /// When fullness=1 it will draw a circle of size scale 
-        /// and when fullness=-0.99 it will draw a very thin crescent
-        /// <author> Jeffrey Goncalves </author>
-        /// </summary>
-        /// <param name="step"></param>
-        /// <param name="scale"></param>
-        /// <param name="fullness"></param>
-        void Draw2DCrescent(float step, float scale, float fullness)
-        {
-            Gl.glBegin(Gl.GL_LINE_LOOP);
-            {
-                Gl.glVertex3f(0, scale, 0);
-                float angle = step;
-
-                while (angle < (float)Math.PI)
-                {
-                    float sinAngle = (float)Math.Sin(angle);
-                    float cosAngle = (float)Math.Cos(angle);
-                    Gl.glVertex3f(scale * sinAngle, scale * cosAngle, 0);
-                    Gl.glVertex3f(-fullness * scale * sinAngle, scale * cosAngle, 0);
-
-                    angle += step;
-                }
-
-                Gl.glVertex3f(0, -scale, 0);
-            }
-            Gl.glEnd();
-        }
-
 
         /// <summary>
         /// Resizes the viewport
