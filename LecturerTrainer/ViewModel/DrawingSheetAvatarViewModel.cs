@@ -53,6 +53,12 @@ namespace LecturerTrainer.Model
         /// <author> Amirali Ghazi </author>
         public static EventHandler<FaceDataWrapper> backgroundXMLFaceRecordingEventStream;
 
+		/// <summary>
+        /// Raise an event when we want to transfer a frame to the recorder
+        /// </summary>
+        /// <author> Amirali Ghazi </author>
+        public static EventHandler<float> backgroundXMLVoiceRecordingEventStream;
+
         /// <summary>
         /// Boolean representing the state of the video recording 
         /// (if the user decides to record his performance or not)
@@ -314,6 +320,8 @@ namespace LecturerTrainer.Model
                 return legTracked;
             }
         }
+
+
         #endregion
 
         #region constructor and Get()
