@@ -85,7 +85,9 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// Indicates if face tracking is enabled or not
         /// </summary>
-        private bool faceTracking = false;
+        public static bool faceTracking = false;
+
+        public static bool voiceData = false;
 
         /// <summary>
         /// XmlReader for loading the skeletons data (body)
@@ -123,19 +125,22 @@ namespace LecturerTrainer.Model
                 avatarDir = avDir;
                 faceDir = fDir;
                 replayViewModel = rvm;
-                faceTracking = false;
+                faceTracking = fDir !=  "" ? true : false;
+                voiceData = vDir != "" ? true : false;
                 DrawingSheetAvatarViewModel.Get().drawFaceInReplay = false;
 
                 //Load the list of the skeletons
                 currentSkeletonNumber = num;
                 skeletonsList = new SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>>();
                 skeletonsList = LoadSkeletonsFromXML(avatarDir, faceDir);
-				
-				//Load the voice data if it exists
-				if(vDir != "") replayWiggle = LoadVoiceDataFromXML(vDir);
-                
+
+                //Load the voice data if it exists
+                if (vDir != "")
+                {
+                    replayWiggle = LoadVoiceDataFromXML(vDir);
+                }
 				//Initilise the first skeleton to be displayed, depending if the replay is on play or stop
-                if (currentSkeletonNumber > skeletonsList.Count)
+                if (currentSkeletonNumber >= skeletonsList.Count)
                     currentSkeleton = skeletonsList[skeletonsList.Count - 1].Item2;
                 else
                     currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
@@ -184,29 +189,19 @@ namespace LecturerTrainer.Model
         /// <returns></returns>
         private void nextSkeleton(object sender, EventArgs evt)
         {
-			bool face = (faceDir == "") ? false : true;
-            if (currentSkeletonNumber < skeletonsList.Count && (replayFace % 2 )== 0 && face)
+            bool face = (faceDir == "") ? false : true;
+
+            if ((currentSkeletonNumber < skeletonsList.Count && (replayFace % 2) == 0 && face)
+                || (currentSkeletonNumber < skeletonsList.Count && !face))
             {
                 currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
             }
-			else if(currentSkeletonNumber < skeletonsList.Count  && !face)
-			{
-				currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
-			}
             else if (currentSkeletonNumber == skeletonsList.Count)
-            {
                 currentSkeleton = null;
-                Console.Out.WriteLine("here");
-            }
-            /*if((replayFace % 2) == 1)
-            {
-                Console.Out.WriteLine(" -- cur " + skeletonsList[(int)currentSkeletonNumber].Item1);
-                Console.Out.WriteLine(" -- stw " + Tools.getStopWatch() + "\n");
-            }*/
 
-            if (currentSkeleton != null)
+                if (currentSkeleton != null)
             {
-                if (faceDir != "")
+                if (face)
                 {
                     DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
                     DrawingSheetAvatarViewModel.Get().drawFace(skeletonsList[(int)currentSkeletonNumber].Item3.depthPointsList,
@@ -221,12 +216,13 @@ namespace LecturerTrainer.Model
             {
                 replayViewModel.stopButtonCommand();
             }
+
 			if(face)
 			{
-				if((replayFace % 2) == 1)
-					currentSkeletonNumber += 1;
-				replayFace++;
-			}
+                if ((replayFace % 2) == 1)
+                    currentSkeletonNumber += 1;
+                replayFace++;
+            }
 			else
 			{
 				currentSkeletonNumber += 1;
