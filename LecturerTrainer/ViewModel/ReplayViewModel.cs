@@ -139,19 +139,6 @@ namespace LecturerTrainer.ViewModel
                 currentAvatarNumber = value;
             }
         }
-
-        private static Tuple<int, Skeleton> currentAvatar;
-        public static Tuple<int, Skeleton> CurrentAvatar
-        {
-            get
-            {
-                return currentAvatar;
-            }
-            set
-            {
-                currentAvatar = value;
-            }
-        }
         
         #endregion
 
