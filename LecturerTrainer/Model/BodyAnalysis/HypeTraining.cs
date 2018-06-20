@@ -162,41 +162,28 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 frame = 0;
                 _complete = true;
 
-                if (GestureRecognized != null)
-                {
-                    GestureRecognized(this, new EventArgs());
-                }
+                GestureRecognized?.Invoke(this, new EventArgs());
             }
             else if(frame > time)
             {
                 frame = 0;
-
                 if(!up)
                 {
                     _up = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 else if(!stretchLeftOK || !stretchRightOK)
                 {
                     _stretch = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 else if(!angleLeftOK || !angleRightOK)
                 {
                     _spread = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
             }
         }

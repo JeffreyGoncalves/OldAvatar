@@ -119,6 +119,17 @@ namespace LecturerTrainer.ViewModel
             pathFile = "";
         }
 
+        public void End()
+        {
+            _gesture.GestureRecognized -= Gesture_GestureRecognized;
+            _handgesture.GestureRecognized -= HandTraining_GestureRecognized;
+            _powergesture.GestureRecognized -= PowerTraining_GestureRecognized;
+            _welcomegesture.GestureRecognized -= WelcomeTraining_GestureRecognized;
+            _salutegesture.GestureRecognized -= SaluteTraining_GestureRecognized;
+            _hypegesture.GestureRecognized -= HypeTraining_GestureRecognized;
+            _facegesture.GestureRecognized -= FaceTraining_GestureRecognized;
+        }
+
         public static TrainingWithAvatarViewModel Get()
         {
             if (instance == null)
@@ -528,16 +539,6 @@ namespace LecturerTrainer.ViewModel
                 string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
-
-                /*string pathFace = TrainingWithAvatarViewModel.Get().videosMap[curItem] + "/" + curItem + "_Good_Job.xml";
-                if (File.Exists(pathFace))
-                {
-                    TrainingWithAvatarViewModel.Get().SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(newPathFile, pathFace);
-                }
-                else
-                {
-                    TrainingWithAvatarViewModel.Get().SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(newPathFile, "");
-                }*/
             }
         }
     }

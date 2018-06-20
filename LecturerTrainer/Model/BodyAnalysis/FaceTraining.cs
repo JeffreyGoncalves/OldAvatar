@@ -12,8 +12,12 @@ namespace LecturerTrainer.Model.BodyAnalysis
     {
         public event EventHandler GestureRecognized;
 
+        private const bool VERBOSE = true;
+        private const int NB_FRAME_MAX = 460;
+
         private bool right;
         private bool left;
+        private int frame;
 
         bool _complete;
 
@@ -24,14 +28,42 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 return _complete;
             }
         }
-        
+
+        bool _lookingDir;
+
+        public bool LookingDir
+        {
+            get
+            {
+                return _lookingDir;
+            }
+        }
+
+        bool _slow;
+
+        public bool Slow
+        {
+            get
+            {
+                return _slow;
+            }
+        }
+
         public void Update(Skeleton sk)
         {
-            _complete = true;
+            _slow = false;
+            _complete = false;
+            _lookingDir = false;
 
-            if (GestureRecognized != null)
+            frame++;
+            if(frame > NB_FRAME_MAX)
             {
-                GestureRecognized(this, new EventArgs());
+                frame = 0;
+                right = false;
+                left = false;
+                _slow = true;
+
+                GestureRecognized?.Invoke(this, new EventArgs());
             }
 
             try
@@ -41,39 +73,72 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 Vector3DF rightEye = face.ElementAt(20);
                 Vector3DF leftEye = face.ElementAt(53);
 
-                if ((rightEye.Z - leftEye.Z < -0.015) && Math.Abs(sk.Joints[JointType.HandRight].Position.X - sk.Joints[JointType.ElbowRight].Position.X) < 0.05 &&
-                sk.Joints[JointType.HandRight].Position.Y - sk.Joints[JointType.ElbowRight].Position.Y > 0.2)
-                {
-                    right = true;
+                Point3D handRight = new Point3D(sk.Joints[JointType.HandRight].Position);
+                Point3D handLeft = new Point3D(sk.Joints[JointType.HandLeft].Position);
+                Point3D elbowRight = new Point3D(sk.Joints[JointType.ElbowRight].Position);
+                Point3D elbowLeft = new Point3D(sk.Joints[JointType.ElbowLeft].Position);
+                Point3D head = new Point3D(sk.Joints[JointType.Head].Position);
 
-                    if (left)
+                if (VERBOSE)
+                {
+                    Console.WriteLine("##################");
+                    Console.WriteLine("frame: " + frame);
+                    Console.WriteLine("direction: " + (rightEye.Z - leftEye.Z));
+                    Console.WriteLine("right: " + right);
+                    Console.WriteLine("left: " + left);
+                }
+
+                if (handRight.Y > head.Y && Math.Abs(handRight.X - elbowRight.X) > 0.05)
+                {
+                    if(rightEye.Z - leftEye.Z < -0.015)
                     {
+                        right = true;
+
+                        if (left)
+                        {
+                            frame = 0;
+                            right = false;
+                            left = false;
+                            _complete = true;
+
+                            GestureRecognized?.Invoke(this, new EventArgs());
+                        }
+                    }
+                    else
+                    {
+                        frame = 0;
                         right = false;
                         left = false;
-                        _complete = true;
+                        _lookingDir = true;
 
-                        if (GestureRecognized != null)
-                        {
-                            GestureRecognized(this, new EventArgs());
-                        }
+                        GestureRecognized?.Invoke(this, new EventArgs());
                     }
                 }
 
-                if (rightEye.Z - leftEye.Z > 0.015 && Math.Abs(sk.Joints[JointType.HandLeft].Position.X - sk.Joints[JointType.ElbowLeft].Position.X) < 0.05 &&
-                sk.Joints[JointType.HandLeft].Position.Y - sk.Joints[JointType.ElbowLeft].Position.Y > 0.2)
+                if (handLeft.Y > head.Y && Math.Abs(handLeft.X - elbowLeft.X) > 0.05)
                 {
-                    left = true;
-
-                    if (right)
+                    if(rightEye.Z - leftEye.Z > 0.015)
                     {
+                        left = true;
+
+                        if (right)
+                        {
+                            frame = 0;
+                            right = false;
+                            left = false;
+                            _complete = true;
+
+                            GestureRecognized?.Invoke(this, new EventArgs());
+                        }
+                    }
+                    else
+                    {
+                        frame = 0;
                         right = false;
                         left = false;
-                        _complete = true;
+                        _lookingDir = true;
 
-                        if (GestureRecognized != null)
-                        {
-                            GestureRecognized(this, new EventArgs());
-                        }
+                        GestureRecognized?.Invoke(this, new EventArgs());
                     }
                 }
             }

@@ -191,6 +191,8 @@ namespace LecturerTrainer.Model
             {
                 currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
             }
+            else if (currentSkeletonNumber == skeletonsList.Count)
+                currentSkeleton = null;
 
             if (currentSkeleton != null)
             {
