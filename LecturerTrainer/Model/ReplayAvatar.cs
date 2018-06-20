@@ -85,7 +85,9 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// Indicates if face tracking is enabled or not
         /// </summary>
-        private bool faceTracking = false;
+        public static bool faceTracking = false;
+
+        public static bool voiceData = false;
 
         /// <summary>
         /// XmlReader for loading the skeletons data (body)
@@ -123,17 +125,20 @@ namespace LecturerTrainer.Model
                 avatarDir = avDir;
                 faceDir = fDir;
                 replayViewModel = rvm;
-                faceTracking = false;
+                faceTracking = fDir !=  "" ? true : false;
+                voiceData = vDir != "" ? true : false;
                 DrawingSheetAvatarViewModel.Get().drawFaceInReplay = false;
 
                 //Load the list of the skeletons
                 currentSkeletonNumber = num;
                 skeletonsList = new SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>>();
                 skeletonsList = LoadSkeletonsFromXML(avatarDir, faceDir);
-				
-				//Load the voice data if it exists
-				if(vDir != "") replayWiggle = LoadVoiceDataFromXML(vDir);
-                
+
+                //Load the voice data if it exists
+                if (vDir != "")
+                {
+                    replayWiggle = LoadVoiceDataFromXML(vDir);
+                }
 				//Initilise the first skeleton to be displayed, depending if the replay is on play or stop
                 if (currentSkeletonNumber >= skeletonsList.Count)
                     currentSkeleton = skeletonsList[skeletonsList.Count - 1].Item2;
@@ -194,7 +199,7 @@ namespace LecturerTrainer.Model
             else if (currentSkeletonNumber == skeletonsList.Count)
                 currentSkeleton = null;
 
-            if (currentSkeleton != null)
+                if (currentSkeleton != null)
             {
                 if (face)
                 {
