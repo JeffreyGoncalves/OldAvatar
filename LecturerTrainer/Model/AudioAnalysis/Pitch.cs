@@ -31,6 +31,12 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// List containing the pitch evolution in the time.
         /// </summary>
         private List<float> pitchList;
+		
+        /// <summary>
+        /// For keeping track of the differences on 'pitchList' between 2 iterations
+        /// </summary>
+		private int oldPitchListSize = 0;
+
 		private static Pitch instance = null;
 		public static Pitch Get(){
 			return instance;
@@ -327,10 +333,14 @@ namespace LecturerTrainer.Model.AudioAnalysis
             volume *= 10;
             volume = Convert.ToInt32(volume);
 
-            if (pitchList.Count > 300){
+            if (pitchList.Count > 300)
 				for (i = 0; i < 300; i++) wiggle[i] = pitchList[pitchList.Count - 301 + i]; //wiggle = the 300 last elenents from pitchList
-			}
-
+			
+			int newValues = pitchList.Count - oldPitchListSize;
+			oldPitchListSize = pitchList.Count;
+			for (i = newValues; i > 0; i--)
+				DrawingSheetAvatarViewModel.backgroundXMLVoiceRecordingEventStream?.Invoke(this, pitchList[pitchList.Count - 1 - i]);
+			
             this.PitchSmoothing();
             if (canSendEvent)
                 lock (Lock)

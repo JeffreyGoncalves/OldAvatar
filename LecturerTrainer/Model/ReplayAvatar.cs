@@ -107,6 +107,7 @@ namespace LecturerTrainer.Model
 
 		private static List<float> replayWiggle = null;
 		private static int wiggleIndex = 0;
+		private static int indexCount = 0;
       
         #endregion
 
@@ -115,7 +116,7 @@ namespace LecturerTrainer.Model
         /// Time ellapsed in ms. It is not the real elapsed time, it depends on the speed
         /// </summary>
 
-        public ReplayAvatar(string avDir, string fDir, ReplayViewModel rvm, int num)
+        public ReplayAvatar(string avDir, string fDir, string vDir,ReplayViewModel rvm, int num)
         {
             try
             {
@@ -129,15 +130,21 @@ namespace LecturerTrainer.Model
                 currentSkeletonNumber = num;
                 skeletonsList = new SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>>();
                 skeletonsList = LoadSkeletonsFromXML(avatarDir, faceDir);
-                //Initilise the first skeleton to be displayed, depending if the replay is on play or stop
+				
+				//Load the voice data if it exists
+				if(vDir != "") replayWiggle = LoadVoiceDataFromXML(vDir);
+                
+				//Initilise the first skeleton to be displayed, depending if the replay is on play or stop
                 if (currentSkeletonNumber > skeletonsList.Count)
                     currentSkeleton = skeletonsList[skeletonsList.Count - 1].Item2;
                 else
                     currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
-                // draw the first avatar
+                
+				// draw the first avatar
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
                 DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
-                // init of the DispatcherTimer that is used for the replay
+                
+				// init of the DispatcherTimer that is used for the replay
                 Tools.initStopWatch();
                 timeToUpdate = new DispatcherTimer();
                 timeToUpdate.Interval = TimeSpan.FromMilliseconds(31.2);
@@ -157,7 +164,7 @@ namespace LecturerTrainer.Model
         /// </summary>
         /// <param name="skDir"></param>
         /// <param name="rvm"></param>
-        public ReplayAvatar(string skDir, ReplayViewModel rvm, int num) : this(skDir, "", rvm, num) { }
+        public ReplayAvatar(string skDir, ReplayViewModel rvm, int num) : this(skDir, "", "", rvm, num) { }
         #endregion
 
         #region replay methods
@@ -247,6 +254,7 @@ namespace LecturerTrainer.Model
         {
             Tools.stopStopWatch();
             timeToUpdate.Stop();
+			wiggleIndex = 0;
             currentSkeletonNumber = 0;
             currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
             DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
@@ -256,61 +264,6 @@ namespace LecturerTrainer.Model
         #endregion
 
         #region XmlSkeletonLoading
-
-		private static void initReplayWiggle()
-		{
-			replayWiggle = new List<float>();
-			for (int i = 0; i < 300; i++)
-			{
-				replayWiggle.Add(0);
-			}
-		}
-
-		private static void endReplayWiggle()
-		{
-			for (int i = 0; i < 300; i++)
-			{
-				replayWiggle.Add(0);
-			}
-		}
-		
-		public static void drawWiggle()
-		{
-			float  xw, xw1, yw, yw1;
-
-            GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name.Count() > 0 && DrawingSheetAvatarViewModel.Get().actualTheme.SN.Contains(p.name) select p.idTextureOpenGL).First());
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-			
-			GL.PushAttrib(AttribMask.ColorBufferBit);
-            for (int i = 0;  i < 299; i++)
-            {
-				yw = +0.6f + replayWiggle[i + wiggleIndex] / 500.0f; 
-				yw1 = +0.6f + replayWiggle[i + 1 + wiggleIndex] / 500.0f;
-				
-                xw = -2.5f + i / 60.0f;
-                xw1 = -2.5f + (i + 1) / 60.0f;
-
-                GL.PushMatrix();
-                GL.Begin(PrimitiveType.Lines);
-                GL.Color4(0.5, 0.5, 0.5, 1.0);
-                GL.Normal3(0.0f, 0.0f, 1.0f);
-                GL.LineWidth(1.0f);
-
-                GL.TexCoord2((xw + 2.5f) / 5.0, (yw - 0.6) / 1.15);
-                GL.Vertex3(xw, yw, 1.0f);
-
-                GL.TexCoord2((xw1 + 2.5f) / 5.0, (yw1 - 0.6) / 1.15);
-                GL.Vertex3(xw1, yw1, 1.0f);
-
-                GL.End();
-                GL.PopMatrix();
-            }
-			System.Diagnostics.Debug.WriteLine(wiggleIndex);
-            GL.PopAttrib();
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-			wiggleIndex+=2;
-		}
 
         /// <summary>
         /// Load all the skeletons from a file
@@ -339,17 +292,6 @@ namespace LecturerTrainer.Model
                             int timeElapsed = Convert.ToInt32(xmlSkeletonReader.Value);
                             xmlSkeletonReader.MoveToAttribute(1);
                             SkeletonTrackingState skTrackingState = (SkeletonTrackingState)Enum.Parse(typeof(SkeletonTrackingState), xmlSkeletonReader.Value);
-							if(xmlSkeletonReader.MoveToAttribute("PeakValue"))
-							{
-								if (replayWiggle == null){
-									initReplayWiggle();
-								}
-								replayWiggle.Add(Convert.ToSingle(xmlSkeletonReader.Value));
-								xmlSkeletonReader.MoveToAttribute("PeakValue2");
-								replayWiggle.Add(Convert.ToSingle(xmlSkeletonReader.Value));
-								xmlSkeletonReader.MoveToAttribute("PeakValue3");
-								replayWiggle.Add(Convert.ToSingle(xmlSkeletonReader.Value));
-							}
                             xmlSkeletonReader.MoveToContent();
                             sk.TrackingState = skTrackingState;
                         
@@ -398,7 +340,6 @@ namespace LecturerTrainer.Model
                                     }
                                 }
                             }
-
                             if(pathFace != "")
                             {
                                 var tu = new Tuple<int, Skeleton, FaceDataWrapper>(timeElapsed , sk, loadFaceWFrame(pathFace, skCount));
@@ -412,7 +353,6 @@ namespace LecturerTrainer.Model
                     }
                 }
                 ReplayViewModel.timeEnd = skeletonSortedListWithTime[skeletonSortedListWithTime.Count - 1].Item1;
-				endReplayWiggle();
                 return skeletonSortedListWithTime;
             }catch(Exception)
             {
@@ -579,6 +519,102 @@ namespace LecturerTrainer.Model
                                         "The savefile is wrongly written");
         }
         #endregion
+
+		#region XMLTonePeakLoading
+		
+		private static List<float> stuffReplayWiggleList(List<float> list)
+		{
+			for (int i = 0; i < 300; i++)
+			{
+				list.Add(0);
+			}
+			return list;
+		}
+
+		/*private static void endReplayWiggle()
+		{
+			for (int i = 0; i < 300; i++)
+			{
+				replayWiggle.Add(0);
+			}
+		}*/
+		
+		public static void drawWiggle()
+		{
+			float  xw, xw1, yw, yw1;
+
+            GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name.Count() > 0 && DrawingSheetAvatarViewModel.Get().actualTheme.SN.Contains(p.name) select p.idTextureOpenGL).First());
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+			
+			GL.PushAttrib(AttribMask.ColorBufferBit);
+            for (int i = 0;  i < 299; i++)
+            {
+				yw = +0.6f + replayWiggle[i + wiggleIndex] / 500.0f; 
+				yw1 = +0.6f + replayWiggle[i + 1 + wiggleIndex] / 500.0f;
+				
+                xw = -2.5f + i / 60.0f;
+                xw1 = -2.5f + (i + 1) / 60.0f;
+
+                GL.PushMatrix();
+                GL.Begin(PrimitiveType.Lines);
+                GL.Color4(0.5, 0.5, 0.5, 1.0);
+                GL.Normal3(0.0f, 0.0f, 1.0f);
+                GL.LineWidth(1.0f);
+
+                GL.TexCoord2((xw + 2.5f) / 5.0, (yw - 0.6) / 1.15);
+                GL.Vertex3(xw, yw, 1.0f);
+
+                GL.TexCoord2((xw1 + 2.5f) / 5.0, (yw1 - 0.6) / 1.15);
+                GL.Vertex3(xw1, yw1, 1.0f);
+
+                GL.End();
+                GL.PopMatrix();
+            }
+            GL.PopAttrib();
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+			wiggleIndex+=3;
+			if (indexCount % 3 == 0) wiggleIndex +=1;
+			indexCount++;
+		}
+
+
+		/// <summary>
+        /// Load the voiceData   
+        /// </summary>
+		public static List<float> LoadVoiceDataFromXML(String path)
+        {
+            try
+            {
+                int count = 0;
+                List<float> toneList = new List<float>();
+				stuffReplayWiggleList(toneList);
+                XmlReaderSettings settings = new XmlReaderSettings { IgnoreWhitespace = true, CheckCharacters = true };
+                XmlReader xmlVoiceReader = XmlReader.Create(path, settings);
+
+                xmlVoiceReader.MoveToContent();
+                while (xmlVoiceReader.Read())
+                {
+                    if (xmlVoiceReader.NodeType == XmlNodeType.Element)
+                    {
+                        if (xmlVoiceReader.Name == "PeakValue_" + count)
+                        {
+                            xmlVoiceReader.MoveToAttribute(0);
+							toneList.Add(Convert.ToSingle(xmlVoiceReader.Value));
+                        }
+                    }
+					count++;
+                }
+				stuffReplayWiggleList(toneList);
+                return toneList;
+            }catch(Exception)
+            {
+                throw new ArgumentException("Impossible to read voice data : ", path);
+            }
+
+        }
+
+		#endregion
 
         //These uses in the end too much memory to be used
         #region SlowerAlternateVersionsOfFaceLoading
