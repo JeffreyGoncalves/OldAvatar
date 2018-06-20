@@ -806,17 +806,12 @@ namespace LecturerTrainer.Model
             //Added by Baptiste Germond using value and code of Alistair Sutherland
             if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true && !ReplayViewModel.isReplaying)
             {
-				SavingTools.PeakRecord = true;
 				float xw, yw, yw1;
 
                 GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name.Count() > 0 && actualTheme.SN.Contains(p.name) select p.idTextureOpenGL).First());
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 				
-				//xmlSkeletonWriter.WriteAttributeString("PeakValue", Model.AudioAnalysis.Pitch.wiggle[Model.AudioAnalysis.Pitch.wiggle.Length].ToString());
-                //if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true && TrainingSideToolViewModel.Get().ToggleAudioRecording) 
-				//System.Diagnostics.Debug.WriteLine(TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked+" - "+TrainingSideToolViewModel.Get().ToggleAudioRecording);
-
 				GL.PushAttrib(AttribMask.ColorBufferBit);
                 for (i = 0; i < 299; i++)
                 {
@@ -844,8 +839,7 @@ namespace LecturerTrainer.Model
                 GL.PopAttrib();
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
-			else if(ReplayViewModel.isReplaying){
-				SavingTools.PeakRecord = false;
+			else if(ReplayViewModel.isReplaying && ReplayViewModel.Get().voiceData != ""){
 				ReplayAvatar.drawWiggle();
 			}
 
@@ -959,7 +953,7 @@ namespace LecturerTrainer.Model
                         }
 
                         Gl.glColor4f(0, 0, 0, 1);
-                        Gl.glTranslatef(-RHori, -0.01f, -0.1f);
+                        Gl.glTranslatef(-RHori, 0.01f, -0.1f);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 
                         for (cnt = 0; cnt < eyesPoints.Length; cnt++)
@@ -970,13 +964,58 @@ namespace LecturerTrainer.Model
                     }
                     Gl.glPopMatrix();
 
-                    // Drawing of the right eyebrow
-                    GL.Begin(PrimitiveType.Polygon);
-                    GL.Vertex3(face15);
-                    GL.Vertex3(face16);
-                    GL.Vertex3(face17);
-                    GL.Vertex3(face18);
-                    GL.End();
+
+                    //Drawing of right eyebrow
+                    Gl.glPushMatrix();
+                    {
+                        float step = (float)Math.PI / 10;
+                        float scale = 0.05f;
+                        float fullness = -0.9999f;
+                        Vector3 HeadX = EyesAlignment;
+                        Vector3 HeadY = headTilt;
+                        Vector3 HeadZ;
+
+                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
+                        HeadZ = Vector3.Cross(HeadX, HeadY);
+
+                        HeadX.Normalize();
+                        HeadY.Normalize();
+                        HeadZ.Normalize();
+
+                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
+
+                        GL.Translate(headCenterPoint);
+                        GL.MultMatrix(HeadM);
+
+
+                        Gl.glTranslatef(-0.07f, 0.07f, -0.1f);
+                        Gl.glScalef(1, 0.25f, 1);
+                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
+                        {
+                            Gl.glVertex3f(scale, 0, 0);
+                            float angle = step;
+
+                            while (angle < (float)Math.PI)
+                            {
+                                float sinAngle = (float)Math.Sin(angle);
+                                float cosAngle = (float)Math.Cos(angle);
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, 0);
+                                angle += step;
+                            }
+                            angle = step;
+                            while (angle < (float)Math.PI)
+                            {
+                                float sinAngle = (float)Math.Sin(angle);
+                                float cosAngle = (float)Math.Cos(angle);
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, 0);
+
+                                angle += step;
+                            }
+                            Gl.glVertex3f(-scale, 0, 0);
+                        }
+                        Gl.glEnd();
+                    }
+                    Gl.glPopMatrix();
 
                     // Drawing of the left eye
                     Gl.glPushMatrix();
@@ -1014,7 +1053,7 @@ namespace LecturerTrainer.Model
                         }
 
                         Gl.glColor4f(0, 0, 0, 1);
-                        Gl.glTranslatef(RHori, -0.01f, -0.1f);
+                        Gl.glTranslatef(RHori, 0.01f, -0.1f);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
 
                         for (cnt = 0; cnt < eyesPoints.Length; cnt++)
@@ -1026,46 +1065,60 @@ namespace LecturerTrainer.Model
                     Gl.glPopMatrix();
 
                     // Drawing of the left eyebrow
-                    GL.Begin(PrimitiveType.Polygon);
-                    GL.Vertex3(face48);//Left
-                    GL.Vertex3(face49);//Top
-                    GL.Vertex3(face50);//Right
-                    GL.Vertex3(face51);//Bottom
-                    GL.End();
-
                     Gl.glPushMatrix();
                     {
-                        float LHScale = (float)Math.Sqrt(Math.Pow(face50.X - face48.X,2) + Math.Pow(face50.Y - face48.Y,2));
-                        float LVScale = (float)Math.Sqrt(Math.Pow(face51.X - face49.X,2) + Math.Pow(face51.Y - face49.Y,2));
+                        float step = (float)Math.PI / 10;
+                        float scale = 0.05f;
+                        float fullness = -0.9999f;
+                        Vector3 HeadX = EyesAlignment;
+                        Vector3 HeadY = headTilt;
+                        Vector3 HeadZ;
 
-                        float angle = 0;
-                        int cnt = 0;
-                        EyesAlignment.X = face53.X - face20.X;
-                        EyesAlignment.Y = face53.Y - face20.Y;
-                        EyesAlignment.Z = face53.Z - face20.Z;
-                        Vector3 test1;
-                        Vector3 test2;
+                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
+                        HeadZ = Vector3.Cross(HeadX, HeadY);
 
-                        test1.X = EyesAlignment.X + headCenterPoint.X;
-                        test1.Y = EyesAlignment.Y + headCenterPoint.Y;
-                        test1.Z = EyesAlignment.Z + headCenterPoint.Z;
+                        HeadX.Normalize();
+                        HeadY.Normalize();
+                        HeadZ.Normalize();
 
-                        test2.X = -EyesAlignment.X + headCenterPoint.X;
-                        test2.Y = -EyesAlignment.Y + headCenterPoint.Y;
-                        test2.Z = -EyesAlignment.Z + headCenterPoint.Z;
+                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
 
-                        Vector3[] eyebrowPoints = new Vector3[10];
+                        GL.Translate(headCenterPoint);
+                        GL.MultMatrix(HeadM);
 
-                        while(angle < (float)Math.PI)
+                        //DrawHorizontalCrescent(0.07f, 0.01f, -0.1f, (float)Math.PI / 10, 0.07f, -0.5f);
+
+                     
+                        Gl.glTranslatef(0.07f, 0.07f, -0.1f);
+                        Gl.glScalef(1, 0.25f, 1);
+                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
                         {
-                            eyebrowPoints[cnt] = (LHScale * (float)Math.Sin(angle)) * test1 + (LHScale * (float)Math.Cos(angle)) * headCenterPoint;
-                            cnt++;
-                            angle += (float)(Math.PI) / 10;
-                        }
+                            Gl.glVertex3f(scale, 0, 0);
+                            float angle = step;
 
-                   
+                            while (angle < (float)Math.PI)
+                            {
+                                float sinAngle = (float)Math.Sin(angle);
+                                float cosAngle = (float)Math.Cos(angle);
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, 0);
+                                angle += step;
+                            }
+                            angle = step;
+                            while (angle < (float)Math.PI)
+                            {
+                                float sinAngle = (float)Math.Sin(angle);
+                                float cosAngle = (float)Math.Cos(angle);
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, 0);
+
+                                angle += step;
+                            }
+                            Gl.glVertex3f(-scale, 0, 0);
+                        }
+                        Gl.glEnd();
                     }
                     Gl.glPopMatrix();
+
+                   
                     
                     
                 }
@@ -1284,63 +1337,67 @@ namespace LecturerTrainer.Model
                     /* List containing all the feedbacks that must be displayed during the current frame */
                     List<String> feedbacksToDisplay = ReplayViewModel.Get().currentFeedbackList;
 
-                    /* Iterating through the list to see which feedback to display */
-                    foreach (String message in feedbacksToDisplay)
-                    {
-                        /*ServerFeedback tempFeedback = new ServerFeedback(message);
-                        ReplayViewModel.Get().manageFeedback(tempFeedback.eventName);*/
-                        switch(message)
-                        {
-                            /*OpenGL feedback of the hands crossed*/
-                            case("Hands are joined"):
-                                HudDrawImage("Hand_Joined", 0.15f, 0.15f,
-                                    avatar.Joints[JointType.HandLeft].Position.X,
-                                    avatar.Joints[JointType.HandLeft].Position.Y);
-                                break;
+					if(feedbacksToDisplay != null)
+					{
 
-                            /*OpenGL feedback of the look at the center*/
-                            case("Look to the center"):
-                                HudDrawImage("Center_Arrow", 0.2f, 0.2f,
-                                    headX,
-                                    headY + 0.5f);
-                                break;
+						/* Iterating through the list to see which feedback to display */
+						foreach (String message in feedbacksToDisplay)
+						{
+							/*ServerFeedback tempFeedback = new ServerFeedback(message);
+							ReplayViewModel.Get().manageFeedback(tempFeedback.eventName);*/
+							switch(message)
+							{
+								/*OpenGL feedback of the hands crossed*/
+								case("Hands are joined"):
+									HudDrawImage("Hand_Joined", 0.15f, 0.15f,
+										avatar.Joints[JointType.HandLeft].Position.X,
+										avatar.Joints[JointType.HandLeft].Position.Y);
+									break;
+
+								/*OpenGL feedback of the look at the center*/
+								case("Look to the center"):
+									HudDrawImage("Center_Arrow", 0.2f, 0.2f,
+										headX,
+										headY + 0.5f);
+									break;
                             
-                            /*OpenGL feedback of the look at the left*/
-                            case("Look to the left"):
-                                HudDrawImage("Left_Arrow", 0.2f, 0.2f,
-                                    headX - 0.5f,
-                                    headY);
-                                break;
+								/*OpenGL feedback of the look at the left*/
+								case("Look to the left"):
+									HudDrawImage("Left_Arrow", 0.2f, 0.2f,
+										headX - 0.5f,
+										headY);
+									break;
                             
-                            /*OpenGL feedback of the look at the right*/
-                            case("Look to the right"):
-                                HudDrawImage("Right_Arrow", 0.2f, 0.2f,
-                                    headX + 0.5f,
-                                    headY);
-                                break;
+								/*OpenGL feedback of the look at the right*/
+								case("Look to the right"):
+									HudDrawImage("Right_Arrow", 0.2f, 0.2f,
+										headX + 0.5f,
+										headY);
+									break;
                             
-                            /*OpenGL feedback of the happy emotion*/
-                            case("Happy"):
-                                HudDrawImage("Happy", 0.2f, 0.2f,
-                                    0.75f,
-                                    0.5f);
-                                break;
+								/*OpenGL feedback of the happy emotion*/
+								case("Happy"):
+									HudDrawImage("Happy", 0.2f, 0.2f,
+										0.75f,
+										0.5f);
+									break;
                             
-                            /*OpenGL feedback of agitation*/
-                            case("Too agitated!"):
-                                HudDrawImage("Agitation", 0.2f, 0.2f,
-                                    -1f,
-                                    0);
-                                break;
+								/*OpenGL feedback of agitation*/
+								case("Too agitated!"):
+									HudDrawImage("Agitation", 0.2f, 0.2f,
+										-1f,
+										0);
+									break;
                             
-                            /*OpenGL feedback of the arms crossed*/
-                            case("Arms Crossed"):
-                                HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
-                                    0.75f,
-                                    0);
-                                break;
-                        }
-                    }
+								/*OpenGL feedback of the arms crossed*/
+								case("Arms Crossed"):
+									HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
+										0.75f,
+										0);
+									break;
+							}
+						}
+					}
 				}
 			}
             else // Training mode
@@ -3119,7 +3176,6 @@ namespace LecturerTrainer.Model
             }
             GL.PopMatrix();
         }
-
 
         /// <summary>
         /// Resizes the viewport

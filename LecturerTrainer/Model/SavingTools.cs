@@ -32,18 +32,6 @@ namespace LecturerTrainer.Model
         private static DateTime localDate = DateTime.Now;
         public static string pathFolder ="";
 
-		private static bool peakRecord = false;
-		public static bool PeakRecord{
-			get
-			{
-				return peakRecord;
-			}
-			set
-			{
-				peakRecord = value;
-			}	
-		}
-
         #region PCQueueFields
         /// <summary>
         /// PCQueue for the videostream recording
@@ -405,7 +393,6 @@ namespace LecturerTrainer.Model
                 xmlVoiceWriter.WriteStartElement("PeakValues");
                 xmlVoiceQueue = new PCQueue<float>(value =>
                 {
-						System.Diagnostics.Debug.WriteLine("write");
                         xmlVoiceWriter.WriteStartElement("PeakValue_" + valueIndex++);
                         xmlVoiceWriter.WriteAttributeString("Value", value.ToString());
 						xmlVoiceWriter.WriteAttributeString("TimeElapse", Tools.getStopWatch().ToString());
