@@ -528,6 +528,16 @@ namespace LecturerTrainer.ViewModel
                 string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+
+                /*string pathFace = TrainingWithAvatarViewModel.Get().videosMap[curItem] + "/" + curItem + "_Good_Job.xml";
+                if (File.Exists(pathFace))
+                {
+                    TrainingWithAvatarViewModel.Get().SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(newPathFile, pathFace);
+                }
+                else
+                {
+                    TrainingWithAvatarViewModel.Get().SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(newPathFile, "");
+                }*/
             }
         }
     }
