@@ -140,7 +140,7 @@ namespace LecturerTrainer.Model
                     replayWiggle = LoadVoiceDataFromXML(vDir);
                 }
 				//Initilise the first skeleton to be displayed, depending if the replay is on play or stop
-                if (currentSkeletonNumber > skeletonsList.Count)
+                if (currentSkeletonNumber >= skeletonsList.Count)
                     currentSkeleton = skeletonsList[skeletonsList.Count - 1].Item2;
                 else
                     currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
@@ -189,29 +189,17 @@ namespace LecturerTrainer.Model
         /// <returns></returns>
         private void nextSkeleton(object sender, EventArgs evt)
         {
-			bool face = (faceDir == "") ? false : true;
-            if (currentSkeletonNumber < skeletonsList.Count && (replayFace % 2 )== 0 && face)
+            bool face = (faceDir == "") ? false : true;
+
+            if ((currentSkeletonNumber < skeletonsList.Count && (replayFace % 2) == 0 && face)
+                || (currentSkeletonNumber < skeletonsList.Count && !face))
             {
                 currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
             }
-			else if(currentSkeletonNumber < skeletonsList.Count  && !face)
-			{
-				currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
-			}
-            else if (currentSkeletonNumber == skeletonsList.Count)
-            {
-                currentSkeleton = null;
-                Console.Out.WriteLine("here");
-            }
-            /*if((replayFace % 2) == 1)
-            {
-                Console.Out.WriteLine(" -- cur " + skeletonsList[(int)currentSkeletonNumber].Item1);
-                Console.Out.WriteLine(" -- stw " + Tools.getStopWatch() + "\n");
-            }*/
 
             if (currentSkeleton != null)
             {
-                if (faceDir != "")
+                if (face)
                 {
                     DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
                     DrawingSheetAvatarViewModel.Get().drawFace(skeletonsList[(int)currentSkeletonNumber].Item3.depthPointsList,
@@ -226,12 +214,13 @@ namespace LecturerTrainer.Model
             {
                 replayViewModel.stopButtonCommand();
             }
+
 			if(face)
 			{
-				if((replayFace % 2) == 1)
-					currentSkeletonNumber += 1;
-				replayFace++;
-			}
+                if ((replayFace % 2) == 1)
+                    currentSkeletonNumber += 1;
+                replayFace++;
+            }
 			else
 			{
 				currentSkeletonNumber += 1;

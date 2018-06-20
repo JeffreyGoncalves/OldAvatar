@@ -361,7 +361,7 @@ namespace LecturerTrainer.ViewModel
                 currentFeedbackList = listlistString.ElementAt(currentListNumber);
             }*/
             //currentListNumber ++;
-            if(ReplayAvatar.CurrentSkeletonNumber != listlistString.Count)
+            if(ReplayAvatar.CurrentSkeletonNumber < listlistString.Count)
             {
                 currentFeedbackList = listlistString.ElementAt(ReplayAvatar.CurrentSkeletonNumber);
             }

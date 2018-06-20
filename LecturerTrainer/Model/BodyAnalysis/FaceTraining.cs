@@ -27,7 +27,12 @@ namespace LecturerTrainer.Model.BodyAnalysis
         
         public void Update(Skeleton sk)
         {
-            _complete = false;
+            _complete = true;
+
+            if (GestureRecognized != null)
+            {
+                GestureRecognized(this, new EventArgs());
+            }
 
             try
             {
@@ -72,9 +77,10 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     }
                 }
             }
-            catch(NullReferenceException) //the kinect don't catch the face
+            catch(NullReferenceException e) //the kinect don't catch the face
             {
-                System.Windows.Forms.MessageBox.Show("the kinect don't catch the face !");
+                //System.Windows.Forms.MessageBox.Show("the kinect don't catch the face !");
+                Console.Error.WriteLine(e);
             }
             /*catch(Exception e1)
             {
