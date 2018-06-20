@@ -135,7 +135,7 @@ namespace LecturerTrainer.Model
 				if(vDir != "") replayWiggle = LoadVoiceDataFromXML(vDir);
                 
 				//Initilise the first skeleton to be displayed, depending if the replay is on play or stop
-                if (currentSkeletonNumber > skeletonsList.Count)
+                if (currentSkeletonNumber >= skeletonsList.Count)
                     currentSkeleton = skeletonsList[skeletonsList.Count - 1].Item2;
                 else
                     currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
@@ -209,6 +209,7 @@ namespace LecturerTrainer.Model
             {
                 replayViewModel.stopButtonCommand();
             }
+
 			if(face)
 			{
                 if ((replayFace % 2) == 1)
