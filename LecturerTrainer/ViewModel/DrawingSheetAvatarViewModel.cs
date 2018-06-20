@@ -478,43 +478,41 @@ namespace LecturerTrainer.Model
                     
                     if(drawFM)
                     {
-                        Console.Out.WriteLine("FACE = TRUE");
-                        Console.Out.WriteLine("count : " + count);
-
                         count++;
                         if (count % 2 == 0)
                         {
-                            Console.Out.WriteLine("Face");
                             fcToDisplay = TrainingWithAvatarViewModel.Get().ChooseFaceToDisplay();
                             if (fcToDisplay.depthPointsList != null && skToDisplay != null)
                             {
-                                mentor = true;
                                 DrawMentor(skToDisplay, fcToDisplay, true);
-                                mentor = false;
+                            }
+                            else
+                            {
+                                drawFM = false;
+                                count = 0;
                             }
                         }
                         else
                         {
-                            Console.Out.WriteLine("Body");
                             skToDisplay = TrainingWithAvatarViewModel.Get().chooseSkeletonToDisplay();
                             if(skToDisplay != null && fcToDisplay.depthPointsList != null)
                             {
-                                mentor = true;
                                 DrawMentor(skToDisplay, fcToDisplay, true);
-                                mentor = false;
                             }
                             else
-                                drawInitialAvatar();
+                            {
+                                drawFM = false;
+                                count = 0;
+                            }
                         }
                     }
                     else
                     {
-                        Console.Out.WriteLine("face = false");
                         skToDisplay = TrainingWithAvatarViewModel.Get().chooseSkeletonToDisplay();
                         if (skToDisplay != null)
                         {
                             fcToDisplay = TrainingWithAvatarViewModel.Get().ChooseFaceToDisplay();
-                            if (fcToDisplay.faceTriangles != null)
+                            if (fcToDisplay.depthPointsList != null)
                                 drawFM = true;
                             DrawMentor(skToDisplay, fcToDisplay, drawFM);
                         }

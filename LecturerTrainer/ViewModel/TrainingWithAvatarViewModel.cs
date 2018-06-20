@@ -75,7 +75,7 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
-        private int skeletonNumber = 0;
+        private int skeletonNumber;
         private int faceNumber;
         public SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> SkeletonList { get; private set; }
 
@@ -281,6 +281,7 @@ namespace LecturerTrainer.ViewModel
                     SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(pathFile, "");
                 }
                 skeletonNumber = 0;
+                faceNumber = 0;
                 launchTraining();
             } 
         }
@@ -323,9 +324,9 @@ namespace LecturerTrainer.ViewModel
             {
                 if (playMode)
                 {
-                    fcToReturn = SkeletonList[skeletonNumber].Item3;
-                    if (skeletonNumber != SkeletonList.Count - 1)
-                        skeletonNumber++;
+                    fcToReturn = SkeletonList[faceNumber].Item3;
+                    if (faceNumber != SkeletonList.Count - 1)
+                        faceNumber++;
                     else
                     {
                         canBeInterrupted = true;
@@ -334,12 +335,12 @@ namespace LecturerTrainer.ViewModel
                 }
                 else if (pauseMode)
                 {
-                    fcToReturn = SkeletonList[skeletonNumber].Item3;
+                    fcToReturn = SkeletonList[faceNumber].Item3;
                 }
                 else if (stopMode)
                 {
-                    skeletonNumber = 0;
-                    fcToReturn = SkeletonList[skeletonNumber].Item3;
+                    faceNumber = 0;
+                    fcToReturn = SkeletonList[faceNumber].Item3;
                 }
             }
 
@@ -527,6 +528,16 @@ namespace LecturerTrainer.ViewModel
                 string curItem = TrainingWithAvatarView.Get().VideosList.SelectedItem.ToString();
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
+
+                /*string pathFace = TrainingWithAvatarViewModel.Get().videosMap[curItem] + "/" + curItem + "_Good_Job.xml";
+                if (File.Exists(pathFace))
+                {
+                    TrainingWithAvatarViewModel.Get().SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(newPathFile, pathFace);
+                }
+                else
+                {
+                    TrainingWithAvatarViewModel.Get().SkeletonList = ReplayAvatar.LoadSkeletonsFromXML(newPathFile, "");
+                }*/
             }
         }
     }
