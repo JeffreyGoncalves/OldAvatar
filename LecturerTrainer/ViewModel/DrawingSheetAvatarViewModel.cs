@@ -685,7 +685,6 @@ namespace LecturerTrainer.Model
             face49 = new Vector3(faceP3D.ElementAt(49).X, faceP3D.ElementAt(49).Y*1.25f, faceP3D.ElementAt(49).Z) + faceAdjustment;
             face50 = new Vector3(faceP3D.ElementAt(50).X, faceP3D.ElementAt(50).Y*1.25f, faceP3D.ElementAt(50).Z) + faceAdjustment;
             face51 = new Vector3(faceP3D.ElementAt(51).X, faceP3D.ElementAt(51).Y*1.25f, faceP3D.ElementAt(51).Z) + faceAdjustment;
-
             //Eyes alignment
             EyesAlignment = new Vector3(face53.X - face20.X, face53.Y - face20.Y, face53.Z - face20.Z);
 
@@ -891,59 +890,61 @@ namespace LecturerTrainer.Model
             {
                 GL.PushMatrix();
                 {
-                    OpenTK.Vector4 faceColor = new OpenTK.Vector4(0.0f, 0.5f, 0.0f, 1.0f);
-                    GL.Color4(faceColor);
+                    OpenTK.Vector4 faceColor = new OpenTK.Vector4(1.0f, 1.0f, 1.0f, 1.0f); 
                     GL.Normal3(0.0f, 0.0f, 1.0f);
                     GL.LineWidth(3.0f);
 
+                    //Entering into the head axis system
                     Vector3 HeadX = EyesAlignment;
                     Vector3 HeadY = headTilt;
                     Vector3 HeadZ;
-
-                    System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
                     HeadZ = Vector3.Cross(HeadX, HeadY);
-
                     HeadX.Normalize();
                     HeadY.Normalize();
                     HeadZ.Normalize();
-
                     double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
+                    float[] HeadMF = new float[16];
 
                     GL.Translate(headCenterPoint);
                     GL.MultMatrix(HeadM);
+                    GL.Color4(faceColor);
 
                     //Drawing of the mouth
                     Gl.glPushMatrix();
                     {
+                       
                         float step = (float)Math.PI / 10;
                         float scale = 0.05f;
                         float fullness = -0.9999f;
-                       
+                      
                         Gl.glTranslatef(0, -0.07f, -0.1f);
+                        Gl.glRotatef(180, 0, 0, 1);
                         Gl.glScalef(1.75f, 0.5f, 1);
-                        Gl.glRotatef(180, 0, 0, 0);
+                         
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
                         {
-                            Gl.glVertex3f(scale, 0, 0.1f);
+                            Gl.glVertex3f(scale, 0, -0.1f);
                             float angle = step;
-
+                        
                             while (angle < (float)Math.PI)
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, 0.1f);
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
+                               
                                 angle += step;
                             }
                             angle = step;
+                            
                             while (angle < (float)Math.PI)
                             {
+
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, 0.1f);
-
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
                                 angle += step;
                             }
-                            Gl.glVertex3f(-scale, 0, 0.1f);
+                            Gl.glVertex3f(-scale, 0, -0.1f);
                         }
                         Gl.glEnd();
                     }
@@ -967,11 +968,10 @@ namespace LecturerTrainer.Model
                             cnt++;
                         }
 
-                        Gl.glColor4f(0, 0, 0, 1);
+                      
                         Gl.glTranslatef(-RHori, 0.01f, -0.1f);
                         Gl.glScalef(0.75f, 1, 1);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
-
                         for (cnt = 0; cnt < eyesPoints.Length; cnt++)
                         {
                             Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
@@ -987,19 +987,21 @@ namespace LecturerTrainer.Model
                         float step = (float)Math.PI / 10;
                         float scale = 0.05f;
                         float fullness = -0.9999f;
-
+                     
                         Gl.glTranslatef(-0.07f, 0.07f, -0.1f);
+                     
                         Gl.glScalef(1, 0.25f, 1);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
                         {
                             Gl.glVertex3f(scale, 0, -0.1f);
                             float angle = step;
-
+                           
                             while (angle < (float)Math.PI)
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
                                 Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
+                           
                                 angle += step;
                             }
                             angle = step;
@@ -1035,12 +1037,9 @@ namespace LecturerTrainer.Model
                             eyesPoints[cnt].Z = -0.1f;
                             cnt++;
                         }
-
-                        Gl.glColor4f(0, 0, 0, 1);
                         Gl.glTranslatef(RHori, 0.01f, -0.1f);
                         Gl.glScalef(0.75f, 1, 1);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
-
                         for (cnt = 0; cnt < eyesPoints.Length; cnt++)
                         {
                             Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
@@ -1059,7 +1058,7 @@ namespace LecturerTrainer.Model
                         Gl.glScalef(1, 0.25f, 1);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
                         {
-                            Gl.glVertex3f(scale, 0, 0);
+                            Gl.glVertex3f(scale, 0, -0.1f);
                             float angle = step;
 
                             while (angle < (float)Math.PI)
