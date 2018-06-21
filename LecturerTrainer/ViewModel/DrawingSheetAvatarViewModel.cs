@@ -837,7 +837,7 @@ namespace LecturerTrainer.Model
                 GL.PopAttrib();
                 GL.BindTexture(TextureTarget.Texture2D, 0);
             }
-			else if(ReplayViewModel.isReplaying && ReplayAvatar.voiceData)
+			else if((ReplayViewModel.isReplaying && ReplayAvatar.voiceData) && ReplayViewModel.played)
             {
 				ReplayAvatar.drawWiggle();
 			}
