@@ -891,30 +891,26 @@ namespace LecturerTrainer.Model
             {
                 GL.PushMatrix();
                 {
-                    
-
-                    
-                  
-
-                    OpenTK.Vector4 faceColor = new OpenTK.Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+                    OpenTK.Vector4 faceColor = new OpenTK.Vector4(0.0f, 0.5f, 0.0f, 1.0f);
                     GL.Color4(faceColor);
                     GL.Normal3(0.0f, 0.0f, 1.0f);
                     GL.LineWidth(3.0f);
-                    /*GL.Begin(PrimitiveType.LineLoop);
-                    GL.Vertex3(MTUL);
-                    GL.Vertex3(ORCM);
-                    GL.Vertex3(MBUL);
-                    GL.Vertex3(OLCM);
-                    GL.Vertex3(MTUL);
-                    GL.End();*/
 
-                    /*GL.Begin(PrimitiveType.LineLoop);
-                    GL.Vertex3(MTLL);
-                    GL.Vertex3(ORCM);
-                    GL.Vertex3(MBLL);
-                    GL.Vertex3(OLCM);
-                    GL.Vertex3(MTLL);
-                    GL.End();*/
+                    Vector3 HeadX = EyesAlignment;
+                    Vector3 HeadY = headTilt;
+                    Vector3 HeadZ;
+
+                    System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
+                    HeadZ = Vector3.Cross(HeadX, HeadY);
+
+                    HeadX.Normalize();
+                    HeadY.Normalize();
+                    HeadZ.Normalize();
+
+                    double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
+
+                    GL.Translate(headCenterPoint);
+                    GL.MultMatrix(HeadM);
 
                     //Drawing of the mouth
                     Gl.glPushMatrix();
@@ -922,36 +918,20 @@ namespace LecturerTrainer.Model
                         float step = (float)Math.PI / 10;
                         float scale = 0.05f;
                         float fullness = -0.9999f;
-                        Vector3 HeadX = EyesAlignment;
-                        Vector3 HeadY = headTilt;
-                        Vector3 HeadZ;
-
-                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
-                        HeadZ = Vector3.Cross(HeadX, HeadY);
-
-                        HeadX.Normalize();
-                        HeadY.Normalize();
-                        HeadZ.Normalize();
-
-                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
-
-                        GL.Translate(headCenterPoint);
-                        GL.MultMatrix(HeadM);
-
-
+                       
                         Gl.glTranslatef(0, -0.07f, -0.1f);
-                        Gl.glScalef(1, 0.25f, 1);
+                        Gl.glScalef(1.75f, 0.5f, 1);
                         Gl.glRotatef(180, 0, 0, 0);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
                         {
-                            Gl.glVertex3f(scale, 0, 0);
+                            Gl.glVertex3f(scale, 0, 0.1f);
                             float angle = step;
 
                             while (angle < (float)Math.PI)
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, 0);
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, 0.1f);
                                 angle += step;
                             }
                             angle = step;
@@ -959,11 +939,11 @@ namespace LecturerTrainer.Model
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, 0);
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, 0.1f);
 
                                 angle += step;
                             }
-                            Gl.glVertex3f(-scale, 0, 0);
+                            Gl.glVertex3f(-scale, 0, 0.1f);
                         }
                         Gl.glEnd();
                     }
@@ -972,24 +952,7 @@ namespace LecturerTrainer.Model
                     // Drawing of the right eye
                     Gl.glPushMatrix();
                     {
-
                         float beta;
-                        Vector3 HeadX = EyesAlignment;
-                        Vector3 HeadY = headTilt;
-                        Vector3 HeadZ;
-
-                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
-                        HeadZ = Vector3.Cross(HeadX, HeadY);
-
-                        HeadX.Normalize();
-                        HeadY.Normalize();
-                        HeadZ.Normalize();
-
-                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
-
-                        GL.Translate(headCenterPoint);
-                        GL.MultMatrix(HeadM);
-
                         float betaStep = (float)(Math.PI) / (float)generalStacks;
                         Vector3[] eyesPoints = new Vector3[20];
                         float RVert = 0.02f; // Size of the horizontal semi-axis of the ellipse
@@ -1024,35 +987,19 @@ namespace LecturerTrainer.Model
                         float step = (float)Math.PI / 10;
                         float scale = 0.05f;
                         float fullness = -0.9999f;
-                        Vector3 HeadX = EyesAlignment;
-                        Vector3 HeadY = headTilt;
-                        Vector3 HeadZ;
-
-                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
-                        HeadZ = Vector3.Cross(HeadX, HeadY);
-
-                        HeadX.Normalize();
-                        HeadY.Normalize();
-                        HeadZ.Normalize();
-
-                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
-
-                        GL.Translate(headCenterPoint);
-                        GL.MultMatrix(HeadM);
-
 
                         Gl.glTranslatef(-0.07f, 0.07f, -0.1f);
                         Gl.glScalef(1, 0.25f, 1);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
                         {
-                            Gl.glVertex3f(scale, 0, 0);
+                            Gl.glVertex3f(scale, 0, -0.1f);
                             float angle = step;
 
                             while (angle < (float)Math.PI)
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, 0);
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
                                 angle += step;
                             }
                             angle = step;
@@ -1060,11 +1007,11 @@ namespace LecturerTrainer.Model
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, 0);
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
 
                                 angle += step;
                             }
-                            Gl.glVertex3f(-scale, 0, 0);
+                            Gl.glVertex3f(-scale, 0, -0.1f);
                         }
                         Gl.glEnd();
                     }
@@ -1075,22 +1022,6 @@ namespace LecturerTrainer.Model
                     {
 
                         float beta;
-                        Vector3 HeadX = EyesAlignment;
-                        Vector3 HeadY = headTilt;
-                        Vector3 HeadZ;
-
-                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
-                        HeadZ = Vector3.Cross(HeadX, HeadY);
-
-                        HeadX.Normalize();
-                        HeadY.Normalize();
-                        HeadZ.Normalize();
-
-                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
-
-                        GL.Translate(headCenterPoint);
-                        GL.MultMatrix(HeadM);
-
                         float betaStep = (float)(Math.PI) / (float)generalStacks;
                         Vector3[] eyesPoints = new Vector3[20];
                         float RVert = 0.02f; // Size of the horizontal semi-axis of the ellipse
@@ -1124,25 +1055,6 @@ namespace LecturerTrainer.Model
                         float step = (float)Math.PI / 10;
                         float scale = 0.05f;
                         float fullness = -0.9999f;
-                        Vector3 HeadX = EyesAlignment;
-                        Vector3 HeadY = headTilt;
-                        Vector3 HeadZ;
-
-                        System.Diagnostics.Debug.WriteLine(Vector3.Dot(HeadX, HeadY));
-                        HeadZ = Vector3.Cross(HeadX, HeadY);
-
-                        HeadX.Normalize();
-                        HeadY.Normalize();
-                        HeadZ.Normalize();
-
-                        double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
-
-                        GL.Translate(headCenterPoint);
-                        GL.MultMatrix(HeadM);
-
-                        //DrawHorizontalCrescent(0.07f, 0.01f, -0.1f, (float)Math.PI / 10, 0.07f, -0.5f);
-
-                     
                         Gl.glTranslatef(0.07f, 0.07f, -0.1f);
                         Gl.glScalef(1, 0.25f, 1);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
@@ -1154,7 +1066,7 @@ namespace LecturerTrainer.Model
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, 0);
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
                                 angle += step;
                             }
                             angle = step;
@@ -1162,19 +1074,15 @@ namespace LecturerTrainer.Model
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, 0);
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
 
                                 angle += step;
                             }
-                            Gl.glVertex3f(-scale, 0, 0);
+                            Gl.glVertex3f(-scale, 0, -0.1f);
                         }
                         Gl.glEnd();
                     }
                     Gl.glPopMatrix();
-
-                   
-                    
-                    
                 }
                 GL.PopMatrix();
 
