@@ -958,7 +958,7 @@ namespace LecturerTrainer.ViewModel
             {
                 MainWindow.main.audioProvider.stopRecording();
                 MainWindow.main.audioProvider.stopSpeechRateDetection();
-                MainWindow.main.audioProvider.stopPeakDetection();
+                //MainWindow.main.audioProvider.stopPeakDetection(); might be usefull to comment the above line as well 
             }
 				if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true){
 					DrawingSheetAvatarViewModel.backgroundXMLVoiceRecordingEventStream -= backgroundVoiceXMLRecording;
