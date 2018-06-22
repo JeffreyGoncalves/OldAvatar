@@ -240,6 +240,20 @@ namespace LecturerTrainer.Model
         private Vector3 headTilt;
 
         /// <summary>
+        /// Initial distance between eye and eyebrow
+        /// </summary>
+        private float initialRightEBE;
+        private float initialLeftEBE;
+
+        /// <summary>
+        /// Initial eyes' radiuses
+        /// </summary>
+        private float initialHorizontalLeftEyeRadius;
+        private float initialHorizontalRightEyeRadius;
+        private float initialVerticalLeftEyeRadius;
+        private float initialVerticalRightEyeRadius;
+
+        /// <summary>
         /// Vector corresponding to the alignment of the eyes (headTilt.EyesAlignment is normally equal to 0)
         /// </summary>
         private Vector3 EyesAlignment;
@@ -688,6 +702,15 @@ namespace LecturerTrainer.Model
             //Eyes alignment
             EyesAlignment = new Vector3(face53.X - face20.X, face53.Y - face20.Y, face53.Z - face20.Z);
 
+            //Initial distances and radiuses
+            initialRightEBE = (float)Math.Sqrt(Math.Pow(face21.X - face18.X, 2) + Math.Pow(face21.Y - face18.Y, 2) + Math.Pow(face21.Z - face18.Z, 2));
+            initialLeftEBE = (float)Math.Sqrt(Math.Pow(face54.X - face51.X, 2) + Math.Pow(face54.Y - face51.Y, 2) + Math.Pow(face54.Z - face51.Z, 2));
+
+            initialHorizontalLeftEyeRadius = (float)Math.Sqrt(Math.Pow(face56.X - face53.X, 2) + Math.Pow(face56.Y - face53.Y, 2) + Math.Pow(face56.Z - face53.Z, 2));
+            initialVerticalLeftEyeRadius = (float)Math.Sqrt(Math.Pow(face54.X - face55.X, 2) + Math.Pow(face54.Y - face55.Y, 2) + Math.Pow(face54.Z - face55.Z, 2));
+            initialHorizontalRightEyeRadius = (float)Math.Sqrt(Math.Pow(face23.X - face20.X, 2) + Math.Pow(face23.Y - face20.Y, 2) + Math.Pow(face23.Z - face20.Z, 2));
+            initialVerticalRightEyeRadius = (float)Math.Sqrt(Math.Pow(face21.X - face22.X, 2) + Math.Pow(face21.Y - face22.Y, 2) + Math.Pow(face21.Z - face22.Z, 2));
+
             //Finally, we want to lengthen face elements
             float verticalFaceGap = 0.02f * 2.0f;
             float horizontalFaceGap = 0.05f * 2.0f;
@@ -894,6 +917,15 @@ namespace LecturerTrainer.Model
                     GL.Normal3(0.0f, 0.0f, 1.0f);
                     GL.LineWidth(3.0f);
 
+                    //Calculations for eyebrows and eyes' animations
+                    float LeftEyebrowAdjustment = (float)Math.Sqrt(Math.Pow(face54.X - face51.X, 2) + Math.Pow(face54.Y - face51.Y, 2) + Math.Pow(face54.Z - face51.Z, 2)) - initialLeftEBE;
+                    /*float RightEyebrowAdjustment = (float)Math.Sqrt(Math.Pow(face21.X - face18.X, 2) + Math.Pow(face21.Y - face18.Y, 2) + Math.Pow(face21.Z - face18.Z, 2)) - initialRightEBE;
+                    float HorizontalRightEyeAdjustment = (float)Math.Sqrt(Math.Pow(face23.X - face20.X, 2) + Math.Pow(face23.Y - face20.Y, 2) + Math.Pow(face23.Z - face20.Z, 2)) - initialHorizontalRightEyeRadius;
+                    float HorizontalLeftEyeAdjustment = (float)Math.Sqrt(Math.Pow(face56.X - face53.X, 2) + Math.Pow(face56.Y - face53.Y, 2) + Math.Pow(face56.Z - face53.Z, 2)) - initialHorizontalLeftEyeRadius;
+                    float VerticalLeftEyeAdjustment = (float)Math.Sqrt(Math.Pow(face54.X - face55.X, 2) + Math.Pow(face54.Y - face55.Y, 2) + Math.Pow(face54.Z - face55.Z, 2)) - initialVerticalLeftEyeRadius;
+                    float VerticalRightEyeAdjustment = (float)Math.Sqrt(Math.Pow(face21.X - face22.X, 2) + Math.Pow(face21.Y - face22.Y, 2) + Math.Pow(face21.Z - face22.Z, 2)) - initialVerticalRightEyeRadius;
+                    */
+                    System.Diagnostics.Debug.WriteLine(LeftEyebrowAdjustment);
                     //Entering into the head axis system
                     Vector3 HeadX = EyesAlignment;
                     Vector3 HeadY = headTilt;
@@ -908,14 +940,15 @@ namespace LecturerTrainer.Model
                     GL.Translate(headCenterPoint);
                     GL.MultMatrix(HeadM);
                     GL.Color4(faceColor);
+                    System.Diagnostics.Debug.WriteLine(LeftEyebrowAdjustment);
 
                     //Drawing of the mouth
                     Gl.glPushMatrix();
                     {
                        
-                        float step = (float)Math.PI / 10;
-                        float scale = 0.05f;
-                        float fullness = -0.9999f;
+                        float step = (float)Math.PI / (float)generalStacks;
+                        float scale = 0.05f; //size of the mouth
+                        float fullness = -0.9999f; //value drawing a crescent when close to -1 and circle when close to 1
                       
                         Gl.glTranslatef(0, -0.07f, -0.1f);
                         Gl.glRotatef(180, 0, 0, 1);
@@ -931,20 +964,9 @@ namespace LecturerTrainer.Model
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
                                 Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
-                               
-                                angle += step;
-                            }
-                            angle = step;
-                            
-                            while (angle < (float)Math.PI)
-                            {
-
-                                float sinAngle = (float)Math.Sin(angle);
-                                float cosAngle = (float)Math.Cos(angle);
                                 Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
                                 angle += step;
                             }
-                            Gl.glVertex3f(-scale, 0, -0.1f);
                         }
                         Gl.glEnd();
                     }
@@ -984,10 +1006,10 @@ namespace LecturerTrainer.Model
                     //Drawing of right eyebrow
                     Gl.glPushMatrix();
                     {
-                        float step = (float)Math.PI / 10;
-                        float scale = 0.05f;
-                        float fullness = -0.9999f;
-                     
+                        float step = (float)Math.PI / (float)generalStacks;
+                        float scale = 0.05f; // size of the eyebrow
+                        float fullness = -0.9999f;//value drawing a crescent when close to -1 and circle when close to 1
+
                         Gl.glTranslatef(-0.07f, 0.07f, -0.1f);
                      
                         Gl.glScalef(1, 0.25f, 1);
@@ -1001,19 +1023,9 @@ namespace LecturerTrainer.Model
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
                                 Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
-                           
-                                angle += step;
-                            }
-                            angle = step;
-                            while (angle < (float)Math.PI)
-                            {
-                                float sinAngle = (float)Math.Sin(angle);
-                                float cosAngle = (float)Math.Cos(angle);
                                 Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
-
                                 angle += step;
                             }
-                            Gl.glVertex3f(-scale, 0, -0.1f);
                         }
                         Gl.glEnd();
                     }
@@ -1051,9 +1063,9 @@ namespace LecturerTrainer.Model
                     // Drawing of the left eyebrow
                     Gl.glPushMatrix();
                     {
-                        float step = (float)Math.PI / 10;
-                        float scale = 0.05f;
-                        float fullness = -0.9999f;
+                        float step = (float)Math.PI / (float)generalStacks;
+                        float scale = 0.05f; // size of the eyebrow
+                        float fullness = -0.9999f;//value drawing a crescent when close to -1 and circle when close to 1
                         Gl.glTranslatef(0.07f, 0.07f, -0.1f);
                         Gl.glScalef(1, 0.25f, 1);
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
@@ -1066,18 +1078,9 @@ namespace LecturerTrainer.Model
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
                                 Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
-                                angle += step;
-                            }
-                            angle = step;
-                            while (angle < (float)Math.PI)
-                            {
-                                float sinAngle = (float)Math.Sin(angle);
-                                float cosAngle = (float)Math.Cos(angle);
                                 Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
-
                                 angle += step;
                             }
-                            Gl.glVertex3f(-scale, 0, -0.1f);
                         }
                         Gl.glEnd();
                     }
