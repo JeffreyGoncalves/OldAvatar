@@ -11,7 +11,7 @@ namespace LecturerTrainer.Model
 {
     public class EventsLinker
     {
-        public static event EventHandler<InstantFeedback> enthusiasmEvent;
+        //public static event EventHandler<InstantFeedback> enthusiasmEvent;
        // private static Timer enthusiasmTimer;
 
         // We want to link the hands raised event with the emotion event "happy" to generate an "enthusiasm" event

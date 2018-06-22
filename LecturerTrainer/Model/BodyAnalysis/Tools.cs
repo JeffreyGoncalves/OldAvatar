@@ -30,7 +30,7 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// used for the charts. It is 1/10 of the total time of the record.
         /// </summary>
-        private static int correctTime;
+        private static int correctTime = 0;
         /// <summary>
         /// time interval for the timer
         /// </summary>
@@ -139,7 +139,7 @@ namespace LecturerTrainer.Model
         }
         #endregion
 
-        #region methods for the timer
+        /*#region methods for the timer
         /// <summary>
         /// initialize and start the timer
         /// </summary>
@@ -200,7 +200,7 @@ namespace LecturerTrainer.Model
                 DrawingSheetStreamViewModel.Get(View.DrawingSheetView.Get()).ShowFeedbacksOnVideoStream();
             }
         }
-        #endregion
+        #endregion*/
 
         #region stopwatch
         /// <summary>
@@ -215,10 +215,9 @@ namespace LecturerTrainer.Model
             stopWatch.Start();
         }
 
-        public static void restartStopWatch()
+        public static void resetStopWatch()
         {
-            stopWatch.Restart();
-            stopWatch.Stop();
+            stopWatch.Reset();
         }
 
         public static void stopStopWatch()
@@ -272,6 +271,11 @@ namespace LecturerTrainer.Model
             return stringTime;
         }
 
+        public static int secondEllapsed()
+        {
+            return (int)stopWatch.ElapsedMilliseconds/1000;
+        }
+
         #endregion
 
         #region methods for the charts
@@ -282,7 +286,7 @@ namespace LecturerTrainer.Model
         /// <remarks>Add by Florian BECHU: Summer 2016</remarks>
         public static String ChooseTheCorrectUnitTime()
         {
-            long temp = time * clock;
+            long temp = TrainingSideToolViewModel.Get().timeRecorded;
 
             if(temp <10000)
             {
@@ -314,13 +318,6 @@ namespace LecturerTrainer.Model
             return correctTime;
         }
 
-        /// <summary>
-        /// return the time of the timer in milliseconds.
-        /// </summary>
-        public static long maxTime()
-        {
-            return time * clock;
-        }
 
         /// <summary>
         /// obtain the date included in a path
@@ -369,6 +366,9 @@ namespace LecturerTrainer.Model
         /// <remarks>Add by Florian BECHU: Summer 2016</remarks>
         public static bool addSeriesToCharts<U>(IGraph chart, Series series, string seriesName,U list,string totalValue,bool addEmpty) where U : ICollection<int>
         {
+
+            foreach (int nteger in list)
+                Console.Out.WriteLine("-- val " + nteger);
             List<string> listLabel = new List<string>();
             int firstValue = 0;
             series.Title = seriesName;
@@ -377,10 +377,13 @@ namespace LecturerTrainer.Model
                 return false;
 
             series.Values = new ChartValues<double>();
-            for (int i = 0; i < (maxTime() / getCorrectTime()) + 1; i++) // Chart Initializing. We put all values at 0 and we create labels for the X-axis
+            //Console.Out.WriteLine("-- " + chart.GetType().ToString());
+
+            for (int i = 0; i < (TrainingSideToolViewModel.Get().timeRecorded / getCorrectTime()) + 1; i++) // Chart Initializing. We put all values at 0 and we create labels for the X-axis
             {
                 int val1 = i * (getCorrectTime() / 1000);
                 int val2 = val1 + (getCorrectTime() / 1000) - 1;
+                //Console.Out.WriteLine("-- " + val1 + " -- " + val2);
                 if (val2 - val1 == 0) // if the sessions is lower than 10 secs
                 {
                     listLabel.Add((val1 + 1).ToString() + "sec");
@@ -392,13 +395,15 @@ namespace LecturerTrainer.Model
                     series.Values.Add((double)0);
                 }
             }
-
+            Console.Out.WriteLine("--  " + listLabel.Count + " -- " + series.Values.Count);
+            Console.Out.WriteLine("-- " + list.Count);
             if(list.Count > 0)
             {
                 for (int i = 0; i < list.Count; i++) //we add data in serie
                 {
                     int currentValue = list.ElementAt(i);
-                    if (i == 0 || (i > 0 && (currentValue - firstValue) > 1000)) // if the movment is longer than 1 sec
+                    Console.Out.WriteLine("i -- " + (currentValue - firstValue));
+                    if (i == 0 || (i > 0 && (currentValue - firstValue) > 500)) // if the movment is longer than 1 sec
                     {
                         
                         int indice = currentValue / getCorrectTime();
@@ -445,7 +450,7 @@ namespace LecturerTrainer.Model
                 return false;
 
             series.Values = new ChartValues<double>();
-            for (int i = 0; i < (maxTime() / getCorrectTime()) + 1; i++) // Chart Initializing. We put all values at 0 and we create labels for X-axis
+            for (int i = 0; i < (TrainingSideToolViewModel.Get().timeRecorded / getCorrectTime()) + 1; i++) // Chart Initializing. We put all values at 0 and we create labels for X-axis
             {
                 int val1 = i * (getCorrectTime() / 1000);
                 int val2 = val1 + (getCorrectTime() / 1000) - 1;

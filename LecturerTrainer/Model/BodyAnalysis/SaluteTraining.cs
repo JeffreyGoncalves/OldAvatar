@@ -13,13 +13,14 @@ namespace LecturerTrainer.Model.BodyAnalysis
     {
         public event EventHandler GestureRecognized;
 
-        private static int errorMax = 120;
+        private const int ERROR_MAX = 120;
+        private const int TOO_FAST = 480;
+        private const int TOO_SLOW = 240;
+        private const int WAITING_TIME = 2;
+
         private static int countError = 0;
         private static int nbFrames = 0;
         private static int nbStay = 0;
-        private static int tooSlow = 240;
-        private static int tooFast = 480;
-        private static int waitingTime = 2;
         private static bool start = false;
 
         bool _slow;
@@ -62,16 +63,6 @@ namespace LecturerTrainer.Model.BodyAnalysis
             }
         }
 
-        bool _fast;
-
-        public bool Fast
-        {
-            get
-            {
-                return _fast;
-            }
-        }
-
         bool _stay;
 
         public bool Stay
@@ -91,7 +82,6 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 return _complete;
             }
         }
-        
 
         public void Update(Skeleton sk)
         {
@@ -121,12 +111,12 @@ namespace LecturerTrainer.Model.BodyAnalysis
             double angle = Math.Acos(cosAngle) * 180/Math.PI;
 
             //arm alignment check (version 1)
-            Vector3 vectorShoulder = new Vector3((float)(shoulder.X - shoulderLeft.X), (float)(shoulder.Y - shoulderLeft.Y), (float)(shoulder.Z - shoulderLeft.Z));
+            /*Vector3 vectorShoulder = new Vector3((float)(shoulder.X - shoulderLeft.X), (float)(shoulder.Y - shoulderLeft.Y), (float)(shoulder.Z - shoulderLeft.Z));
             Vector3 vectorShoulderElbow = new Vector3((float)(elbow.X - shoulder.X), (float)(elbow.Y - shoulder.Y), (float)(elbow.Z - shoulder.Z));
 
             float crossProductX = vectorShoulder.Y * vectorShoulderElbow.Z - vectorShoulder.Z * vectorShoulderElbow.Y;
             float crossProductY = vectorShoulder.Z * vectorShoulderElbow.X - vectorShoulder.X * vectorShoulderElbow.Z;
-            float crossProductZ = vectorShoulder.X * vectorShoulderElbow.Y - vectorShoulder.Y * vectorShoulderElbow.X;
+            float crossProductZ = vectorShoulder.X * vectorShoulderElbow.Y - vectorShoulder.Y * vectorShoulderElbow.X;*/
 
             //arm alignment check (version 2)
             double directionVector = (shoulder.Y - shoulderLeft.Y) / (shoulder.X - shoulderLeft.X);
@@ -137,54 +127,8 @@ namespace LecturerTrainer.Model.BodyAnalysis
             //distance between left hand and hip
             double distance = Math.Sqrt(Geometry.distanceSquare(handLeft, hipLeft));
 
-            /*if (!(Math.Abs(angle - 45) < 1 && Math.Abs(theoreticalY - elbow.Y) < 0.05 && Math.Abs(head.Y - hand.Y) < 0.1 &&
-                Math.Abs(head.Z - hand.Z) < 0.1 && distance < 0.5))
-            {
-                if(Math.Abs(angle - 45) < 1)
-                {
-                    Console.WriteLine("######## ANGLE OK ###########");
-                    Console.WriteLine("distance " + distance);
-                    Console.WriteLine("alignment " + Math.Abs(theoreticalY - elbow.Y));
-                    Console.WriteLine("y " + Math.Abs(head.Y - hand.Y));
-                    Console.WriteLine("z " + Math.Abs(head.Z - hand.Z));
-                }
-                else if(Math.Abs(theoreticalY - elbow.Y) < 0.05)
-                {
-                    Console.WriteLine("######## ALIGNMENT OK ###########");
-                    Console.WriteLine("distance " + distance);
-                    Console.WriteLine("angle " + angle);
-                    Console.WriteLine("y " + Math.Abs(head.Y - hand.Y));
-                    Console.WriteLine("z " + Math.Abs(head.Z - hand.Z));
-                }
-                else if(Math.Abs(head.Y - hand.Y) < 0.1)
-                {
-                    Console.WriteLine("######## Y OK ###########");
-                    Console.WriteLine("distance " + distance);
-                    Console.WriteLine("angle " + angle);
-                    Console.WriteLine("alignment " + Math.Abs(theoreticalY - elbow.Y));
-                    Console.WriteLine("z " + Math.Abs(head.Z - hand.Z));
-                }
-                else if(Math.Abs(head.Z - hand.Z) < 0.1)
-                {
-                    Console.WriteLine("######## Z OK ###########");
-                    Console.WriteLine("distance " + distance);
-                    Console.WriteLine("angle " + angle);
-                    Console.WriteLine("alignment " + Math.Abs(theoreticalY - elbow.Y));
-                    Console.WriteLine("y " + Math.Abs(head.Y - hand.Y));
-                }
-                else if(distance < 0.1)
-                {
-                    Console.WriteLine("######## DISTANCE OK ###########");
-                    Console.WriteLine("angle " + angle);
-                    Console.WriteLine("alignment " + Math.Abs(theoreticalY - elbow.Y));
-                    Console.WriteLine("y " + Math.Abs(head.Y - hand.Y));
-                    Console.WriteLine("z " + Math.Abs(head.Z - hand.Z));
-                }
-                
-            }*/
-
             //if the salute is not made in time
-            if (!start && nbFrames > tooSlow)
+            if (!start && nbFrames > TOO_SLOW)
             {
                 countError = 0;
                 nbFrames = 0;
@@ -194,37 +138,23 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 {
                     _leftHand = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 //wrong arm alignment
                 else if (!(Math.Abs(theoreticalY - elbow.Y) < 0.05))
                 {
                     _alignment = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 //wrong arm angle
                 else if (!(Math.Abs(angle - 45) < 1))
                 {
                     _angleB = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
             }
-
-            Console.WriteLine("####################");
-            Console.WriteLine("hand x: " + hand.X);
-            Console.WriteLine("head x: " + head.X);
-            Console.WriteLine("diff: " + (Math.Abs(head.X - hand.X) < 0.1));
 
             //good position of salute
             if(/*Math.Abs(angle - 45) < 5 &&*/ Math.Abs(theoreticalY - elbow.Y) < 0.1 && Math.Abs(head.Y - hand.Y) < 0.1 && 
@@ -234,7 +164,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 nbStay++;
 
                 //salute complete
-                if(nbStay >= waitingTime)
+                if(nbStay >= WAITING_TIME)
                 {
                     start = false;
                     countError = 0;
@@ -242,10 +172,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     nbStay = 0;
                     _complete = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
             }
             else
@@ -254,7 +181,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     countError++;
                 
                 //if the user does not stay waiting
-                if (start && nbFrames < tooFast && countError > errorMax) 
+                if (start && nbFrames < TOO_FAST && countError > ERROR_MAX) 
                 {
                     countError = 0;
                     nbFrames = 0;
@@ -262,10 +189,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     start = false;
                     _stay = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
             }
         }

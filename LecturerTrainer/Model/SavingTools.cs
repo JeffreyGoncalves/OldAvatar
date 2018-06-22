@@ -250,8 +250,8 @@ namespace LecturerTrainer.Model
         public static void StartSavingXMLSkeleton()
         {
 			Console.Out.WriteLine("here");
-            Tools.initStopWatch();
-            Tools.startStopWatch();
+            //Tools.initStopWatch();
+            //Tools.startStopWatch();
             int nbSkFrame = 0;
             int count = 0;
 

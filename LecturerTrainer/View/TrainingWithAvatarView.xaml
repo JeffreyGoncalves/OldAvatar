@@ -39,6 +39,8 @@
                         <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
                     </Separator.Background>
                 </Separator>
+                
+                <!--
                 <ListBox x:Name="VideosList" ItemsSource="{Binding VideosNameList}" Margin="10,10,10,0" Background="{x:Null}" Height="130.4">
                     <ListBox.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
@@ -47,6 +49,32 @@
                         <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
                     </ListBox.BorderBrush>
                 </ListBox>
+                -->
+
+                <!--
+                <Button x:Name="Button_faceTracking">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <TextBlock  x:Name="FaceTrackingDisable" TextWrapping="Wrap" Foreground="Red"/>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                -->
+
+                <TextBlock x:Name="FaceTrackingDisable" TextWrapping="Wrap" Foreground="Red"/>
+                <ListBox x:Name="VideosList" ItemTemplate="{DynamicResource DataTemplate1}" ItemContainerStyle="{DynamicResource ListBoxItemStyle1}" Margin="10,10,10,0" Background="{x:Null}" Height="130.4">
+                    <ListBox.Resources>
+                        <DataTemplate x:Key="DataTemplate1">
+                            <Grid>
+                                <TextBlock Text="{Binding Name}" Foreground="{Binding Color}"/>
+                            </Grid>
+                        </DataTemplate>
+                        <Style x:Key="ListBoxItemStyle1" TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="IsHitTestVisible" Value="{Binding IsSelectable}"/>
+                        </Style>
+                    </ListBox.Resources>
+                </ListBox>
+                
             </StackPanel>
         </Border>
         <Border x:Name="VideoPlayer" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" Margin="0" Grid.Column="1" Grid.Row="3">

@@ -781,7 +781,7 @@ namespace LecturerTrainer.ViewModel
             {
                 DrawingSheetView.Get().ReplayAudio.Stop();
             }
-            Tools.restartStopWatch();
+            Tools.resetStopWatch();
             ReplayAvatar.offset = 0;
             ReplayAvatar.realTime = true;
             currentListNumber = 0;
