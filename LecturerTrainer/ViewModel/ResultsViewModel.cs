@@ -409,7 +409,7 @@ namespace LecturerTrainer.ViewModel
                 ReadFileStream.Close();
             }
             WriteFileStream2.Close();
-
+            
             string patern = "[0-9]+\\.xml$";
 
             foreach (string pathtemp in Directory.EnumerateFiles(path))
@@ -440,9 +440,12 @@ namespace LecturerTrainer.ViewModel
                 FileStream fs = File.Create(path + "chart" + num + ".xml");
                 TextWriter WriteFileStream = new StreamWriter(fs);
                 type = ReadFileStream.ReadLine();
+                //Console.Out.WriteLine("-- typ -- " + type);
                 string patern = ReadFileStream.ReadLine();
+                //Console.Out.WriteLine("-- pat -- " + patern);
                 WriteFileStream.WriteLine(patern);
                 line = ReadFileStream.ReadLine();
+                Console.Out.WriteLine("-- lin -- " + line);
                 if (string.IsNullOrEmpty(line)) // if it's the end of the file
                 {
                     WriteFileStream.Close();
@@ -454,6 +457,7 @@ namespace LecturerTrainer.ViewModel
                 string name = tab[0].Substring(1);
                 string final = tab[0].Insert(1, "/");
                 final = final.Insert(final.Length, ">");
+                Console.Out.WriteLine("-- fin -- " + final);
 
 
                 while (line != final && !string.IsNullOrEmpty(line))

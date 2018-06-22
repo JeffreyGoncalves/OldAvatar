@@ -107,9 +107,15 @@ namespace LecturerTrainer.Model
             }
         }
 
-		private static List<float> replayWiggle = null;
-		private static int wiggleIndex = 0;
-		private static int indexCount = 0;
+		/// <summary>
+        /// The list in which the voice data for drawing the sound bar will be stored
+        /// </summary>
+		private static List<Tuple<int, float, int>> replaySoundBar = new List<Tuple<int, float, int>>();
+
+		/// <summary>
+        /// Index that indicates which part of the above list will be displayed as the sound bar
+        /// </summary>
+		public static int wiggleIndex = 0;
       
         #endregion
 
@@ -137,7 +143,7 @@ namespace LecturerTrainer.Model
                 //Load the voice data if it exists
                 if (vDir != "")
                 {
-                    replayWiggle = LoadVoiceDataFromXML(vDir);
+					replaySoundBar = LoadVoiceDataFromXML(vDir);
                 }
 				//Initilise the first skeleton to be displayed, depending if the replay is on play or stop
                 if (currentSkeletonNumber >= skeletonsList.Count)
@@ -199,7 +205,7 @@ namespace LecturerTrainer.Model
             else if (currentSkeletonNumber == skeletonsList.Count)
                 currentSkeleton = null;
 
-                if (currentSkeleton != null)
+            if (currentSkeleton != null)
             {
                 if (face)
                 {
@@ -529,24 +535,65 @@ namespace LecturerTrainer.Model
         #endregion
 
 		#region XMLTonePeakLoading
-		
-		private static List<float> stuffReplayWiggleList(List<float> list)
+
+		/// <summary>
+        /// Loads the voiceData in order to display the sound curve.
+		/// <param name="path">The path of the voiceData file</param>
+        /// <returns>The list of values that will be displayed as the sound bar</returns>
+        /// </summary>
+		public static List<Tuple<int, float, int>> LoadVoiceDataFromXML(String path)
+        {
+            try
+            {
+                int count = 0;
+                List<Tuple<int, float, int>> toneList = new List<Tuple<int, float, int>>();
+                stuffReplaySoundBarList(toneList);
+				XmlReaderSettings settings = new XmlReaderSettings { IgnoreWhitespace = true, CheckCharacters = true };
+                XmlReader xmlVoiceReader = XmlReader.Create(path, settings);
+
+                xmlVoiceReader.MoveToContent();
+                while (xmlVoiceReader.Read())
+                {
+                    if (xmlVoiceReader.NodeType == XmlNodeType.Element)
+                    {
+                        if (xmlVoiceReader.Name == "PeakValue_" + count)
+                        {
+                            xmlVoiceReader.MoveToAttribute(0);
+							int time = Convert.ToInt32(xmlVoiceReader.Value);
+							xmlVoiceReader.MoveToAttribute(1);
+							float value = Convert.ToSingle(xmlVoiceReader.Value);
+							xmlVoiceReader.MoveToAttribute(2);
+							int index = Convert.ToInt32(xmlVoiceReader.Value);
+
+							toneList.Add(new Tuple<int, float, int>(time, value, index));
+                        }
+                    }
+					count++;
+                }
+				stuffReplaySoundBarList(toneList);
+                return toneList;
+            }catch(Exception)
+            {
+                throw new ArgumentException("Impossible to read voice data : ", path);
+            }
+
+        }
+
+		/// <summary>
+        /// Fills the voice list with empty values to fill it
+        /// </summary>
+		private static List<Tuple<int, float, int>> stuffReplaySoundBarList(List<Tuple<int, float, int>> list)
 		{
-			for (int i = 0; i < 300; i++)
+			for (int i = 0; i < Model.AudioAnalysis.Pitch.WIGGLE_SIZE; i++)
 			{
-				list.Add(0);
+				list.Add(new Tuple<int, float, int>(0, 0, 0));
 			}
 			return list;
 		}
-
-		/*private static void endReplayWiggle()
-		{
-			for (int i = 0; i < 300; i++)
-			{
-				replayWiggle.Add(0);
-			}
-		}*/
 		
+		/// <summary>
+        /// Draws the sound bar
+        /// </summary>
 		public static void drawWiggle()
 		{
 			float  xw, xw1, yw, yw1;
@@ -556,13 +603,16 @@ namespace LecturerTrainer.Model
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 			
 			GL.PushAttrib(AttribMask.ColorBufferBit);
-            for (int i = 0;  i < 299; i++)
+			wiggleIndex = currentWiggleIndex();
+
+            for (int i = 0;  i < Model.AudioAnalysis.Pitch.WIGGLE_SIZE - 1; i++)
             {
-				yw = +0.6f + replayWiggle[i + wiggleIndex] / 500.0f; 
-				yw1 = +0.6f + replayWiggle[i + 1 + wiggleIndex] / 500.0f;
 				
-                xw = -2.5f + i / 60.0f;
-                xw1 = -2.5f + (i + 1) / 60.0f;
+				yw = +0.6f + replaySoundBar[i + wiggleIndex].Item2 / 500.0f; 
+				yw1 = +0.6f + replaySoundBar[i + 1 + wiggleIndex].Item2 / 500.0f;
+
+                xw = -3.6f + (i + 130) / 60.0f;
+                xw1 = -3.6f + (i + 130 + 1) / 60.0f;
 
                 GL.PushMatrix();
                 GL.Begin(PrimitiveType.Lines);
@@ -581,46 +631,22 @@ namespace LecturerTrainer.Model
             }
             GL.PopAttrib();
             GL.BindTexture(TextureTarget.Texture2D, 0);
-			wiggleIndex+=3;
-			if (indexCount % 3 == 0) wiggleIndex +=1;
-			indexCount++;
 		}
 
-
 		/// <summary>
-        /// Load the voiceData   
+        /// Returns the index from which the current part of the curve should be displayed
         /// </summary>
-		public static List<float> LoadVoiceDataFromXML(String path)
-        {
-            try
-            {
-                int count = 0;
-                List<float> toneList = new List<float>();
-				stuffReplayWiggleList(toneList);
-                XmlReaderSettings settings = new XmlReaderSettings { IgnoreWhitespace = true, CheckCharacters = true };
-                XmlReader xmlVoiceReader = XmlReader.Create(path, settings);
-
-                xmlVoiceReader.MoveToContent();
-                while (xmlVoiceReader.Read())
-                {
-                    if (xmlVoiceReader.NodeType == XmlNodeType.Element)
-                    {
-                        if (xmlVoiceReader.Name == "PeakValue_" + count)
-                        {
-                            xmlVoiceReader.MoveToAttribute(0);
-							toneList.Add(Convert.ToSingle(xmlVoiceReader.Value));
-                        }
-                    }
-					count++;
-                }
-				stuffReplayWiggleList(toneList);
-                return toneList;
-            }catch(Exception)
-            {
-                throw new ArgumentException("Impossible to read voice data : ", path);
-            }
-
-        }
+		private static int currentWiggleIndex()
+		{
+			long currentTime = Tools.getStopWatch() - offset; 
+			for(int i = 0; i < replaySoundBar.Count; i++)
+			{
+				if(currentTime < replaySoundBar[i].Item1){
+					return replaySoundBar[i-1].Item3;
+				}
+			}
+			return wiggleIndex;
+		}
 
 		#endregion
 

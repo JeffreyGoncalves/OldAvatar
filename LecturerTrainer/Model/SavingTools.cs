@@ -250,8 +250,8 @@ namespace LecturerTrainer.Model
         public static void StartSavingXMLSkeleton()
         {
 			Console.Out.WriteLine("here");
-            Tools.initStopWatch();
-            Tools.startStopWatch();
+            //Tools.initStopWatch();
+            //Tools.startStopWatch();
             int nbSkFrame = 0;
             int count = 0;
 
@@ -393,9 +393,10 @@ namespace LecturerTrainer.Model
                 xmlVoiceWriter.WriteStartElement("PeakValues");
                 xmlVoiceQueue = new PCQueue<float>(value =>
                 {
-                        xmlVoiceWriter.WriteStartElement("PeakValue_" + valueIndex++);
-                        xmlVoiceWriter.WriteAttributeString("Value", value.ToString());
+                        xmlVoiceWriter.WriteStartElement("PeakValue_" + valueIndex);
 						xmlVoiceWriter.WriteAttributeString("TimeElapse", Tools.getStopWatch().ToString());
+                        xmlVoiceWriter.WriteAttributeString("Value", value.ToString());
+						xmlVoiceWriter.WriteAttributeString("Index", (valueIndex++).ToString());
 						xmlVoiceWriter.WriteEndElement();
                 }, () =>
                 {
@@ -403,7 +404,6 @@ namespace LecturerTrainer.Model
                     xmlVoiceWriter.WriteEndDocument();
                     xmlVoiceWriter.Flush();
                     xmlVoiceWriter.Close();
-					System.Diagnostics.Debug.WriteLine("close");
                 }, "XMLVoiceRecordingTask");
             }
             catch (Exception ex)

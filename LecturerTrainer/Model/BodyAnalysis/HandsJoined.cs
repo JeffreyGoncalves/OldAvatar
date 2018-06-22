@@ -77,11 +77,11 @@ namespace LecturerTrainer.Model
                 hands = true;
                 if (rec && eventfinished)
                 {
-                    if (!handsjoined.Contains((int)Tools.getTimer()))
+                    if (!handsjoined.Contains((int)(Tools.getStopWatch() / 1000 )))
                     {
-                        handsjoined.Add((int)Tools.getTimer());
+                        handsjoined.Add((int)(Tools.getStopWatch() / 1000 ));
                     }
-                    
+
                     eventfinished = false;
                 }
             }
@@ -110,11 +110,17 @@ namespace LecturerTrainer.Model
             var chart = new CartesianGraph();
             chart.title = "Hand joined Counter";
             chart.subTitle = Tools.ChooseTheCorrectUnitTime();
-
-            if (!Tools.addSeriesToCharts(chart, new LineSeries(), "Hand joined", handsjoined, "Total hand joined: ",false))
+            Console.Out.WriteLine("--  HandsJoined");
+            if (!Tools.addSeriesToCharts(chart, new LineSeries(), "Hand joined", handsjoined, "Total hand joined: ", false))
+            {
                 list.Add(Tools.createEmptyGraph("Hands were not joined"));
+            }
             else
+            {
+                foreach(string str in chart.listTotalValue)
+                    
                 list.Add(chart);
+            }
             return list;
         }
     }
