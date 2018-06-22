@@ -321,7 +321,6 @@
     </Compile>
     <Compile Include="Model\Charts\GraphEmpty.cs" />
     <Compile Include="Model\Charts\NumberGraph.cs" />
-    <Compile Include="Model\Chronometre.cs" />
     <Compile Include="Model\EmotionRecognizer\eigenFace.cs" />
     <Compile Include="Model\EmotionRecognizer\eigenFace3D.cs" />
     <Compile Include="Model\EmotionRecognizer\EigenMethod.cs" />

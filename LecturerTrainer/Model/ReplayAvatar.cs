@@ -205,7 +205,7 @@ namespace LecturerTrainer.Model
             else if (currentSkeletonNumber == skeletonsList.Count)
                 currentSkeleton = null;
 
-                if (currentSkeleton != null)
+            if (currentSkeleton != null)
             {
                 if (face)
                 {

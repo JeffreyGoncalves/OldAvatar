@@ -66,7 +66,8 @@ namespace LecturerTrainer.ViewModel
         private readonly RelayCommand goToResults;
         
         private IRecordingState state;
-        private Chronometre stopwatch;
+        private System.Timers.Timer TimeToUpdate = new System.Timers.Timer(1000);
+        private bool timerLaunched;
         private String chrono;
         private string speechPath = "IMPORT SPEECH";
 
@@ -76,6 +77,8 @@ namespace LecturerTrainer.ViewModel
         private int _limitedTimeSeconds;
         // in seconds
         private int _limitedTimeSum;
+
+        public long timeRecorded = 0;
 
         /// <summary>
         /// video recording variables 
@@ -361,9 +364,10 @@ namespace LecturerTrainer.ViewModel
             VoicePool = new FeedbackPool(voiceFields);
             CommentPool = new FeedbackPool(commentFields);
 
-            // setting up the chronometre 
-            this.stopwatch = new Chronometre();
-            this.stopwatch.TimeToUpdate.Elapsed += UpdateChrono;
+            // setting up the stopwatch and the update for the limited time record
+            Tools.initStopWatch();
+            this.TimeToUpdate.Elapsed += UpdateChrono;
+
             beginRecordingCommand = new RelayCommand(BeginRecording,
                 () => State == IRecordingState.Stopped ||
                       State == IRecordingState.Monitoring ||
@@ -371,7 +375,7 @@ namespace LecturerTrainer.ViewModel
             stopCommand = new RelayCommand(Stop,
                 () => State == IRecordingState.Recording);
             goToResults = new RelayCommand(ShowResults,
-                () => State == IRecordingState.Stopped && this.stopwatch.isStarted);
+                () => State == IRecordingState.Stopped && this.timerLaunched);
             replayModeCommand = new RelayCommand(ChoosePerfToReplay);
 
             // prepare video recorders 
@@ -590,7 +594,7 @@ namespace LecturerTrainer.ViewModel
         #region properties
 
         // chronometre binding
-        public String Chrono
+        public string Chrono
         {
             get { return chrono; }
             set
@@ -828,7 +832,6 @@ namespace LecturerTrainer.ViewModel
         // begins the video recording and set it up 
         private void BeginVideoAndAudioRecording()
         {
-            Console.WriteLine("Start");
             if (Main.session.Exists())
             {
                 string combine;
@@ -918,7 +921,6 @@ namespace LecturerTrainer.ViewModel
             // Timothée
             if (TrackingSideToolViewModel.get().ShowTextOnScreen)
                 MainWindow.main.audioProvider.startRecText();
-            Console.WriteLine("EndStart");
         }
 
         // stops video recording and creates a test.avi file 
@@ -981,6 +983,7 @@ namespace LecturerTrainer.ViewModel
 
             ResViewMod.getAgitationStatistics(Agitation.getAgitationStats());
             List<IGraph> temp = new List<IGraph>();
+            Console.Out.WriteLine("avant add");
             temp.AddRange(HandsJoined.getHandStatistics());
             temp.AddRange(ArmsCrossed.getArmsStatistics());
             ResViewMod.getArmsMotion(temp);
@@ -1026,15 +1029,19 @@ namespace LecturerTrainer.ViewModel
 
         public void startStopwatch()
         {
-            this.stopwatch.Reset();
-            this.stopwatch.Start();
+            Tools.resetStopWatch();
+            Tools.startStopWatch();
+            timerLaunched = true;
+            TimeToUpdate.Start();
             state = IRecordingState.Recording;
             UpdateChrono(null, null);
         }
 
         public void stopStopwatch()
         {
-            this.stopwatch.Stop();
+            Tools.stopStopWatch();
+            timerLaunched = false;
+            TimeToUpdate.Stop();
             state = IRecordingState.Stopped;
             UpdateChrono(null, null);
         }
@@ -1045,7 +1052,7 @@ namespace LecturerTrainer.ViewModel
         private void BeginRecording()
         {
             isRecording = true;
-            //Tools.createAndStartTimer();
+            timeRecorded = 0;
             startStopwatch();
             DrawingSheetAvatarViewModel.Get().nbFrames = 0;
             Agitation.record = true;
@@ -1077,6 +1084,7 @@ namespace LecturerTrainer.ViewModel
         {
             isRecording = false;
             stopStopwatch();
+            timeRecorded = Tools.getStopWatch();
             SideToolsViewModel.Get().allTabsSelectable();
             Agitation.record = false;
             HandsJoined.record = false;
@@ -1089,7 +1097,6 @@ namespace LecturerTrainer.ViewModel
                 lookingDirection.record = false;
                 EmotionRecognition.record = false;
             }
-            //Tools.stopTimer();
             StopVideoAndAudioRecording();
         }
 
@@ -1199,13 +1206,14 @@ namespace LecturerTrainer.ViewModel
 
         public void UpdateChrono(object source, ElapsedEventArgs e)
         {
-            Chrono = stopwatch.ToString();
+            //Chrono = stopwatch.ToString();
+            Chrono = Tools.FormatTime((int)Tools.getStopWatch());
             if (_isTimeLimited && _limitedTimeSum > 0)
             {
                 // remaining time 
-                Double floatting = 360 - ((360 * (_limitedTimeSum - stopwatch.NowSeconds())) / (float)_limitedTimeSum);
+                Double floatting = 360 - ((360 * (_limitedTimeSum - Tools.secondEllapsed())) / (float)_limitedTimeSum);
 
-                IconViewModel.get().ResidualTimeText = Tools.FormatTime((_limitedTimeSum - stopwatch.NowSeconds()) * 1000);
+                IconViewModel.get().ResidualTimeText = Tools.FormatTime((_limitedTimeSum - Tools.secondEllapsed()) * 1000);
 
                 TrainerStopwatchViewModel.Get().update((int)floatting);
                 if (floatting >= 360)
@@ -1372,10 +1380,10 @@ namespace LecturerTrainer.ViewModel
                 toRet = "";
                 if (fb.feedback == "Too agitated!")
                 {
-                    if (previousFrame != (int)Tools.getTimer())
+                    if (previousFrame != (int)(Tools.getStopWatch() / 1000 * 1000))
                     {
                         toRet = fb.feedback + '@' + feedbackName + '@' + Tools.getStopWatch().ToString() + "@True";
-                        previousFrame = (int)Tools.getTimer();
+                        previousFrame = (int)(Tools.getStopWatch() / 1000 * 1000);
                     }
                 }
                 else

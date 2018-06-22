@@ -63,9 +63,9 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 feedArmsCrossed = true;
                 if (rec && eventfinished)
                 {
-                    if (!armscrossed.Contains((int)Tools.getTimer()))
+                    if (!armscrossed.Contains((int)(Tools.getStopWatch() / 1000 )))
                     {
-                        armscrossed.Add((int)Tools.getTimer());
+                        armscrossed.Add((int)(Tools.getStopWatch() / 1000 ));
                     }
                     eventfinished = false;
                 }
