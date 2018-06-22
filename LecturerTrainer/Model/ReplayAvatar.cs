@@ -584,7 +584,7 @@ namespace LecturerTrainer.Model
         /// </summary>
 		private static List<Tuple<int, float, int>> stuffReplaySoundBarList(List<Tuple<int, float, int>> list)
 		{
-			for (int i = 0; i < 300; i++)
+			for (int i = 0; i < Model.AudioAnalysis.Pitch.WIGGLE_SIZE; i++)
 			{
 				list.Add(new Tuple<int, float, int>(0, 0, 0));
 			}
@@ -605,14 +605,14 @@ namespace LecturerTrainer.Model
 			GL.PushAttrib(AttribMask.ColorBufferBit);
 			wiggleIndex = currentWiggleIndex();
 
-            for (int i = 130;  i < 299; i++)
+            for (int i = 0;  i < Model.AudioAnalysis.Pitch.WIGGLE_SIZE - 1; i++)
             {
 				
 				yw = +0.6f + replaySoundBar[i + wiggleIndex].Item2 / 500.0f; 
 				yw1 = +0.6f + replaySoundBar[i + 1 + wiggleIndex].Item2 / 500.0f;
 
-                xw = -3.6f + i / 60.0f;
-                xw1 = -3.6f + (i + 1) / 60.0f;
+                xw = -3.6f + (i + 130) / 60.0f;
+                xw1 = -3.6f + (i + 130 + 1) / 60.0f;
 
                 GL.PushMatrix();
                 GL.Begin(PrimitiveType.Lines);

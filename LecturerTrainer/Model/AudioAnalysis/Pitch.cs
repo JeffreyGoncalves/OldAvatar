@@ -87,7 +87,8 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// </summary>
         //private static string LowSpeaking = "Too low frequences";
 
-        public static float[] wiggle = new float[300];
+		public const int WIGGLE_SIZE = 170;
+        public static float[] wiggle = new float[WIGGLE_SIZE]; // previous size was 300 but actually, only around 170 values are displayed at a time.
 
 
         /// <summary>
@@ -333,8 +334,8 @@ namespace LecturerTrainer.Model.AudioAnalysis
             volume *= 10;
             volume = Convert.ToInt32(volume);
 
-            if (pitchList.Count > 300)
-				for (i = 0; i < 300; i++) wiggle[i] = pitchList[pitchList.Count - 301 + i]; //wiggle = the 300 last elenents from pitchList
+            if (pitchList.Count > WIGGLE_SIZE)
+				for (i = 0; i < WIGGLE_SIZE; i++) wiggle[i] = pitchList[pitchList.Count - (WIGGLE_SIZE+1) + i]; //wiggle = the WIGGLE_SIZE(= 170) last elenents from pitchList
 			
 			int newValues = pitchList.Count - oldPitchListSize;
 			oldPitchListSize = pitchList.Count;
