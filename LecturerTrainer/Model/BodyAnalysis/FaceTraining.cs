@@ -12,12 +12,12 @@ namespace LecturerTrainer.Model.BodyAnalysis
     {
         public event EventHandler GestureRecognized;
 
-        private const bool VERBOSE = true;
+        private const bool VERBOSE = false;
         private const int NB_FRAME_MAX = 460;
 
-        private bool right;
-        private bool left;
-        private int frame;
+        private static bool right;
+        private static bool left;
+        private static int frame;
 
         bool _complete;
 
@@ -39,29 +39,30 @@ namespace LecturerTrainer.Model.BodyAnalysis
             }
         }
 
-        bool _slow;
+        bool _up;
 
-        public bool Slow
+        public bool Up
         {
             get
             {
-                return _slow;
+                return _up;
             }
         }
 
         public void Update(Skeleton sk)
         {
-            _slow = false;
+            _up = false;
             _complete = false;
             _lookingDir = false;
 
             frame++;
+            
             if(frame > NB_FRAME_MAX)
             {
                 frame = 0;
                 right = false;
                 left = false;
-                _slow = true;
+                _up = true;
 
                 GestureRecognized?.Invoke(this, new EventArgs());
             }
@@ -77,18 +78,18 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 Point3D handLeft = new Point3D(sk.Joints[JointType.HandLeft].Position);
                 Point3D elbowRight = new Point3D(sk.Joints[JointType.ElbowRight].Position);
                 Point3D elbowLeft = new Point3D(sk.Joints[JointType.ElbowLeft].Position);
-                Point3D head = new Point3D(sk.Joints[JointType.Head].Position);
+                Point3D shoulder = new Point3D(sk.Joints[JointType.ShoulderCenter].Position);
 
                 if (VERBOSE)
                 {
-                    Console.WriteLine("##################");
+                    Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~");
                     Console.WriteLine("frame: " + frame);
                     Console.WriteLine("direction: " + (rightEye.Z - leftEye.Z));
                     Console.WriteLine("right: " + right);
                     Console.WriteLine("left: " + left);
                 }
 
-                if (handRight.Y > head.Y && Math.Abs(handRight.X - elbowRight.X) > 0.05)
+                if (Math.Abs(handRight.X - elbowRight.X) > 0.05 && handRight.Y > shoulder.Y)
                 {
                     if(rightEye.Z - leftEye.Z < -0.015)
                     {
@@ -115,7 +116,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     }
                 }
 
-                if (handLeft.Y > head.Y && Math.Abs(handLeft.X - elbowLeft.X) > 0.05)
+                if (Math.Abs(handLeft.X - elbowLeft.X) > 0.05 && handLeft.Y > shoulder.Y)
                 {
                     if(rightEye.Z - leftEye.Z > 0.015)
                     {
@@ -142,15 +143,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     }
                 }
             }
-            catch(NullReferenceException e) //the kinect don't catch the face
+            catch(Exception e) //the kinect don't catch the face
             {
                 //System.Windows.Forms.MessageBox.Show("the kinect don't catch the face !");
                 Console.Error.WriteLine(e);
             }
-            /*catch(Exception e1)
-            {
-                Console.Error.WriteLine(e1);
-            }*/
         }
     }
 }
