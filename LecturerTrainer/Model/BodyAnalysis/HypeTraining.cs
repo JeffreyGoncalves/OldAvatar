@@ -12,12 +12,13 @@ namespace LecturerTrainer.Model.BodyAnalysis
     {
         public event EventHandler GestureRecognized;
 
-        private int frame = 0;
-        private int time = 180;
-        private float angle = 75;
-        private float errorRateStretch = 0.2f;
-        private float errorRateAngle = 15f;
-        private bool verbose = false;
+        private const int TIME = 180;
+        private const float ANGLE = 75f;
+        private const float ERROR_RATE_STRETCH = 0.2f;
+        private const float ERROR_RATE_ANGLE = 15f;
+        //private const bool VERBOSE = false;
+
+        private static int frame;
 
         bool _complete;
 
@@ -89,7 +90,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
             double cosAngleRight = (Math.Pow(lenghtShoulderHandRight, 2) - (Math.Pow(lenghtHeadShoulderRight, 2) + Math.Pow(lenghtHeadHandRight, 2))) / (-2 * lenghtHeadShoulderRight * lenghtHeadHandRight);
             double angleRight = Math.Acos(cosAngleRight) * 180 / Math.PI;
 
-            if (Math.Abs(angleRight - angle) < errorRateAngle)
+            if (Math.Abs(angleRight - ANGLE) < ERROR_RATE_ANGLE)
                 angleRightOK = true;
 
             //calculation of the angle formed by the left arm
@@ -100,13 +101,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
             double cosAngleLeft = (Math.Pow(lenghtShoulderHandLeft, 2) - (Math.Pow(lenghtHeadShoulderLeft, 2) + Math.Pow(lenghtHeadHandLeft, 2))) / (-2 * lenghtHeadShoulderLeft * lenghtHeadHandLeft);
             double angleLeft = Math.Acos(cosAngleLeft) * 180 / Math.PI;
 
-            if (Math.Abs(angleLeft - angle) < errorRateAngle)
+            if (Math.Abs(angleLeft - ANGLE) < ERROR_RATE_ANGLE)
                 angleLeftOK = true;
 
             //check if the arms are stretched (version 1)
-
-            /*
-            Vector3 vectorShoulderElbowRight = new Vector3((float)(elbowRight.X - shoulderRight.X), (float)(elbowRight.Y - shoulderRight.Y), (float)(elbowRight.Z - shoulderRight.Z));
+            /*Vector3 vectorShoulderElbowRight = new Vector3((float)(elbowRight.X - shoulderRight.X), (float)(elbowRight.Y - shoulderRight.Y), (float)(elbowRight.Z - shoulderRight.Z));
             Vector3 vectorElbowHandRight = new Vector3((float)(handRight.X - elbowRight.X), (float)(handRight.Y - elbowRight.Y), (float)(handRight.Z - elbowRight.Z));
 
             float crossProductX = vectorShoulderElbowRight.Y * vectorElbowHandRight.Z - vectorShoulderElbowRight.Z * vectorElbowHandRight.Y;
@@ -124,8 +123,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
             crossProductZ = vectorShoulderElbowLeft.X * vectorElbowHandLeft.Y - vectorShoulderElbowLeft.Y * vectorElbowHandLeft.X;
 
             if (Math.Abs(crossProductX) < errorRateStretch && Math.Abs(crossProductY) < errorRateStretch && Math.Abs(crossProductZ) < errorRateStretch)
-                stretchLeftOK = true;
-            */
+                stretchLeftOK = true;*/
 
             //check if the arms are stretched (version 2)
             double directionVector = (elbowRight.Y - shoulderRight.Y) / (elbowRight.X - shoulderRight.X);
@@ -133,7 +131,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
 
             double theoreticalYRight = handRight.X * directionVector + k;
 
-            if (Math.Abs(theoreticalYRight - handRight.Y) < errorRateStretch)
+            if (Math.Abs(theoreticalYRight - handRight.Y) < ERROR_RATE_STRETCH)
                 stretchRightOK = true;
 
             directionVector = (elbowLeft.Y - shoulderLeft.Y) / (elbowLeft.X - shoulderLeft.X);
@@ -141,62 +139,49 @@ namespace LecturerTrainer.Model.BodyAnalysis
 
             double theoreticalYLeft = handLeft.X * directionVector + k;
 
-            if(Math.Abs(theoreticalYLeft - handLeft.Y) < errorRateStretch)
+            if(Math.Abs(theoreticalYLeft - handLeft.Y) < ERROR_RATE_STRETCH)
                 stretchLeftOK = true;
 
             //checked if the arms are up
             if (handLeft.Y > head.Y && handRight.Y > head.Y)
                 up = true;
-
-            if(verbose)
+            
+            /*if(VERBOSE)
             {
                 Console.WriteLine("#######################");
                 Console.WriteLine("angle left: " + angleLeft);
                 Console.WriteLine("angle right: " + angleRight);
                 Console.WriteLine("stretch left: " + Math.Abs(theoreticalYLeft - handLeft.Y));
                 Console.WriteLine("stretch right: " + Math.Abs(theoreticalYRight - handRight.Y));
-            }
+            }*/
 
             if(up && stretchLeftOK && stretchRightOK && angleLeftOK && angleRightOK)
             {
                 frame = 0;
                 _complete = true;
 
-                if (GestureRecognized != null)
-                {
-                    GestureRecognized(this, new EventArgs());
-                }
+                GestureRecognized?.Invoke(this, new EventArgs());
             }
-            else if(frame > time)
+            else if(frame > TIME)
             {
                 frame = 0;
-
                 if(!up)
                 {
                     _up = true;
-
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 else if(!stretchLeftOK || !stretchRightOK)
                 {
                     _stretch = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 else if(!angleLeftOK || !angleRightOK)
                 {
                     _spread = true;
 
-                    if (GestureRecognized != null)
-                    {
-                        GestureRecognized(this, new EventArgs());
-                    }
+                    GestureRecognized?.Invoke(this, new EventArgs());
                 }
             }
         }
