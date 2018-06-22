@@ -70,6 +70,7 @@ namespace LecturerTrainer.View
         private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
         {
             ReplayAvatar.offset += ReplayViewModel.localOffset;
+			ReplayViewModel.localOffset = 0;
             if(Stream.IsChecked == true)
             {
                 if(isPlayed)
