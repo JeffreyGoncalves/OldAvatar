@@ -190,6 +190,7 @@ namespace LecturerTrainer.ViewModel
             get { return stringTimer; }
             set
             {
+                
                 stringTimer = value;
                 OnPropertyChanged("countStartRecord");
             }
@@ -232,6 +233,7 @@ namespace LecturerTrainer.ViewModel
                 dispatcherTimer.Start();
                 secLaunchedTimer = DateTime.Now.Second;
                 countStartRecord = secWait.ToString();
+
             }
             else
             {

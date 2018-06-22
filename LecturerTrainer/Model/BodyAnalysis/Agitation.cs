@@ -243,10 +243,10 @@ namespace LecturerTrainer.Model
                                 //Counting the number of frame recorded
                                 nbFrameRecorded++;
                             }
-                            if (agitated)
+                            if (!agitNotAgit[j].Contains((int)(Tools.getStopWatch() / 1000 )) && agitated)
                             {
                                 //Adding the time where the joint was agitated during the recording
-                                agitNotAgit[j].Add((int)Tools.getTimer());
+                                agitNotAgit[j].Add((int)(Tools.getStopWatch() /1000 ));
                             }
                         }
                         //If the joint is too agitated
