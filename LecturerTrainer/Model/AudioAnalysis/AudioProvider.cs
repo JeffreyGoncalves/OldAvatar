@@ -1170,7 +1170,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             int[] peaks = new int[nbIntensities]; //array filled with 1s and 0s, 1 = it's a peak, 0 = it's not a peak
             int validNbPeaks = 0; // Valid number of peaks that are considered as a syllable
             //let's find the noise floor
-            for (int i = 0; i < nbIntensities - 1; i++)
+            for (int i = 0; i < nbIntensities; i++)
             {
                 if (intensity[i] < intensity[minint])
                 {
@@ -1178,14 +1178,14 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 }
             }
             //let's find the max noise
-            for (int i = 0; i < nbIntensities - 1; i++)
+            for (int i = 0; i < nbIntensities; i++)
             {
-                if (intensity[i] >= intensity[maxint])
+                if (intensity[i] > intensity[maxint])
                 {
                     maxint = i;
                 }
             }
-            // let's find the 0.99 quantile to get the maximumwithout influence of of non-speech sound bursts
+            // let's find the 0.99 quantile to get the maximum without influence of non-speech sound bursts
             float[] intensity2 = new float[nbIntensities];
             float[] sortedIntensity = new float[nbIntensities];
             for (int i = 0; i < nbIntensities; i++)
@@ -1193,16 +1193,30 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 intensity2[i] = (float)(20 * Math.Log10(Math.Abs(intensity[i]) / 0.000001));
 
             }
+            max99int = (int)(99 * nbIntensities) / 100;
+            float max99float = 0.0f;
+            for (int i = 0; i < max99int; i++)
+            {
+                if (intensity2[i] > max99float)
+                {
+                    max99float = intensity2[i];
+                }
+            }
             for (int i = 0; i < nbIntensities; i++)
             {
                 sortedIntensity[i] = intensity2[i];
             }
             bubbleSort(sortedIntensity);
             // We estimate the intensity threshold
-            max99int = (int)0.99 * (sortedIntensity.Length + 1);
-            threshold = (int)((sortedIntensity[max99int] / 100000) + silencedb);
-            threshold2 = (int)(intensity2[maxint] - sortedIntensity[sortedIntensity.Length - max99int - 1]);
+            threshold = (int)(max99float + silencedb);
+            threshold2 = (int)(intensity2[maxint] - max99float);
             threshold3 = silencedb - threshold2;
+
+            Console.WriteLine("||||||||||||||");
+            Console.WriteLine("T1 : " + threshold);
+            Console.WriteLine("T2 : " + threshold2);
+            Console.WriteLine("T3 : " + threshold3);
+            Console.WriteLine("||||||||||||||");
             if (threshold < (int)intensity2[minint])
             {
                 threshold = (int)intensity2[minint];
@@ -1287,7 +1301,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 int nextID = idOfPeaks[i + 1];
                 float dip = MinValue(intensity, actualID, nextID);
                 float diffDip = Math.Abs(valueOfPeaks[i] - dip);
-                if (diffDip > mindip && speaking[actualID] == 1 && valueOfPeaks[i] > 89)
+                if (diffDip > mindip && speaking[actualID] == 1 && valueOfPeaks[i] > 70 && (timeOfPeaks[i+1] - timeOfPeaks[i] > 0.02))
                 {
                     validNbPeaks++;
                 }
