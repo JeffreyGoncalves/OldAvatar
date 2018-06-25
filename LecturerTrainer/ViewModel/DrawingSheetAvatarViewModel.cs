@@ -810,13 +810,13 @@ namespace LecturerTrainer.Model
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 				
 				GL.PushAttrib(AttribMask.ColorBufferBit);
-                for (i = 130; i < 299; i++) // all the 300 values are actually not displayed during one frame but only around 170
+                for (i = 0; i < Model.AudioAnalysis.Pitch.WIGGLE_SIZE - 1; i++)
                 {
                     yw = +0.6f + Model.AudioAnalysis.Pitch.wiggle[i] / 500.0f; 
-                    yw1 = +0.6f + Model.AudioAnalysis.Pitch.wiggle[i + 1] / 500.0f;
+                    yw1 = +0.6f + Model.AudioAnalysis.Pitch.wiggle[i+1] / 500.0f;
 
-                    xw = -3.6f + i / 60.0f;
-                    float xw1 = -3.6f + (i + 1) / 60.0f;
+                    xw = -3.6f + (i+130) / 60.0f;
+                    float xw1 = -3.6f + (i + 1+130) / 60.0f;
 
                     GL.PushMatrix();
                     GL.Begin(PrimitiveType.Lines);
