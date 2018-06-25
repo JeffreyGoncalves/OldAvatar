@@ -139,68 +139,7 @@ namespace LecturerTrainer.Model
         }
         #endregion
 
-        /*#region methods for the timer
-        /// <summary>
-        /// initialize and start the timer
-        /// </summary>
-        /// <remarks>Author: Florian BECHU: Summer 2016</remarks>
-        public static void createAndStartTimer()
-        {
-            initializeTimer();
-            dispatcherTimer.Start();     
-        }
-
-        /// <summary>
-        /// start the timer 
-        /// </summary>
-        /// <remarks>Author: Florian BECHU: Summer 2016</remarks>
-        public static void startTimer()
-        {
-            dispatcherTimer.Start();
-        }
-
-        /// <summary>
-        /// initialize the timer that called the function dispatcherTier_tick all the 200 milliseconds
-        /// </summary>
-        /// <remarks>Author: Florian BECHU: Juin 2016</remarks>
-        public static void initializeTimer()
-        {
-            time = 0;
-            correctTime = 0;
-            clock = 1; //don't put below 200 millisec because it isn't the correct value
-            dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Interval = TimeSpan.FromMilliseconds(clock);
-            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-        }
-
-        /// <summary>
-        /// Stop the timer if not null
-        /// </summary>
-        public static void stopTimer()
-        {
-            if(dispatcherTimer != null)
-                dispatcherTimer.Stop();
-        }
-
-        /// <summary>
-        /// return the time of the timer between start and stop in milliseconds
-        /// </summary>
-        /// <returns>the time of the timer</returns>
-        public static long getTimer()
-        {
-            return time*clock;
-        }
-
-        private static void dispatcherTimer_Tick(object sender, EventArgs e)
-        {
-            //Console.Out.WriteLine("-- " + getTimer());
-            time++;
-            if (TrainingSideToolViewModel.Get().IsReplayingMode == true) //used only in the replay mode
-            {
-                DrawingSheetStreamViewModel.Get(View.DrawingSheetView.Get()).ShowFeedbacksOnVideoStream();
-            }
-        }
-        #endregion*/
+       
 
         #region stopwatch
         /// <summary>
@@ -377,13 +316,11 @@ namespace LecturerTrainer.Model
                 return false;
 
             series.Values = new ChartValues<double>();
-            //Console.Out.WriteLine("-- " + chart.GetType().ToString());
 
             for (int i = 0; i < (TrainingSideToolViewModel.Get().timeRecorded / getCorrectTime()) + 1; i++) // Chart Initializing. We put all values at 0 and we create labels for the X-axis
             {
                 int val1 = i * (getCorrectTime() / 1000);
                 int val2 = val1 + (getCorrectTime() / 1000) - 1;
-                //Console.Out.WriteLine("-- " + val1 + " -- " + val2);
                 if (val2 - val1 == 0) // if the sessions is lower than 10 secs
                 {
                     listLabel.Add((val1 + 1).ToString() + "sec");
@@ -397,10 +334,32 @@ namespace LecturerTrainer.Model
             }
             Console.Out.WriteLine("--  " + listLabel.Count + " -- " + series.Values.Count);
             Console.Out.WriteLine("-- " + list.Count);
-            if(list.Count > 0)
+
+            int c = 0;
+            int indice = 0;
+            int gap = (int)TrainingSideToolViewModel.Get().timeRecorded / 100 / series.Values.Count;
+            for (int i = 0; i < list.Count; i++) 
+            {
+                if (list.ElementAt(i) < c + gap && list.ElementAt(i) >= c)
+                {
+                    series.Values[indice] = (double)series.Values[indice] + 1;
+                }
+                else
+                {
+                    Console.Out.WriteLine("-- changement");
+                    c += gap;
+                    indice++;
+                    i--;
+                }
+
+            }
+            
+            
+            /*if (list.Count > 0)
             {
                 for (int i = 0; i < list.Count; i++) //we add data in serie
                 {
+                    
                     int currentValue = list.ElementAt(i);
                     Console.Out.WriteLine("i -- " + (currentValue - firstValue));
                     if (i == 0 || (i > 0 && (currentValue - firstValue) > 500)) // if the movment is longer than 1 sec
@@ -413,8 +372,10 @@ namespace LecturerTrainer.Model
                             firstValue = currentValue;
                         }
                     }
+
                 }
-            }   
+            } */
+            
             chart.listSeries.Add(series);
             if (totalValue.Count() > 0)
             {
