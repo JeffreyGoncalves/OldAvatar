@@ -1037,9 +1037,10 @@ namespace LecturerTrainer.ViewModel
             UpdateChrono(null, null);
         }
 
-        public void stopStopwatch()
+        public void stopStopwatch(long time)
         {
-            Tools.stopStopWatch();
+            timeRecorded = Tools.getStopWatch();
+            Tools.resetStopWatch();
             timerLaunched = false;
             TimeToUpdate.Stop();
             state = IRecordingState.Stopped;
@@ -1083,8 +1084,7 @@ namespace LecturerTrainer.ViewModel
         private void Stop()
         {
             isRecording = false;
-            stopStopwatch();
-            timeRecorded = Tools.getStopWatch();
+            stopStopwatch(timeRecorded);
             SideToolsViewModel.Get().allTabsSelectable();
             Agitation.record = false;
             HandsJoined.record = false;
@@ -1207,7 +1207,6 @@ namespace LecturerTrainer.ViewModel
         public void UpdateChrono(object source, ElapsedEventArgs e)
         {
             Chrono = Tools.FormatTime((int)Tools.getStopWatch());
-            Console.Out.WriteLine("-- t -- " + Tools.getStopWatch());
             if (_isTimeLimited && _limitedTimeSum > 0)
             {
                 // remaining time 

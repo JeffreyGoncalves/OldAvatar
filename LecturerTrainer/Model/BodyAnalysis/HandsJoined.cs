@@ -78,35 +78,23 @@ namespace LecturerTrainer.Model
             {
                 if(!sw.IsRunning)
                     sw.Start();
-                if(sw.ElapsedMilliseconds / 100 > 7 )
-                    Console.Out.WriteLine(" -- hand joined");
-                handsJoinedEvent(null, new InstantFeedback("Hands are joined"));
-                hands = true;
-                if (rec)
+                if(sw.ElapsedMilliseconds / 100 > 7)
                 {
-//                    Console.Out.WriteLine("-- t" + Tools.getStopWatch());
-                    if (!handsjoined.Contains((int)(Tools.getStopWatch() / 100 )))
+                    handsJoinedEvent(null, new InstantFeedback("Hands are joined"));
+                    hands = true;
+                    if (rec)
                     {
-                        //Console.Out.WriteLine(" -- add handJ");
-                        handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
+                        if (!handsjoined.Contains((int)(Tools.getStopWatch() / 100 )))
+                        {
+                            handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
+                        }
                     }
                 }
-                /*if (rec && eventfinished)
-                {
-                    if (!handsjoined.Contains((int)(Tools.getStopWatch() / 100 )))
-                    {
-                        Console.Out.WriteLine(" -- add handJ");
-                        handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
-                    }
-
-                    eventfinished = false;
-                }*/
             }
             else
             {
                 if(sw.IsRunning)
                     sw.Reset();
-                //Console.Out.WriteLine("-------------------------");
                 hands = false;
                 eventfinished = true;
             }

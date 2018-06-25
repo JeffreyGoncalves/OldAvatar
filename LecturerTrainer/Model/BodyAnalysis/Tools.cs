@@ -306,17 +306,15 @@ namespace LecturerTrainer.Model
         public static bool addSeriesToCharts<U>(IGraph chart, Series series, string seriesName,U list,string totalValue,bool addEmpty) where U : ICollection<int>
         {
 
-            foreach (int nteger in list)
-                Console.Out.WriteLine("-- val " + nteger);
+            /*foreach (int nteger in list)
+                Console.Out.WriteLine("-- val " + nteger);*/
             List<string> listLabel = new List<string>();
-            int firstValue = 0;
             series.Title = seriesName;
 
             if(!addEmpty && list.Count<=0)
                 return false;
 
             series.Values = new ChartValues<double>();
-
             for (int i = 0; i < (TrainingSideToolViewModel.Get().timeRecorded / getCorrectTime()) + 1; i++) // Chart Initializing. We put all values at 0 and we create labels for the X-axis
             {
                 int val1 = i * (getCorrectTime() / 1000);
@@ -332,8 +330,6 @@ namespace LecturerTrainer.Model
                     series.Values.Add((double)0);
                 }
             }
-            Console.Out.WriteLine("--  " + listLabel.Count + " -- " + series.Values.Count);
-            Console.Out.WriteLine("-- " + list.Count);
 
             int c = 0;
             int indice = 0;
@@ -346,35 +342,14 @@ namespace LecturerTrainer.Model
                 }
                 else
                 {
-                    Console.Out.WriteLine("-- changement");
+                    if (i == list.Count - 1)
+                        break;
                     c += gap;
                     indice++;
                     i--;
                 }
 
             }
-            
-            
-            /*if (list.Count > 0)
-            {
-                for (int i = 0; i < list.Count; i++) //we add data in serie
-                {
-                    
-                    int currentValue = list.ElementAt(i);
-                    Console.Out.WriteLine("i -- " + (currentValue - firstValue));
-                    if (i == 0 || (i > 0 && (currentValue - firstValue) > 500)) // if the movment is longer than 1 sec
-                    {
-                        
-                        int indice = currentValue / getCorrectTime();
-                        if (indice < series.Values.Count)
-                        {
-                            series.Values[indice] = (double)series.Values[indice] + 1;
-                            firstValue = currentValue;
-                        }
-                    }
-
-                }
-            } */
             
             chart.listSeries.Add(series);
             if (totalValue.Count() > 0)
