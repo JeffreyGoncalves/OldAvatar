@@ -1190,7 +1190,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             float[] sortedIntensity = new float[nbIntensities];
             for (int i = 0; i < nbIntensities; i++)
             {
-                intensity2[i] = (float)Math.Pow((20 * Math.Log10(Math.Abs(intensity[i]) / 0.000001)), 4);
+                intensity2[i] = (float)(20 * Math.Log10(Math.Abs(intensity[i]) / 0.000001));
 
             }
             max99int = (int)(99 * nbIntensities) / 100;
