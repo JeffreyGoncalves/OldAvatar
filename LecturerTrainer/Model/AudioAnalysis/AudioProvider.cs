@@ -1212,11 +1212,6 @@ namespace LecturerTrainer.Model.AudioAnalysis
             threshold2 = (int)(intensity2[maxint] - max99float);
             threshold3 = silencedb - threshold2;
 
-            Console.WriteLine("||||||||||||||");
-            Console.WriteLine("T1 : " + threshold);
-            Console.WriteLine("T2 : " + threshold2);
-            Console.WriteLine("T3 : " + threshold3);
-            Console.WriteLine("||||||||||||||");
             if (threshold < (int)intensity2[minint])
             {
                 threshold = (int)intensity2[minint];
