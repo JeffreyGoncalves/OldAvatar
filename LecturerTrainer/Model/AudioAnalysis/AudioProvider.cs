@@ -1190,7 +1190,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             float[] sortedIntensity = new float[nbIntensities];
             for (int i = 0; i < nbIntensities; i++)
             {
-                intensity2[i] = (float)(20 * Math.Log10(Math.Abs(intensity[i]) / 0.000001));
+                intensity2[i] = (float)Math.Pow((20 * Math.Log10(Math.Abs(intensity[i]) / 0.000001)), 4);
 
             }
             max99int = (int)(99 * nbIntensities) / 100;
@@ -1301,11 +1301,15 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 int nextID = idOfPeaks[i + 1];
                 float dip = MinValue(intensity, actualID, nextID);
                 float diffDip = Math.Abs(valueOfPeaks[i] - dip);
-                if (diffDip > mindip && speaking[actualID] == 1 && valueOfPeaks[i] > 70 && (timeOfPeaks[i+1] - timeOfPeaks[i] > 0.02))
+                if (diffDip > mindip && speaking[actualID] == 1 && valueOfPeaks[i] > 70)
                 {
                     validNbPeaks++;
                 }
-
+            }
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\Thibaut\source\repos\OldAvatar\Intensity_Over_Time-Bis.txt", true))
+            for (int i = 0; i < nbPeaks; i++)
+            {
+                file.WriteLine(valueOfPeaks[i]);
             }
             this.nbSyllables += validNbPeaks;
             // ValidNbPeaks is the number of syllables during 
