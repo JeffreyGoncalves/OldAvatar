@@ -577,7 +577,6 @@ namespace LecturerTrainer.Model
         /// </summary>
         private void display()
         {
-            
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.PushMatrix();
             {
@@ -1234,13 +1233,13 @@ namespace LecturerTrainer.Model
             
             if(!isTraining)
 			{
-                /*The way feedback is displayed changes wether we are in normal mode or replay mode*/
+				//The way feedback is displayed changes wether we are in normal mode or replay mode
 
-                /* Normal mode feedback display */
+                // Normal mode feedback display 
 
                 if (!ReplayViewModel.isReplaying)
                 {
-                    /*OpenGL feedback of the hands crossed*/
+                    //OpenGL feedback of the hands crossed
                     if(Model.HandsJoined.hands)
                     {
                         HudDrawImage("Hand_Joined", 0.15f, 0.15f,
@@ -1248,7 +1247,7 @@ namespace LecturerTrainer.Model
                             avatar.Joints[JointType.HandLeft].Position.Y);
                     }
 
-                    /*OpenGL feedback of the look at the center*/
+                    //OpenGL feedback of the look at the center
                     if(Model.EmotionRecognizer.lookingDirection.feedC)
                     {
                         HudDrawImage("Center_Arrow", 0.2f, 0.2f,
@@ -1256,7 +1255,7 @@ namespace LecturerTrainer.Model
                             headY + 0.5f);
                     }
 
-                    /*OpenGL feedback of the look at the left*/
+                    //OpenGL feedback of the look at the left
                     if(Model.EmotionRecognizer.lookingDirection.feedL)
                     {
                         HudDrawImage("Left_Arrow", 0.2f, 0.2f,
@@ -1264,7 +1263,7 @@ namespace LecturerTrainer.Model
                             headY);
                     }
 
-                    /*OpenGL feedback of the look at the right*/
+                    //OpenGL feedback of the look at the right
                     if(Model.EmotionRecognizer.lookingDirection.feedR)
                     {
                         HudDrawImage("Right_Arrow", 0.2f, 0.2f,
@@ -1272,7 +1271,7 @@ namespace LecturerTrainer.Model
                             headY);
                     }
 
-                    /*OpenGL feedback of the happy emotion*/
+                    //OpenGL feedback of the happy emotion
                     if(Model.EmotionRecognizer.EmotionRecognition.happy)
                     {
                         HudDrawImage("Happy", 0.2f, 0.2f,
@@ -1280,7 +1279,7 @@ namespace LecturerTrainer.Model
                             0.5f);
                     }
 
-                    /*OpenGL feedback of the surprised emotion*/
+                    //OpenGL feedback of the surprised emotion
                     if(Model.EmotionRecognizer.EmotionRecognition.surprised)
                     {
                         HudDrawImage("Surprised", 0.2f, 0.2f,
@@ -1288,7 +1287,7 @@ namespace LecturerTrainer.Model
                             0.5f);
                     }
 
-                    /*OpenGL feedback of agitation*/
+                    //OpenGL feedback of agitation
                     if(Model.Agitation.feedAg)
                     {
                         HudDrawImage("Agitation", 0.2f, 0.2f,
@@ -1296,14 +1295,14 @@ namespace LecturerTrainer.Model
                             0);
                     }
 
-                    /*OpenGL feedback of the arms crossed*/
+                    //OpenGL feedback of the arms crossed
                     if(Model.BodyAnalysis.ArmsCrossed.feedArmsCrossed)
                     {
                         HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
                             0.75f,
                             0);
                     }
-                }
+				}
                 /* Replay Mode feedback display */
                 else{
                     /* List containing all the feedbacks that must be displayed during the current frame */
@@ -3159,11 +3158,11 @@ namespace LecturerTrainer.Model
             GL.Viewport(0, 0, w, h);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            if (w <= h)
+            if (w <= h && w != 0)
             {
                 GL.Ortho(-1.0, 1.0, -1.0 * (double)h / (double)w, 1.0 * (double)h / (double)w, -10.0, 10.0);
             }
-            else
+            else if((w > h) && h != 0)
             {
                 GL.Ortho(-1.0 * (double)w / (double)h, 1.0 * (double)w / (double)h, -1.0, 1.0, -10.0, 10.0);
             }
@@ -3191,8 +3190,9 @@ namespace LecturerTrainer.Model
         {
             if (!dsv.loaded) return;
             display();
-            glControl.SwapBuffers();
-        }
+            glControl.SwapBuffers(); 
+			
+		}
         #endregion
 
         #region themeGestion

@@ -66,7 +66,7 @@ namespace LecturerTrainer.ViewModel
         private readonly RelayCommand goToResults;
         
         private IRecordingState state;
-        private System.Timers.Timer TimeToUpdate = new System.Timers.Timer(1000);
+        private System.Timers.Timer TimeToUpdate = new System.Timers.Timer(100);
         private bool timerLaunched;
         private String chrono;
         private string speechPath = "IMPORT SPEECH";
@@ -1037,9 +1037,10 @@ namespace LecturerTrainer.ViewModel
             UpdateChrono(null, null);
         }
 
-        public void stopStopwatch()
+        public void stopStopwatch(long time)
         {
-            Tools.stopStopWatch();
+            timeRecorded = Tools.getStopWatch();
+            Tools.resetStopWatch();
             timerLaunched = false;
             TimeToUpdate.Stop();
             state = IRecordingState.Stopped;
@@ -1083,8 +1084,7 @@ namespace LecturerTrainer.ViewModel
         private void Stop()
         {
             isRecording = false;
-            stopStopwatch();
-            timeRecorded = Tools.getStopWatch();
+            stopStopwatch(timeRecorded);
             SideToolsViewModel.Get().allTabsSelectable();
             Agitation.record = false;
             HandsJoined.record = false;
@@ -1124,11 +1124,11 @@ namespace LecturerTrainer.ViewModel
                 }
                 catch(ArgumentException e)
                 {
-                    System.Windows.Forms.MessageBox.Show("impossible to open: " + e.ParamName);
+                    new ErrorMessageBox("ArgumentError", "impossible to open: " + e.ParamName).ShowDialog();
                 }
                 catch(Exception e)
                 {
-                    System.Windows.Forms.MessageBox.Show(e.Message);
+                    new ErrorMessageBox("Error", e.Message).ShowDialog();
                 }
             }
         }
@@ -1206,7 +1206,6 @@ namespace LecturerTrainer.ViewModel
 
         public void UpdateChrono(object source, ElapsedEventArgs e)
         {
-            //Chrono = stopwatch.ToString();
             Chrono = Tools.FormatTime((int)Tools.getStopWatch());
             if (_isTimeLimited && _limitedTimeSum > 0)
             {
