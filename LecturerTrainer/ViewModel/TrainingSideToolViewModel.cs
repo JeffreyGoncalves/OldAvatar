@@ -1068,7 +1068,7 @@ namespace LecturerTrainer.ViewModel
             // Prevents the user from changing tracking configs while recording
             MainWindow.main.audioProvider.resetTmpCount();
             HandsRaised.resetCounters();
-            SideToolsViewModel.Get().disableTrackingTab();
+			SideToolsViewModel.Get().disableTrackingAndTrainingTab();
             if (isTimeLimited)
             {
                 _limitedTimeSum = (_limitedTimeHours * 60 * 60) + (_limitedTimeMinutes * 60) + _limitedTimeSeconds;
