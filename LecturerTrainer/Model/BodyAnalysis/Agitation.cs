@@ -268,10 +268,11 @@ namespace LecturerTrainer.Model
                                 feedAg = false;
                             }
                         }
-                        /*else if (agitated && j == JointType.HandLeft)//We had to choose one joint to raise only one 
+						// Somehow this is useful for the agitation icon to be displayed correctly during replays
+                        else if (agitated) 
                         {
                             agitationEvent(j, new InstantFeedback(tooAgitatedText));
-                        }*/
+                        }
                     }
                 }
             }
