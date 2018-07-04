@@ -178,6 +178,7 @@ namespace LecturerTrainer.ViewModel
                         if (this.trainingVM.State == IRecordingState.Paused || this.trainingVM.State == IRecordingState.RequestedStop || this.trainingVM.State == IRecordingState.Stopped)
                         {
                             Button b = this.trainingV.FindName("startRecordingButton") as Button;
+
                             b.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                             b.Command.Execute(null);
                         }

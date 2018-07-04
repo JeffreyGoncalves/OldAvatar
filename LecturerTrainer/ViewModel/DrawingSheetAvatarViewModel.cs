@@ -28,6 +28,51 @@ namespace LecturerTrainer.Model
     {
         #region fields
 
+        #region Mentor's variables
+
+        public static String displayCustomText = String.Empty;
+
+        private static int count;
+        private static bool drawFM;
+
+        private static Skeleton skToDisplay = null;
+        private static FaceDataWrapper fcToDisplay = new FaceDataWrapper(null, null, null);
+
+        private Vector3 mentorMTUL;
+        private Vector3 mentorMBUL;
+        private Vector3 mentorMBLL;
+        private Vector3 mentorMTLL;
+        private Vector3 mentorORCM;
+        private Vector3 mentorOLCM;
+
+        private Vector3 mentorface19;
+        private Vector3 mentorface20;
+        private Vector3 mentorface21;
+        private Vector3 mentorface22;
+        private Vector3 mentorface23;
+        private Vector3 mentorface24;
+
+        private Vector3 mentorface52;
+        private Vector3 mentorface53;
+        private Vector3 mentorface54;
+        private Vector3 mentorface55;
+        private Vector3 mentorface56;
+        private Vector3 mentorface57;
+
+        private Vector3 mentorface15;
+        private Vector3 mentorface16;
+        private Vector3 mentorface17;
+        private Vector3 mentorface18;
+
+        private Vector3 mentorface48;
+        private Vector3 mentorface49;
+        private Vector3 mentorface50;
+        private Vector3 mentorface51;
+
+        private Vector3 mentorheadCenterPoint;
+        private Vector3 mentorheadTilt;
+        #endregion
+
         /// <summary>
         /// the instance of the singleton class 
         /// </summary>
@@ -336,49 +381,6 @@ namespace LecturerTrainer.Model
 
         #endregion
 
-        #region Mentor's variables
-
-        private static int count;
-        private static bool drawFM;
-
-        private static Skeleton skToDisplay = null;
-        private static FaceDataWrapper fcToDisplay = new FaceDataWrapper(null, null, null);
-
-        private Vector3 mentorMTUL;
-        private Vector3 mentorMBUL;
-        private Vector3 mentorMBLL;
-        private Vector3 mentorMTLL;
-        private Vector3 mentorORCM;
-        private Vector3 mentorOLCM;
-
-        private Vector3 mentorface19;
-        private Vector3 mentorface20;
-        private Vector3 mentorface21;
-        private Vector3 mentorface22;
-        private Vector3 mentorface23;
-        private Vector3 mentorface24;
-
-        private Vector3 mentorface52;
-        private Vector3 mentorface53;
-        private Vector3 mentorface54;
-        private Vector3 mentorface55;
-        private Vector3 mentorface56;
-        private Vector3 mentorface57;
-
-        private Vector3 mentorface15;
-        private Vector3 mentorface16;
-        private Vector3 mentorface17;
-        private Vector3 mentorface18;
-
-        private Vector3 mentorface48;
-        private Vector3 mentorface49;
-        private Vector3 mentorface50;
-        private Vector3 mentorface51;
-
-        private Vector3 mentorheadCenterPoint;
-        private Vector3 mentorheadTilt;
-        #endregion
-
         #region constructor and Get()
         // private constructor allow us to make sure that we have only one instance 
         private DrawingSheetAvatarViewModel(DrawingSheetView dsv)
@@ -483,14 +485,42 @@ namespace LecturerTrainer.Model
                 if (isTraining)
                 {
                     GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-                    GL.PushMatrix();
+
+                    //CHANGE HERE
+                    /*
+                     * GL.PushMatrix();
+                        {
+                            displayTextTraining();
+                            GL.Translate(-1.0f, 0, 0);
+                            drawAvatar(evt);
+                        }
+                        GL.PopMatrix();
+                    *
+                    */
+
+                    if (displayCustomText.Length == 0)
                     {
-                        /*user's avatar*/
-                        displayTextTraining();
-                        GL.Translate(-1.0f, 0, 0);
-                        drawAvatar(evt);
+                        GL.PushMatrix();
+                        {
+                            /*user's avatar*/
+                            displayTextTraining();
+                            GL.Translate(-1.0f, 0, 0);
+                            drawAvatar(evt);
+                        }
+                        GL.PopMatrix();
                     }
-                    GL.PopMatrix();
+                    else
+                    {
+                        GL.PushMatrix();
+                        {
+                            /*user's avatar*/
+                            DisplayTextTraining(displayCustomText);
+                            GL.Translate(-1.0f, 0, 0);
+                            drawAvatar(evt);
+                        }
+                        GL.PopMatrix();
+                    }
+
                     /*The coach's avatar*/
                     GL.PushMatrix();
                     GL.Translate(1.0f, 0, 0);
@@ -1373,7 +1403,7 @@ namespace LecturerTrainer.Model
 			}
             else // Training mode
             {
-                if (TrainingWithAvatarViewModel.Get().PlayMode & mentor)
+                /*if (TrainingWithAvatarViewModel.Get().PlayMode & mentor)
                 {
                     if (Model.BodyAnalysis.WelcomeTraining.goodjob)
                     {
@@ -1416,7 +1446,7 @@ namespace LecturerTrainer.Model
                         0.75f);
 
                     first = true;  //resets the TooSlow feedback 
-                }
+                }*/
             }
 
             // Reset the texture applied to polygons
@@ -3299,7 +3329,36 @@ namespace LecturerTrainer.Model
             }
             // GL.Scale(0.5, 0.5, 1.0);
             GL.Enable(EnableCap.Lighting);
+        }
 
+        /// <summary>
+        /// Display a message during the training
+        /// </summary>
+        /// <param name="str"></param>
+        public void DisplayTextTraining(string str)
+        {
+            //both versions work
+
+            /** Version 1 **/
+            /*
+            char[] textToDisplay = str.ToCharArray();
+
+            GL.Color4(pixelFeedbackColor.R, pixelFeedbackColor.G, pixelFeedbackColor.B, pixelFeedbackColor.A);
+            GL.Disable(EnableCap.Lighting);
+            GL.RasterPos3(-0.025f * ((float)textToDisplay.Length - 1), 0.8f, 0);
+            for (int i = 0; i < textToDisplay.Length; i++)
+            {
+                Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_TIMES_ROMAN_24, textToDisplay[i]);
+            }
+            GL.Enable(EnableCap.Lighting);
+            */
+
+            /** Version 2 **/
+            GL.Color4(pixelFeedbackColor.R, pixelFeedbackColor.G, pixelFeedbackColor.B, pixelFeedbackColor.A);
+            GL.Disable(EnableCap.Lighting);
+            GL.RasterPos2(-0.025f * ((float)str.Length - 1), 0.8f);
+            Glut.glutBitmapString(Glut.GLUT_BITMAP_TIMES_ROMAN_24, str);
+            GL.Enable(EnableCap.Lighting);
         }
 
         // Timothée
