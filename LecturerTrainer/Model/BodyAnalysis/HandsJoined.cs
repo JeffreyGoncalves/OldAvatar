@@ -12,6 +12,7 @@ using LecturerTrainer.View;
 using System.Collections.ObjectModel;
 using LiveCharts.Wpf;
 using LiveCharts;
+using System.Diagnostics;
 
 namespace LecturerTrainer.Model
 {
@@ -65,6 +66,8 @@ namespace LecturerTrainer.Model
         public static bool hands = false;
         public static bool eventfinished = true;
 
+        public static Stopwatch sw = new Stopwatch();
+
         /// <summary>
         /// function called to detect the hands joined
         /// </summary>
@@ -73,20 +76,25 @@ namespace LecturerTrainer.Model
         {
             if (Geometry.distanceSquare(new Point3D(sk.Joints[JointType.HandLeft].Position), new Point3D(sk.Joints[JointType.HandRight].Position)) < 0.01)
             {
-                handsJoinedEvent(null, new InstantFeedback("Hands are joined"));
-                hands = true;
-                if (rec && eventfinished)
+                if(!sw.IsRunning)
+                    sw.Start();
+                if(sw.ElapsedMilliseconds / 100 > 7)
                 {
-                    if (!handsjoined.Contains((int)(Tools.getStopWatch() / 1000 )))
+                    handsJoinedEvent(null, new InstantFeedback("Hands are joined"));
+                    hands = true;
+                    if (rec)
                     {
-                        handsjoined.Add((int)(Tools.getStopWatch() / 1000 ));
+                        if (!handsjoined.Contains((int)(Tools.getStopWatch() / 100 )))
+                        {
+                            handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
+                        }
                     }
-
-                    eventfinished = false;
                 }
             }
             else
             {
+                if(sw.IsRunning)
+                    sw.Reset();
                 hands = false;
                 eventfinished = true;
             }

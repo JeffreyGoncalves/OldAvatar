@@ -38,11 +38,11 @@ namespace LecturerTrainer.Model
         /// Different tresholds for the main part of the body
         /// Added by Baptiste Germond
         /// </summary>
-        private static double relevantTresholdHand = 0.36;//0.0015
-        private static double relevantTresholdHip = 0.0096;//0.0004;
-        private static double relevantTresholdShoulder = 0.084;//0.00035;
+        private static double relevantTresholdHand = 0.7;//0.36;//0.0015
+        private static double relevantTresholdHip = 0.011;//0.0096;//0.0004;
+        private static double relevantTresholdShoulder = 0.1;//0.084;//0.00035;
         //private static double relevantTresholdElbow = 0.5;
-        private static double relevantTresholdKnee = 0.24;//0.001;
+        private static double relevantTresholdKnee = 0.3;//0.24;//0.001;
 
         private static double agitationSensitivity = 1;
         /// <summary>
@@ -176,7 +176,7 @@ namespace LecturerTrainer.Model
         /// <remarks>Author: Clement Michard</remarks>
         public static void testAgitation(Skeleton sk)
         {
-
+			//System.Diagnostics.Debug.WriteLine(Environment.TickCount - ticksTest); ~15ms or so
             //Modified and added by Nicolas DONORE
             List<JointType> testedJoints = new List<JointType>();
             testedJoints.Add(JointType.HandLeft);
@@ -196,6 +196,7 @@ namespace LecturerTrainer.Model
 
         }
 
+
         /// <summary>
         /// Lauch the detection of the agitation of a joint.
         /// </summary>
@@ -205,7 +206,7 @@ namespace LecturerTrainer.Model
         /// Modified by Baptiste Germond, changing to counting the total of frame to do less calcul
         /// And deactivating the agitation of the legs when not tracked
         private static void agitationJoint(Skeleton sk, JointType j)
-        {
+			{
             if (sk.Joints[j].TrackingState == JointTrackingState.Tracked)
             {
                 /*Ensure that if the leg are not tracked it will not count them in the agitation method*/
@@ -214,8 +215,7 @@ namespace LecturerTrainer.Model
                         //|| sk.joints[j].JointType == JointType.HipLeft
                         //|| sk.Joints[j].JointType == JointType.HipRight 
                         || sk.Joints[j].JointType == JointType.KneeLeft
-                        || sk.Joints[j].JointType == JointType.KneeRight )
-                    ))
+                        || sk.Joints[j].JointType == JointType.KneeRight )))
                 {
                     //If we record the performance and the List conting the agitation of the joint has not the joint observe
                     if (rec && !agitNotAgit.Keys.Contains(j))
@@ -230,8 +230,8 @@ namespace LecturerTrainer.Model
                         agitation[j] = new Agitation(j);
                     }
                     //Adding the position of the joint
-                    agitation[j].Enqueue(Geometry.refKinectToSkeleton(new Point3D(sk.Joints[j].Position), sk));
-                    if (agitation[j].Count == agitation[j].time * KINECT_RATE)
+                    agitation[j].Enqueue(Geometry.refKinectToSkeleton(new Point3D(sk.Joints[j].Position), sk)); 
+					if (agitation[j].Count == agitation[j].time * KINECT_RATE)
                     {
                         //Return wether the joint is too agitated or not
                         bool agitated = agitation[j].tooAgitated();
@@ -243,10 +243,10 @@ namespace LecturerTrainer.Model
                                 //Counting the number of frame recorded
                                 nbFrameRecorded++;
                             }
-                            if (!agitNotAgit[j].Contains((int)(Tools.getStopWatch() / 1000 )) && agitated)
+                            if (!agitNotAgit[j].Contains((int)(Tools.getStopWatch() / 100 )) && agitated)
                             {
                                 //Adding the time where the joint was agitated during the recording
-                                agitNotAgit[j].Add((int)(Tools.getStopWatch() /1000 ));
+                                agitNotAgit[j].Add((int)(Tools.getStopWatch() /100 ));
                             }
                         }
                         //If the joint is too agitated
@@ -268,13 +268,23 @@ namespace LecturerTrainer.Model
                                 feedAg = false;
                             }
                         }
-                        else if (agitated && j == JointType.HandLeft)//We had to choose one joint to raise only one 
+						// Somehow this is useful for the agitation icon to be displayed correctly during replays
+                        else if (agitated) 
                         {
                             agitationEvent(j, new InstantFeedback(tooAgitatedText));
                         }
                     }
                 }
             }
+			// If a joint is no longer tracked, we consider it as "not agitated"
+			else{
+				tooAgitatedJoints.Remove(j);
+                //If the list is empty we stop the feedback
+                if (tooAgitatedJoints.Count == 0)
+				{
+					feedAg = false;
+				}
+			}
         }
 
         public static void removeAgitation(Skeleton sk)

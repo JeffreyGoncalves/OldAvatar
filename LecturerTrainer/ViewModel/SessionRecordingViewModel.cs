@@ -236,8 +236,7 @@ namespace LecturerTrainer.ViewModel
             }
             else
             {
-                ErrorMessageBox error = new ErrorMessageBox("Starting a record", "You need to close the replay mode before\nlaunching any new record");
-                error.ShowDialog();
+                new ErrorMessageBox("Starting a record", "You need to close the replay mode before\nlaunching any new record").ShowDialog();
             }
 
         }        

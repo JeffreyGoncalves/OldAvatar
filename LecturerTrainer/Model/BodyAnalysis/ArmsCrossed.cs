@@ -61,13 +61,21 @@ namespace LecturerTrainer.Model.BodyAnalysis
             {
                 armsCrossedEvent(null, new InstantFeedback("Arms Crossed"));
                 feedArmsCrossed = true;
-                if (rec && eventfinished)
+                /*if (rec && eventfinished)
                 {
-                    if (!armscrossed.Contains((int)(Tools.getStopWatch() / 1000 )))
+                    if (!armscrossed.Contains((int)(Tools.getStopWatch() / 100 )))
                     {
-                        armscrossed.Add((int)(Tools.getStopWatch() / 1000 ));
+                        Console.Out.WriteLine(" -- add armC");
+                        armscrossed.Add((int)(Tools.getStopWatch() / 100 ));
                     }
                     eventfinished = false;
+                }*/
+                if (rec)
+                {
+                    if (!armscrossed.Contains((int)(Tools.getStopWatch() / 100)))
+                    {
+                        armscrossed.Add((int)(Tools.getStopWatch() / 100));
+                    }
                 }
             }
             else
