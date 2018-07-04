@@ -445,7 +445,6 @@ namespace LecturerTrainer.ViewModel
                 //Console.Out.WriteLine("-- pat -- " + patern);
                 WriteFileStream.WriteLine(patern);
                 line = ReadFileStream.ReadLine();
-                Console.Out.WriteLine("-- lin -- " + line);
                 if (string.IsNullOrEmpty(line)) // if it's the end of the file
                 {
                     WriteFileStream.Close();
@@ -457,7 +456,6 @@ namespace LecturerTrainer.ViewModel
                 string name = tab[0].Substring(1);
                 string final = tab[0].Insert(1, "/");
                 final = final.Insert(final.Length, ">");
-                Console.Out.WriteLine("-- fin -- " + final);
 
 
                 while (line != final && !string.IsNullOrEmpty(line))

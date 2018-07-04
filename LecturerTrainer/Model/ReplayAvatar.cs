@@ -165,9 +165,13 @@ namespace LecturerTrainer.Model
                 timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
                 timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
                 timeToUpdate.Tick += changeSlider;
-            }catch(ArgumentException e)
+            }catch(ArgumentException)
             {
-                throw e;
+                throw;
+            }
+            catch (XmlLoadingException)
+            {
+                throw;
             }
         }
         /// <summary>
@@ -344,8 +348,8 @@ namespace LecturerTrainer.Model
                                                     jointPoints.Z = float.Parse(xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
                                                     break;
                                                 default:
-                                                    //Console.WriteLine("Error: " + xmlSkeletonJointsReader.Value, CultureInfo.InvariantCulture);
-                                                    break;
+                                                    throw new XmlLoadingException("Error while loading the skeletonData",
+                                                     "Missing axis in skeleton" + skCount + " in " + currentJointType);
                                             }
                                         }
                                         currentJoint.Position = jointPoints;
@@ -364,14 +368,25 @@ namespace LecturerTrainer.Model
                                 skeletonSortedListWithTime.Add(skCount++, tu);
                             }
                         }
+                        else
+                        {
+                            throw new XmlLoadingException("Error while loading the skeletonData",
+                                    "The savefile is wrongly written in skeleton " + skCount);
+                        }
                     }
                 }
                 ReplayViewModel.timeEnd = skeletonSortedListWithTime[skeletonSortedListWithTime.Count - 1].Item1;
                 return skeletonSortedListWithTime;
-            }catch(Exception)
+            }
+            catch (XmlLoadingException e)
+            {
+                throw e;
+            }
+            catch (Exception)
             {
                 throw new ArgumentException("Impossible to read ", path);
             }
+            
 
         }
 

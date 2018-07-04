@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using System.Threading;
 using Microsoft.Kinect;
 using System.Windows.Threading;
+using LecturerTrainer.Model.Exceptions;
 
 namespace LecturerTrainer.ViewModel
 {
@@ -430,8 +431,12 @@ namespace LecturerTrainer.ViewModel
                         isReplaying = true;
                         //}
                     }
-                    catch (ArgumentException e) {
-                        throw e;
+                    catch (ArgumentException) {
+                        throw;
+                    }
+                    catch (XmlLoadingException)
+                    {
+                        throw;
                     }
                 }
                 if (isReplaying)

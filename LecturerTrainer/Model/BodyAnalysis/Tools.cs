@@ -333,22 +333,25 @@ namespace LecturerTrainer.Model
 
             int c = 0;
             int indice = 0;
-            int gap = (int)TrainingSideToolViewModel.Get().timeRecorded / 100 / series.Values.Count;
-            for (int i = 0; i < list.Count; i++) 
+            if(list.Count > 0)
             {
-                if (list.ElementAt(i) < c + gap && list.ElementAt(i) >= c)
+                int gap = (int)TrainingSideToolViewModel.Get().timeRecorded / 100 / series.Values.Count;
+                for (int i = 0; i < list.Count; i++) 
                 {
-                    series.Values[indice] = (double)series.Values[indice] + 1;
-                }
-                else
-                {
-                    if (i == list.Count - 1)
-                        break;
-                    c += gap;
-                    indice++;
-                    i--;
-                }
+                    if (list.ElementAt(i) < c + gap && list.ElementAt(i) >= c)
+                    {
+                        series.Values[indice] = (double)series.Values[indice] + 1;
+                    }
+                    else
+                    {
+                        if (i == list.Count - 1)
+                            break;
+                        c += gap;
+                        indice++;
+                        i--;
+                    }
 
+                }
             }
             
             chart.listSeries.Add(series);
