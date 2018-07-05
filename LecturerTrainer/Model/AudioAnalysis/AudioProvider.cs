@@ -1163,7 +1163,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
 
             float[] intensity2 = new float[nbIntensities]; // Table of intensities converted in db
 
-            // Convertion of intensities from V to db
+            // Convertion of intensities from V to db, raised to power 2
             for (int i = 0; i < nbIntensities; i++)
             {
                 intensity2[i] = (float)Math.Pow((float)(20 * Math.Log10(Math.Abs(intensity[i]) / 0.000001)),2);
