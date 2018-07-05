@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 using System.Threading;
 using Microsoft.Kinect;
 using System.Windows.Threading;
+using LecturerTrainer.Model.Exceptions;
 
 namespace LecturerTrainer.ViewModel
 {
@@ -290,8 +291,8 @@ namespace LecturerTrainer.ViewModel
         {
             var listFeedback = new List<List<String>>();
             string tempLine;
-            // each list contains the feedbacks contain in an interval of time
-            // this interval is the time during two skeleton in the ReplayAvatar.SkeletonList
+            // each list contains the feedbacks that are present in an interval of time
+            // this interval is the time between two skeletons in the ReplayAvatar.SkeletonList
             int timeDown = 0;
             int count = 0;
             int timeUp = ReplayAvatar.SkeletonList[count].Item1;
@@ -335,7 +336,7 @@ namespace LecturerTrainer.ViewModel
                     }
                 }
                 file.Close();
-                // if the number of list is less than the number of skeleton we fill with empty lists
+                // if the number of lists is less than the number of skeleton, we fill with empty lists
                 if(listFeedback.Count != ReplayAvatar.SkeletonList.Count)
                 {
                     int diff = ReplayAvatar.SkeletonList.Count - listFeedback.Count;
@@ -430,8 +431,12 @@ namespace LecturerTrainer.ViewModel
                         isReplaying = true;
                         //}
                     }
-                    catch (ArgumentException e) {
-                        throw e;
+                    catch (ArgumentException) {
+                        throw;
+                    }
+                    catch (XmlLoadingException)
+                    {
+                        throw;
                     }
                 }
                 if (isReplaying)

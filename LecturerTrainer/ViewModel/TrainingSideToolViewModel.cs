@@ -363,15 +363,15 @@ namespace LecturerTrainer.ViewModel
             FacePool = new FeedbackPool(faceFields);
             VoicePool = new FeedbackPool(voiceFields);
             CommentPool = new FeedbackPool(commentFields);
-
+            
             // setting up the stopwatch and the update for the limited time record
             Tools.initStopWatch();
             this.TimeToUpdate.Elapsed += UpdateChrono;
 
             beginRecordingCommand = new RelayCommand(BeginRecording,
                 () => State == IRecordingState.Stopped ||
-                      State == IRecordingState.Monitoring ||
-                      State == IRecordingState.Paused);
+                        State == IRecordingState.Monitoring ||
+                        State == IRecordingState.Paused);
             stopCommand = new RelayCommand(Stop,
                 () => State == IRecordingState.Recording);
             goToResults = new RelayCommand(ShowResults,
@@ -856,7 +856,7 @@ namespace LecturerTrainer.ViewModel
             }
             else
             {
-                string newPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\"));
+                string newPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 string combine = System.IO.Path.Combine(newPath, "PublicRecord");
 
                 if (!Directory.Exists(combine))
@@ -864,7 +864,6 @@ namespace LecturerTrainer.ViewModel
                     Directory.CreateDirectory(combine);
                 }
                 storingFeedbackThreadData = new StoringFeedbackThreadData("feedback", SavingTools.nameFolder(combine, "PublicRecord"));
-
             }
 
             storingFeedbackThread = new Thread(storingFeedbackThreadData.threadProcess);
@@ -1068,7 +1067,7 @@ namespace LecturerTrainer.ViewModel
             // Prevents the user from changing tracking configs while recording
             MainWindow.main.audioProvider.resetTmpCount();
             HandsRaised.resetCounters();
-            SideToolsViewModel.Get().disableTrackingTab();
+			SideToolsViewModel.Get().disableTrackingAndTrainingTab();
             if (isTimeLimited)
             {
                 _limitedTimeSum = (_limitedTimeHours * 60 * 60) + (_limitedTimeMinutes * 60) + _limitedTimeSeconds;
@@ -1111,6 +1110,7 @@ namespace LecturerTrainer.ViewModel
                 replayViewModel.resetInstance();
                 replayViewModel = null;
             }
+
             System.Windows.Forms.OpenFileDialog fbd = new System.Windows.Forms.OpenFileDialog();
             fbd.Filter = "Performance File (.avi,.skd)|*.avi;*.skd"; // Filter files by extension
             fbd.Title = "Select the file of the performance you want to replay";

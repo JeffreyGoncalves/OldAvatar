@@ -28,6 +28,51 @@ namespace LecturerTrainer.Model
     {
         #region fields
 
+        #region Mentor's variables
+
+        public static String displayCustomText = String.Empty;
+
+        private static int count;
+        private static bool drawFM;
+
+        private static Skeleton skToDisplay = null;
+        private static FaceDataWrapper fcToDisplay = new FaceDataWrapper(null, null, null);
+
+        private Vector3 mentorMTUL;
+        private Vector3 mentorMBUL;
+        private Vector3 mentorMBLL;
+        private Vector3 mentorMTLL;
+        private Vector3 mentorORCM;
+        private Vector3 mentorOLCM;
+
+        private Vector3 mentorface19;
+        private Vector3 mentorface20;
+        private Vector3 mentorface21;
+        private Vector3 mentorface22;
+        private Vector3 mentorface23;
+        private Vector3 mentorface24;
+
+        private Vector3 mentorface52;
+        private Vector3 mentorface53;
+        private Vector3 mentorface54;
+        private Vector3 mentorface55;
+        private Vector3 mentorface56;
+        private Vector3 mentorface57;
+
+        private Vector3 mentorface15;
+        private Vector3 mentorface16;
+        private Vector3 mentorface17;
+        private Vector3 mentorface18;
+
+        private Vector3 mentorface48;
+        private Vector3 mentorface49;
+        private Vector3 mentorface50;
+        private Vector3 mentorface51;
+
+        private Vector3 mentorheadCenterPoint;
+        private Vector3 mentorheadTilt;
+        #endregion
+
         /// <summary>
         /// the instance of the singleton class 
         /// </summary>
@@ -244,6 +289,18 @@ namespace LecturerTrainer.Model
         /// </summary>
         private Vector3 EyesAlignment;
 
+        /// <summary>
+        /// Floats corresponding to the current distance between the eyebrow and the eye and the distance between the eyebrow and the eye on the last frame
+        /// </summary>
+        private float currentRightEBEDist;
+        private float lastRightEBEDist = 0;
+        private float currentLeftEBEDist;
+        private float lastLeftEBEDist = 0;
+        private float eyebrowDifference;
+        private float eyebrowAdjustment = 0;
+
+        private int UpdateFrame;
+
         private bool isInitialized = false, isSignalLostInitialized = false;
 
         public int nbFrames { get; set; }
@@ -322,49 +379,6 @@ namespace LecturerTrainer.Model
         }
 
 
-        #endregion
-
-        #region Mentor's variables
-
-        private static int count;
-        private static bool drawFM;
-
-        private static Skeleton skToDisplay = null;
-        private static FaceDataWrapper fcToDisplay = new FaceDataWrapper(null, null, null);
-
-        private Vector3 mentorMTUL;
-        private Vector3 mentorMBUL;
-        private Vector3 mentorMBLL;
-        private Vector3 mentorMTLL;
-        private Vector3 mentorORCM;
-        private Vector3 mentorOLCM;
-
-        private Vector3 mentorface19;
-        private Vector3 mentorface20;
-        private Vector3 mentorface21;
-        private Vector3 mentorface22;
-        private Vector3 mentorface23;
-        private Vector3 mentorface24;
-
-        private Vector3 mentorface52;
-        private Vector3 mentorface53;
-        private Vector3 mentorface54;
-        private Vector3 mentorface55;
-        private Vector3 mentorface56;
-        private Vector3 mentorface57;
-
-        private Vector3 mentorface15;
-        private Vector3 mentorface16;
-        private Vector3 mentorface17;
-        private Vector3 mentorface18;
-
-        private Vector3 mentorface48;
-        private Vector3 mentorface49;
-        private Vector3 mentorface50;
-        private Vector3 mentorface51;
-
-        private Vector3 mentorheadCenterPoint;
-        private Vector3 mentorheadTilt;
         #endregion
 
         #region constructor and Get()
@@ -471,14 +485,42 @@ namespace LecturerTrainer.Model
                 if (isTraining)
                 {
                     GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-                    GL.PushMatrix();
+
+                    //CHANGE HERE
+                    /*
+                     * GL.PushMatrix();
+                        {
+                            displayTextTraining();
+                            GL.Translate(-1.0f, 0, 0);
+                            drawAvatar(evt);
+                        }
+                        GL.PopMatrix();
+                    *
+                    */
+
+                    if (displayCustomText.Length == 0)
                     {
-                        /*user's avatar*/
-                        displayTextTraining();
-                        GL.Translate(-1.0f, 0, 0);
-                        drawAvatar(evt);
+                        GL.PushMatrix();
+                        {
+                            /*user's avatar*/
+                            displayTextTraining();
+                            GL.Translate(-1.0f, 0, 0);
+                            drawAvatar(evt);
+                        }
+                        GL.PopMatrix();
                     }
-                    GL.PopMatrix();
+                    else
+                    {
+                        GL.PushMatrix();
+                        {
+                            /*user's avatar*/
+                            DisplayTextTraining(displayCustomText);
+                            GL.Translate(-1.0f, 0, 0);
+                            drawAvatar(evt);
+                        }
+                        GL.PopMatrix();
+                    }
+
                     /*The coach's avatar*/
                     GL.PushMatrix();
                     GL.Translate(1.0f, 0, 0);
@@ -892,7 +934,6 @@ namespace LecturerTrainer.Model
                     OpenTK.Vector4 faceColor = new OpenTK.Vector4(1.0f, 1.0f, 1.0f, 1.0f); 
                     GL.Normal3(0.0f, 0.0f, 1.0f);
                     GL.LineWidth(3.0f);
-
                     //Entering into the head axis system
                     Vector3 HeadX = EyesAlignment;
                     Vector3 HeadY = headTilt;
@@ -902,19 +943,18 @@ namespace LecturerTrainer.Model
                     HeadY.Normalize();
                     HeadZ.Normalize();
                     double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
-                    float[] HeadMF = new float[16];
-
                     GL.Translate(headCenterPoint);
                     GL.MultMatrix(HeadM);
                     GL.Color4(faceColor);
+                   
 
                     //Drawing of the mouth
                     Gl.glPushMatrix();
                     {
                        
-                        float step = (float)Math.PI / 10;
-                        float scale = 0.05f;
-                        float fullness = -0.9999f;
+                        float step = (float)Math.PI / (float)generalStacks;
+                        float scale = 0.05f; //size of the mouth
+                        float fullness = -0.9999f; //value drawing a crescent when close to -1 and circle when close to 1
                       
                         Gl.glTranslatef(0, -0.07f, -0.1f);
                         Gl.glRotatef(180, 0, 0, 1);
@@ -930,20 +970,9 @@ namespace LecturerTrainer.Model
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
                                 Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
-                               
-                                angle += step;
-                            }
-                            angle = step;
-                            
-                            while (angle < (float)Math.PI)
-                            {
-
-                                float sinAngle = (float)Math.Sin(angle);
-                                float cosAngle = (float)Math.Cos(angle);
                                 Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
                                 angle += step;
                             }
-                            Gl.glVertex3f(-scale, 0, -0.1f);
                         }
                         Gl.glEnd();
                     }
@@ -983,38 +1012,43 @@ namespace LecturerTrainer.Model
                     //Drawing of right eyebrow
                     Gl.glPushMatrix();
                     {
-                        float step = (float)Math.PI / 10;
-                        float scale = 0.05f;
-                        float fullness = -0.9999f;
-                     
+                        float step = (float)Math.PI / (float)generalStacks;
+                        float scale = 0.05f; // size of the eyebrow
+                        float fullness = -0.9999f;//value drawing a crescent when close to -1 and circle when close to 1
+                        currentRightEBEDist = (float)Math.Sqrt(Math.Pow(face16.X - face21.X, 2) + Math.Pow(face16.Y - face21.Y, 2) + Math.Pow(face16.Z - face21.Z, 2));
                         Gl.glTranslatef(-0.07f, 0.07f, -0.1f);
-                     
                         Gl.glScalef(1, 0.25f, 1);
+                        eyebrowDifference = currentRightEBEDist - lastRightEBEDist;
+
+                        //This block contains the implementation of right eyebrow's animation
+                        if (eyebrowDifference >= 0.002) //there is a range [-0.002, 0.002] between the 2 states of the animation to prevent the eyebrow from moving everytime
+                        {
+                            eyebrowAdjustment = 0.1f;
+                        }
+                        else if (eyebrowDifference < -0.002)
+                        {
+                            eyebrowAdjustment = 0;
+                        }
+                       
+                        //Drawing of the crescent shape
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
                         {
-                            Gl.glVertex3f(scale, 0, -0.1f);
+                            Gl.glVertex3f(scale,eyebrowAdjustment, -0.1f);
                             float angle = step;
                            
                             while (angle < (float)Math.PI)
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
-                           
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle + eyebrowAdjustment, -0.1f);
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle + eyebrowAdjustment, -0.1f);
                                 angle += step;
                             }
-                            angle = step;
-                            while (angle < (float)Math.PI)
-                            {
-                                float sinAngle = (float)Math.Sin(angle);
-                                float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
-
-                                angle += step;
-                            }
-                            Gl.glVertex3f(-scale, 0, -0.1f);
+                            Gl.glVertex3f(-scale, eyebrowAdjustment, -0.1f);
                         }
                         Gl.glEnd();
+                        
+                        lastRightEBEDist = currentRightEBEDist;
                     }
                     Gl.glPopMatrix();
 
@@ -1050,35 +1084,42 @@ namespace LecturerTrainer.Model
                     // Drawing of the left eyebrow
                     Gl.glPushMatrix();
                     {
-                        float step = (float)Math.PI / 10;
-                        float scale = 0.05f;
-                        float fullness = -0.9999f;
+                        float step = (float)Math.PI / (float)generalStacks;
+                        float scale = 0.05f; // size of the eyebrow
+                        float fullness = -0.9999f;//value drawing a crescent when close to -1 and circle when close to 1
+                        currentLeftEBEDist = (float)Math.Sqrt(Math.Pow(face51.X - face54.X, 2) + Math.Pow(face51.Y - face54.Y, 2) + Math.Pow(face51.Z - face54.Z, 2));
                         Gl.glTranslatef(0.07f, 0.07f, -0.1f);
                         Gl.glScalef(1, 0.25f, 1);
+                        eyebrowDifference = currentLeftEBEDist - lastLeftEBEDist;
+                       
+                        //This block contains the implementation of left eyebrow's animation
+                        if (eyebrowDifference >= 0.002) //there is a range [-0.002, 0.002] between the 2 states of the animation to prevent the eyebrow from moving everytime
+                        {
+                            eyebrowAdjustment = 0.1f;
+                        }
+                        else if (eyebrowDifference < -0.02)
+                        {
+                            eyebrowAdjustment = 0;
+                        }
+
+                        //Drawing of the crescent shape
                         Gl.glBegin(Gl.GL_TRIANGLE_FAN);
                         {
-                            Gl.glVertex3f(scale, 0, -0.1f);
+                            Gl.glVertex3f(scale, eyebrowAdjustment, -0.1f);
                             float angle = step;
 
                             while (angle < (float)Math.PI)
                             {
                                 float sinAngle = (float)Math.Sin(angle);
                                 float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
+                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle + eyebrowAdjustment, -0.1f);
+                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle + eyebrowAdjustment, -0.1f);
                                 angle += step;
                             }
-                            angle = step;
-                            while (angle < (float)Math.PI)
-                            {
-                                float sinAngle = (float)Math.Sin(angle);
-                                float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
-
-                                angle += step;
-                            }
-                            Gl.glVertex3f(-scale, 0, -0.1f);
+                            Gl.glVertex3f(-scale, eyebrowAdjustment, -0.1f);
                         }
                         Gl.glEnd();
+                        lastLeftEBEDist = currentLeftEBEDist;
                     }
                     Gl.glPopMatrix();
                 }
@@ -1362,7 +1403,7 @@ namespace LecturerTrainer.Model
 			}
             else // Training mode
             {
-                if (TrainingWithAvatarViewModel.Get().PlayMode & mentor)
+                /*if (TrainingWithAvatarViewModel.Get().PlayMode & mentor)
                 {
                     if (Model.BodyAnalysis.WelcomeTraining.goodjob)
                     {
@@ -1405,7 +1446,7 @@ namespace LecturerTrainer.Model
                         0.75f);
 
                     first = true;  //resets the TooSlow feedback 
-                }
+                }*/
             }
 
             // Reset the texture applied to polygons
@@ -3288,7 +3329,36 @@ namespace LecturerTrainer.Model
             }
             // GL.Scale(0.5, 0.5, 1.0);
             GL.Enable(EnableCap.Lighting);
+        }
 
+        /// <summary>
+        /// Display a message during the training
+        /// </summary>
+        /// <param name="str"></param>
+        public void DisplayTextTraining(string str)
+        {
+            //both versions work
+
+            /** Version 1 **/
+            /*
+            char[] textToDisplay = str.ToCharArray();
+
+            GL.Color4(pixelFeedbackColor.R, pixelFeedbackColor.G, pixelFeedbackColor.B, pixelFeedbackColor.A);
+            GL.Disable(EnableCap.Lighting);
+            GL.RasterPos3(-0.025f * ((float)textToDisplay.Length - 1), 0.8f, 0);
+            for (int i = 0; i < textToDisplay.Length; i++)
+            {
+                Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_TIMES_ROMAN_24, textToDisplay[i]);
+            }
+            GL.Enable(EnableCap.Lighting);
+            */
+
+            /** Version 2 **/
+            GL.Color4(pixelFeedbackColor.R, pixelFeedbackColor.G, pixelFeedbackColor.B, pixelFeedbackColor.A);
+            GL.Disable(EnableCap.Lighting);
+            GL.RasterPos2(-0.025f * ((float)str.Length - 1), 0.8f);
+            Glut.glutBitmapString(Glut.GLUT_BITMAP_TIMES_ROMAN_24, str);
+            GL.Enable(EnableCap.Lighting);
         }
 
         // Timothée

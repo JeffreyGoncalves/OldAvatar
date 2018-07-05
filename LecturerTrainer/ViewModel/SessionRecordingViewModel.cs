@@ -190,7 +190,6 @@ namespace LecturerTrainer.ViewModel
             get { return stringTimer; }
             set
             {
-                
                 stringTimer = value;
                 OnPropertyChanged("countStartRecord");
             }
@@ -315,6 +314,7 @@ namespace LecturerTrainer.ViewModel
 
             //Launch the record
             ButtonAutomationPeer peer = new ButtonAutomationPeer(TrainingSideTool.Get().StartRecordingButton);
+
             IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
             invokeProv.Invoke();
         }

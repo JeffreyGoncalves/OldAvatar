@@ -267,7 +267,7 @@ namespace LecturerTrainer.ViewModel
 
         private void OpenChartsAnalysis()
         {
-            if(Main.session.Exists())
+            if (Main.session.Exists())
             {
                 string path = Path.Combine(Directory.GetParent(Main.session.sessionPath).ToString(), "SessionRecording");
                 path = path + Path.DirectorySeparatorChar;

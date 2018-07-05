@@ -394,6 +394,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             this._waveIn = new WaveIn();
             this._recordingFormat = new WaveFormat(44100, 1);
             this._waveIn.WaveFormat = this._recordingFormat;
+
             this._waveIn.StartRecording();
             //pathFile = @"C:\Users\Public\TestFolder\test";
 
