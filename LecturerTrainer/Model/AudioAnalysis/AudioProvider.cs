@@ -1196,6 +1196,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             
             if (intensityPF.Count > 0)
             {
+                // Check if it's a peak.
                 if (intensityPF[intensityPF.Count - 1] > 560.0f)
                 {
                     this.nbSyllables++;
