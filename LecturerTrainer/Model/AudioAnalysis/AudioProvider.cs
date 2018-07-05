@@ -202,6 +202,11 @@ namespace LecturerTrainer.Model.AudioAnalysis
         int nbSyllables = 0;
         int numberOfPeaks = 0;
 
+        /// <summary>
+        /// Intensity per frame
+        /// </summary>
+        List<float> intensityPF = new List<float>();
+
         #endregion
 
         #region Accesors
@@ -1142,195 +1147,83 @@ namespace LecturerTrainer.Model.AudioAnalysis
         }
         private void speechRateCallback(object sender, WaveInEventArgs e)
         {
+            new Thread(() => this.fillIntensity(e.Buffer, e.BytesRecorded)).Start();
             new Thread(() => this.speechRate(e.Buffer, e.BytesRecorded)).Start();
 
         }
+
         ///<summary>
-        /// The speechRate function is called every 100ms and calculates the number of syllables using the praat way of calculating the syllables
+        /// Convert intensities per frequency to intensity.
+        /// </summary>
+        public void fillIntensity(byte[] buffer, int bytesRecorded)
+        {
+            float[] intensity = this._fft.getFFT(buffer, bytesRecorded); // Table of the intensities per frequency
+            int nbIntensities = intensity.Length; // Number of the intensities in the buffer
+
+            float[] intensity2 = new float[nbIntensities]; // Table of intensities converted in db
+
+            // Convertion of intensities from V to db
+            for (int i = 0; i < nbIntensities; i++)
+            {
+                intensity2[i] = (float)Math.Pow((float)(20 * Math.Log10(Math.Abs(intensity[i]) / 0.000001)),2);
+            }
+
+            float sum = 0.0f; // sum of the intensities per frenquency
+
+            for (int i = 0; i < intensity2.Length; i++)
+            {
+                sum += intensity2[i];
+            }
+
+            float sum_sqrt = (float)Math.Sqrt(sum);
+
+            // Extraction of the peaks
+            if (sum_sqrt < 560.0f)
+            {
+                sum_sqrt = 0.0f;
+            }
+
+            intensityPF.Add(sum_sqrt);
+        }
+
+        ///<summary>
+        /// The speechRate function is called every 100ms and calculates the number of syllables
         /// The result is stored in a variable that is initialized every 1 second
         /// </summary>
         public void speechRate(byte[] buffer, int bytesRecorded)
         {
-
-            int silencedb = -25; // Silence threshold
-            int mindip = 4; // Minimum dip between 2 peaks
-            float[] intensity = this._fft.getFFT(buffer, bytesRecorded); // List of the intensities
-            int nbIntensities = intensity.Length; // Number of the intensities in the buffer
-            int minint = 0; // Noise floor
-            int maxint = 0; // Max noise
-            int max99int = 0; // Maximum noise without influence of non - speech sound bursts
-            int threshold, threshold2, threshold3; // Intensity Threshold
-            int nbSilences = 0; // Number of silent parts in the buffer
-            int nbVoices = 0; // Number of voiced parts in the buffer
-            float timeByIntensity = (float)1.0 / nbIntensities; // Time between every intensity
-            float timestampSilence = 0, timestampVoice = 0; // Temporary timestamp to get the positon of the voiced or silent part in time
-            bool counted = false; // Boolean used to count the different silent andd voiced parts
-            int[] speaking = new int[nbIntensities]; //Array filled with 1s and 0s, 1 = speaking , 0 = not speaking
-            int nbPeaks = 0; // Number of peaks in the buffer
-            int[] peaks = new int[nbIntensities]; //array filled with 1s and 0s, 1 = it's a peak, 0 = it's not a peak
-            int validNbPeaks = 0; // Valid number of peaks that are considered as a syllable
-            //let's find the noise floor
-            for (int i = 0; i < nbIntensities; i++)
+            
+            if (intensityPF.Count > 0)
             {
-                if (intensity[i] < intensity[minint])
+                if (intensityPF[intensityPF.Count - 1] > 560.0f)
                 {
-                    minint = i;
+                    this.nbSyllables++;
                 }
             }
-            //let's find the max noise
-            for (int i = 0; i < nbIntensities; i++)
-            {
-                if (intensity[i] > intensity[maxint])
-                {
-                    maxint = i;
-                }
-            }
-            // let's find the 0.99 quantile to get the maximum without influence of non-speech sound bursts
-            float[] intensity2 = new float[nbIntensities];
-            float[] sortedIntensity = new float[nbIntensities];
-            for (int i = 0; i < nbIntensities; i++)
-            {
-                intensity2[i] = (float)(20 * Math.Log10(Math.Abs(intensity[i]) / 0.000001));
-
-            }
-            max99int = (int)(99 * nbIntensities) / 100;
-            float max99float = 0.0f;
-            for (int i = 0; i < max99int; i++)
-            {
-                if (intensity2[i] > max99float)
-                {
-                    max99float = intensity2[i];
-                }
-            }
-            for (int i = 0; i < nbIntensities; i++)
-            {
-                sortedIntensity[i] = intensity2[i];
-            }
-            bubbleSort(sortedIntensity);
-            // We estimate the intensity threshold
-            threshold = (int)(max99float + silencedb);
-            threshold2 = (int)(intensity2[maxint] - max99float);
-            threshold3 = silencedb - threshold2;
-
-            if (threshold < (int)intensity2[minint])
-            {
-                threshold = (int)intensity2[minint];
-            }
-            // Estimate where are the voiced parts and the silence parts in the buffer
-            for (int i = 0; i < nbIntensities; i++)
-            {
-                if (intensity2[i] < threshold3)
-                {
-                    speaking[i] = 0;
-                    timestampSilence += timeByIntensity;
-                    timestampVoice = 0;
-                    if (timestampSilence >= 0.3)
-                    {
-                        if (!counted)
-                        {
-                            counted = true;
-                            nbSilences++;
-                        }
-                    }
-                    else { counted = false; }
-                }
-                else
-                {
-                    speaking[i] = 1;
-                    timestampSilence = 0;
-                    timestampVoice += timeByIntensity;
-                    if (timestampVoice >= 0.1)
-                    {
-                        if (!counted)
-                        {
-                            counted = true;
-                            nbVoices++;
-                        }
-                    }
-                    else { counted = false; }
-                }
-            }
-            // Initialize the array
-            peaks = initTable(peaks);
-            // Estimate the position of the peaks
-            for (int i = 0; i < nbIntensities; i++)
-            {
-                if (i == 0 && intensity2[i] > intensity2[i + 1])
-                {
-                    nbPeaks++;
-                    peaks[i] = 1;
-                }
-                else if (i == nbIntensities - 1 && intensity2[i] > intensity2[i - 1])
-                {
-                    nbPeaks++;
-                    peaks[i] = 1;
-                }
-                else if (i > 0 && i < (nbIntensities - 1))
-                {
-                    if (intensity2[i] > intensity2[i - 1] && intensity2[i] > intensity2[i + 1])
-                    {
-                        nbPeaks++;
-                        peaks[i] = 1;
-                    }
-                }
-
-            }
-            this.numberOfPeaks += nbPeaks;
-            // Choose the valid peaks to be considered as syllables
-            float[] valueOfPeaks = new float[nbPeaks]; // Array filled with the intensity value of the peaks
-            float[] timeOfPeaks = new float[nbPeaks]; // Array filled with the time where the intensity was picked up for each peak
-            int[] idOfPeaks = new int[nbPeaks];
-            for (int i = 0, j = 0; i < nbPeaks; i++, j++)
-            {
-                while (peaks[j] != 1)
-                {
-                    j++;
-                }
-                valueOfPeaks[i] = intensity2[j];
-                idOfPeaks[i] = j;
-                timeOfPeaks[i] = j * timeByIntensity;
-            }
-            for (int i = 0; i < nbPeaks - 1; i++)
-            {
-                int actualID = idOfPeaks[i];
-                int nextID = idOfPeaks[i + 1];
-                float dip = MinValue(intensity, actualID, nextID);
-                float diffDip = Math.Abs(valueOfPeaks[i] - dip);
-                if (diffDip > mindip && speaking[actualID] == 1 && valueOfPeaks[i] > 70)
-                {
-                    validNbPeaks++;
-                }
-            }
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\Thibaut\source\repos\OldAvatar\Intensity_Over_Time-Bis.txt", true))
-            for (int i = 0; i < nbPeaks; i++)
-            {
-                file.WriteLine(valueOfPeaks[i]);
-            }
-            this.nbSyllables += validNbPeaks;
-            // ValidNbPeaks is the number of syllables during 
-            // the timestamp which is 1 second
         }
+
+        
         /// <summary>
         /// The getSpeedRate takes the incremented variable of the speechRate and chooses which case it is : Not Speaking/Low/MidLow/MidHigh/High speech rate
         /// </summary>
         public void getSpeedRate()
         {
-            Console.Out.WriteLine("\nNumber of syllables in 1 second : " + nbSyllables);
-            Console.Out.WriteLine("Number of peaks in general in 1 second : " + numberOfPeaks);
+            Console.Out.WriteLine("\nNumber of syllables in 1 second : " + nbSyllables + "\n");
+            //Console.Out.WriteLine("Number of peaks in general in 1 second : " + numberOfPeaks + "\n");
             int level = 0;
-            if (this.nbSyllables <= 2)
+            if (this.nbSyllables <= 1)
             {
                 level = 0;
             }
-            else if (this.nbSyllables <= 4)
+            else if (this.nbSyllables <= 3)
             {
                 level = 1;
             }
-            else if (this.nbSyllables <= 6)
+            else if (this.nbSyllables <= 5)
             {
                 level = 2;
             }
-            else if (this.nbSyllables <= 8)
+            else if (this.nbSyllables <= 7)
             {
                 level = 3;
             }
@@ -1358,11 +1251,13 @@ namespace LecturerTrainer.Model.AudioAnalysis
             this.nbSyllables = 0;
             this.numberOfPeaks = 0;
         }
+
         public int[] initTable(int[] buffer)
         {
             for (int i = 0; i < buffer.Length; i++) { buffer[i] = 0; }
             return buffer;
         }
+
         public float MinValue(float[] buffer, int l, int h)
         {
             float min = 100;
@@ -1372,6 +1267,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             }
             return min;
         }
+
         public int findIDofValue(float[] buf, float x)
         {
             for (int i = 0; i < buf.Length; i++)
@@ -1380,6 +1276,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             }
             return -1;
         }
+
         public void swap(float[] buf, int x, int y)
         {
             float temp;
@@ -1387,6 +1284,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             buf[x] = buf[y];
             buf[y] = temp;
         }
+
         public void bubbleSort(float[] buf)
         {
             for (int i = buf.Length - 1; i > 0; i--)
@@ -1400,6 +1298,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 }
             }
         }
+
         public int averageSpeechRateInSession(List<int> levels)
         {
             int result = 0;
@@ -1413,6 +1312,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             }
             return result;
         }
+
         /// <summary>
         /// Called when a word has been recognized.
         /// Used to count the number of word.
