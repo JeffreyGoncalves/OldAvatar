@@ -263,14 +263,6 @@ namespace LecturerTrainer.Model
         private float eyebrowAdjustment = 0;
 
         /// <summary>
-        /// Floats for smile animation 
-        /// </summary>
-        private float currentHorizontalLength;
-        private float lastHorizontalLenght = 0;
-        private float horizontalMouthDifference;
-        private float horizontalMouthAdjustment;
-
-        /// <summary>
         /// Float for opening/closing the mouth
         /// </summary>
         private float currentLipsDistance;
@@ -953,6 +945,7 @@ namespace LecturerTrainer.Model
                         Vector3 leftOuterCorner = new Vector3(-scale, 0, -0.1f);
                         Vector3 rightOuterCorner = new Vector3(scale, 0, -0.1f);
 
+                        //Calculation of lips' position at each frame
                         if (LipsDistanceDiff > 0.003f)
                         {
                             LipsAdjustment = 3.0f;
@@ -964,7 +957,36 @@ namespace LecturerTrainer.Model
 
                         Gl.glScalef(1.75f, LipsAdjustment * 0.5f, 1);
 
+                        /*Drawing of an ellipse that represents the hole of the mouth
+                        this ellipse looks like a line when the mouth is closed and looks like
+                        a real ellipse when the mouth is open*/
+                        Gl.glColor3f(1.0f, 0, 0);
+                        float beta;
+                        float betaStep = (float)(Math.PI) / (float)generalStacks;
+                        Vector3[] innerPoints = new Vector3[20];
+                        int cnt = 0;
+                        float RHori = (float)Math.Sqrt(Math.Pow(leftOuterCorner.X - rightOuterCorner.X, 2) + Math.Pow(leftOuterCorner.Y - rightOuterCorner.Y, 2) + Math.Pow(leftOuterCorner.Z - rightOuterCorner.Z, 2)) / 2;
+                        float RVert = LipsAdjustment / 500;
+
+                        for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
+                        {
+                            innerPoints[cnt].X = (float)Math.Cos(beta) * RHori;
+                            innerPoints[cnt].Y = (float)Math.Sin(beta) * RVert;
+                            innerPoints[cnt].Z = -0.1f;
+                            cnt++;
+                        }
+
+                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
+                        for (cnt = 0; cnt < innerPoints.Length; cnt++)
+                        {
+                            Gl.glVertex3f(innerPoints[cnt].X, innerPoints[cnt].Y, innerPoints[cnt].Z);
+                        }
+                        Gl.glEnd();
+
+                        //Drawing of the mouth's lips
+                        Gl.glColor3f(1.0f, 1.0f, 1.0f);
                         DrawMouth(leftOuterCorner, rightOuterCorner);
+
                         lastLipsDistance = currentLipsDistance;
                     }
                     Gl.glPopMatrix();
@@ -1070,15 +1092,6 @@ namespace LecturerTrainer.Model
                             Gl.glVertex3f(eyesPoints[cnt].X, eyesPoints[cnt].Y, eyesPoints[cnt].Z);
                         }
                         Gl.glEnd();
-                    }
-                    Gl.glPopMatrix();
-
-                    Gl.glPushMatrix();
-                    {
-                        Gl.glRasterPos2d(0, 0);
-                        Glut.glutBitmapString(Glut.GLUT_BITMAP_HELVETICA_18, "================================IT'S A TRAP========================");
-                        Gl.glRasterPos2f(-1, 0.5f);
-                        Glut.glutBitmapString(Glut.GLUT_BITMAP_TIMES_ROMAN_24, "=====================IT'S A ARMAGEDDON========================");
                     }
                     Gl.glPopMatrix();
 
