@@ -296,10 +296,24 @@ namespace LecturerTrainer.Model
         private float lastRightEBEDist = 0;
         private float currentLeftEBEDist;
         private float lastLeftEBEDist = 0;
+
+        /// <summary>
+        /// Float corresponding to the difference between currentEBE and lastEBE
+        /// </summary>
         private float eyebrowDifference;
+
+        /// <summary>
+        /// Float added to the eyebrows' Y coordinate to make the animation
+        /// </summary>
         private float eyebrowAdjustment = 0;
 
-        private int UpdateFrame;
+        /// <summary>
+        /// Float for opening/closing the mouth
+        /// </summary>
+        private float currentLipsDistance;
+        private float lastLipsDistance = 0;
+        private float LipsDistanceDiff;
+        private float LipsAdjustment;
 
         private bool isInitialized = false, isSignalLostInitialized = false;
 
@@ -954,27 +968,56 @@ namespace LecturerTrainer.Model
                        
                         float step = (float)Math.PI / (float)generalStacks;
                         float scale = 0.05f; //size of the mouth
-                        float fullness = -0.9999f; //value drawing a crescent when close to -1 and circle when close to 1
                       
+                        currentLipsDistance = (float)Math.Sqrt(Math.Pow(MBUL.X - MTLL.X, 2) + Math.Pow(MBUL.Y - MTLL.Y, 2) + Math.Pow(MBUL.Z - MTLL.Z, 2));
+                        LipsDistanceDiff = currentLipsDistance - lastLipsDistance;
                         Gl.glTranslatef(0, -0.07f, -0.1f);
-                        Gl.glRotatef(180, 0, 0, 1);
-                        Gl.glScalef(1.75f, 0.5f, 1);
-                         
-                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
+                        Vector3 leftOuterCorner = new Vector3(-scale, 0, -0.1f);
+                        Vector3 rightOuterCorner = new Vector3(scale, 0, -0.1f);
+
+                        //Calculation of lips' position at each frame
+                        if (LipsDistanceDiff > 0.003f)
                         {
-                            Gl.glVertex3f(scale, 0, -0.1f);
-                            float angle = step;
-                        
-                            while (angle < (float)Math.PI)
-                            {
-                                float sinAngle = (float)Math.Sin(angle);
-                                float cosAngle = (float)Math.Cos(angle);
-                                Gl.glVertex3f(scale * cosAngle, scale * sinAngle, -0.1f);
-                                Gl.glVertex3f(-fullness * scale * cosAngle, scale * sinAngle, -0.1f);
-                                angle += step;
-                            }
+                            LipsAdjustment = 3.0f;
+                        }
+                        else if(LipsDistanceDiff < -0.003f)
+                        {
+                            LipsAdjustment = 1.0f;
+                        }
+
+                        Gl.glScalef(1.75f, LipsAdjustment * 0.5f, 1);
+
+                        /*Drawing of an ellipse that represents the hole of the mouth
+                        this ellipse looks like a line when the mouth is closed and looks like
+                        a real ellipse when the mouth is open*/
+                        Gl.glColor3f(1.0f, 0, 0);
+                        float beta;
+                        float betaStep = (float)(Math.PI) / (float)generalStacks;
+                        Vector3[] innerPoints = new Vector3[20];
+                        int cnt = 0;
+                        float RHori = (float)Math.Sqrt(Math.Pow(leftOuterCorner.X - rightOuterCorner.X, 2) + Math.Pow(leftOuterCorner.Y - rightOuterCorner.Y, 2) + Math.Pow(leftOuterCorner.Z - rightOuterCorner.Z, 2)) / 2;
+                        float RVert = LipsAdjustment / 500;
+
+                        for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
+                        {
+                            innerPoints[cnt].X = (float)Math.Cos(beta) * RHori;
+                            innerPoints[cnt].Y = (float)Math.Sin(beta) * RVert;
+                            innerPoints[cnt].Z = -0.1f;
+                            cnt++;
+                        }
+
+                        Gl.glBegin(Gl.GL_TRIANGLE_FAN);
+                        for (cnt = 0; cnt < innerPoints.Length; cnt++)
+                        {
+                            Gl.glVertex3f(innerPoints[cnt].X, innerPoints[cnt].Y, innerPoints[cnt].Z);
                         }
                         Gl.glEnd();
+
+                        //Drawing of the mouth's lips
+                        Gl.glColor3f(1.0f, 1.0f, 1.0f);
+                        DrawMouth(leftOuterCorner, rightOuterCorner);
+
+                        lastLipsDistance = currentLipsDistance;
                     }
                     Gl.glPopMatrix();
 
@@ -1063,10 +1106,11 @@ namespace LecturerTrainer.Model
                         float RHori = 0.07f; //Size of the vertical semi-axis of the ellipse
                         int cnt = 0;
 
+                        //Drawing of the ellipse
                         for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
                         {
-                            eyesPoints[cnt].X = (float)Math.Cos(beta) * RHori;
-                            eyesPoints[cnt].Y = (float)Math.Sin(beta) * RVert;
+                            eyesPoints[cnt].X = (float)Math.Cos(beta) * (RHori);
+                            eyesPoints[cnt].Y = (float)Math.Sin(beta) * (RVert);
                             eyesPoints[cnt].Z = -0.1f;
                             cnt++;
                         }
@@ -2174,6 +2218,51 @@ namespace LecturerTrainer.Model
             DrawFootSecondVersion(ankle.X, ankle.Y, ankle.Z, footEnd.X, footEnd.Y, footEnd.Z, color, left);
         }
 
+        /// <summary>
+        /// Draws a mouth centered at the origin (translations and projections have to be done before) 
+        /// and based on its 2 outer corners
+        /// </summary>
+        /// <param name="leftOC"></param>
+        /// <param name="rightOC"></param>
+        private void DrawMouth(Vector3 leftOC,Vector3 rightOC)
+        {
+            Vector3[] ULPoints = new Vector3[8];
+            Vector3[] LLPoints = new Vector3[8];
+
+            //Upper Lip's points
+            ULPoints[0] = leftOC;
+            ULPoints[1] = new Vector3(leftOC.X + 0.025f, leftOC.Y + 0.025f, leftOC.Z);
+            ULPoints[2] = new Vector3(leftOC.X + 0.05f, leftOC.Y + 0.01f, leftOC.Z);
+            ULPoints[3] = new Vector3(leftOC.X + 0.075f, leftOC.Y + 0.025f, leftOC.Z);
+            ULPoints[4] = rightOC;
+            ULPoints[5] = new Vector3(rightOC.X - 0.04f, leftOC.Y + 0.0075f, rightOC.Z);
+            ULPoints[6] = new Vector3(rightOC.X - 0.06f, leftOC.Y + 0.0075f, rightOC.Z);
+            ULPoints[7] = new Vector3(rightOC.X - 0.08f, leftOC.Y + 0.0025f, rightOC.Z);
+
+            //Lower Lip's points
+            LLPoints[0] = leftOC;
+            LLPoints[1] = new Vector3(leftOC.X + 0.025f, leftOC.Y - 0.0005f, leftOC.Z);
+            LLPoints[2] = new Vector3(leftOC.X + 0.05f, leftOC.Y - 0.001f, leftOC.Z);
+            LLPoints[3] = new Vector3(leftOC.X + 0.075f, leftOC.Y - 0.0005f, leftOC.Z);
+            LLPoints[4] = rightOC;
+            LLPoints[5] = new Vector3(rightOC.X - 0.025f, rightOC.Y - 0.02f, rightOC.Z);
+            LLPoints[6] = new Vector3(rightOC.X - 0.05f, rightOC.Y - 0.03f, rightOC.Z);
+            LLPoints[7] = new Vector3(rightOC.X - 0.075f, rightOC.Y - 0.02f, rightOC.Z);
+            
+            Gl.glBegin(Gl.GL_POLYGON);
+            {
+                for(int i=0; i < 8; i++)
+                {
+                    Gl.glVertex3f(ULPoints[i].X, ULPoints[i].Y, ULPoints[i].Z);
+                }
+
+                for (int i = 0; i < 8; i++)
+                {
+                    Gl.glVertex3f(LLPoints[i].X, LLPoints[i].Y, LLPoints[i].Z);
+                }
+            }
+            Gl.glEnd();
+        }
 
 
         #endregion
@@ -3315,7 +3404,6 @@ namespace LecturerTrainer.Model
             else if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
             {
                 fullTextToDisplay = "Your turn ! ";
-
             }
             char[] textToDisplay = fullTextToDisplay.ToCharArray();
 
