@@ -216,7 +216,7 @@ namespace LecturerTrainer.ViewModel
             playPerformanceCommand = new RelayCommand(Play);
             pausePerformanceCommand = new RelayCommand(Pause);
             stopPerformanceCommand = new RelayCommand(Stop);
-            //videoAvatarDisplayCommand = new RelayCommand(videoAvatarDisplay);
+            videoAvatarDisplayCommand = new RelayCommand(videoAvatarDisplay);
             avatarDisplayCommand = new RelayCommand(avatarDisplay);
             streamDisplayCommand = new RelayCommand(videoStreamDisplay);
             quitCommand = new RelayCommand(quit);
@@ -431,9 +431,6 @@ namespace LecturerTrainer.ViewModel
                         isReplaying = true;
                         //}
                     }
-                    catch (ArgumentException) {
-                        throw;
-                    }
                     catch (XmlLoadingException)
                     {
                         throw;
@@ -609,7 +606,7 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// Displays the skeleton view
         /// </summary>
-        /*public void videoAvatarDisplay()
+        public void videoAvatarDisplay()
         {
             if (filePathVideoAvatar != null)
             {
@@ -623,17 +620,14 @@ namespace LecturerTrainer.ViewModel
                 }
                 else
                 {
-                    DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0,0, (int)(Tools.getTimer() / 1000));
-                    DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, (int)(Tools.getTimer() / 1000));
+                    DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
+                    DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
                 }
                 filePath = filePathVideoAvatar;
                 DrawingSheetView.Get().ShowReplayVideoSheet();
-                if (skeletonScrolling != null)
-                    skeletonScrolling.Stop();
-                skeletonScrolling = null;
-                startButtonCommand();
+                PlayOrStop();
             }
-        }*/
+        }
 
         /// <summary>
         /// Displays the avatar view

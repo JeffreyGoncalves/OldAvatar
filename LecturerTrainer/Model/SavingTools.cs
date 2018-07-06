@@ -154,6 +154,7 @@ namespace LecturerTrainer.Model
         {
             if (videoStreamQueue != null)
             {
+                //Console.Out.WriteLine("stream");
                 if (!videoStreamWriter.IsOpen)
                     videoStreamWriter.Open(SavingTools.pathFolder + '/' + "stream" + ".avi", e.Width, e.Height, 30, VideoCodec.MPEG4, 1000000);
                 videoStreamQueue.EnqueueItem(e);
@@ -166,8 +167,10 @@ namespace LecturerTrainer.Model
         /// <param name="e">The bitmap to enqueue</param>
         public static void EnqueueAvatarVideoStream(Bitmap e)
         {
+            Console.Out.WriteLine(avatarStreamQueue == null ? "av  null" : "av  not null");
             if (avatarStreamQueue != null)
             {
+                //Console.Out.WriteLine("avatar");
                 if (!avatarVideoStreamWriter.IsOpen)
                     avatarVideoStreamWriter.Open(SavingTools.pathFolder + '/' + "avatar" + ".avi", e.Width, e.Height, 30, VideoCodec.MPEG4, 1000000);
                 avatarStreamQueue.EnqueueItem(e);
@@ -220,6 +223,7 @@ namespace LecturerTrainer.Model
                 {
                     videoStreamWriter.Close();
                 }, "VideoRecordingTask");
+                Console.Out.WriteLine( avatarStreamQueue == null ? "str null" : "str not null");
             }
             catch (Exception ex)
             {
@@ -239,6 +243,7 @@ namespace LecturerTrainer.Model
                 {
                     avatarVideoStreamWriter.Close();
                 }, "AvatarVideoRecordingTask");
+                Console.Out.WriteLine( avatarStreamQueue == null ? "ava null" : "ava not null");
             }
             catch (Exception ex)
             {
@@ -249,9 +254,6 @@ namespace LecturerTrainer.Model
 
         public static void StartSavingXMLSkeleton()
         {
-			Console.Out.WriteLine("here");
-            //Tools.initStopWatch();
-            //Tools.startStopWatch();
             int nbSkFrame = 0;
             int count = 0;
 
@@ -418,6 +420,8 @@ namespace LecturerTrainer.Model
 
         #endregion
 
+
+        // REMOVE
         public static void StartSavingBinaryFace()
         {
             string fileName = SavingTools.pathFolder + "/" + "faceData.dat";

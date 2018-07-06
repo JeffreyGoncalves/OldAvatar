@@ -139,7 +139,6 @@ namespace LecturerTrainer.Model
         }
         #endregion
 
-       
 
         #region stopwatch
         /// <summary>
@@ -306,8 +305,6 @@ namespace LecturerTrainer.Model
         public static bool addSeriesToCharts<U>(IGraph chart, Series series, string seriesName,U list,string totalValue,bool addEmpty) where U : ICollection<int>
         {
 
-            /*foreach (int nteger in list)
-                Console.Out.WriteLine("-- val " + nteger);*/
             List<string> listLabel = new List<string>();
             series.Title = seriesName;
 
@@ -330,11 +327,11 @@ namespace LecturerTrainer.Model
                     series.Values.Add((double)0);
                 }
             }
-
             int c = 0;
             int indice = 0;
             if(list.Count > 0)
             {
+
                 int gap = (int)TrainingSideToolViewModel.Get().timeRecorded / 100 / series.Values.Count;
                 for (int i = 0; i < list.Count; i++) 
                 {
@@ -344,7 +341,7 @@ namespace LecturerTrainer.Model
                     }
                     else
                     {
-                        if (i == list.Count - 1)
+                        if (i == list.Count - 1 || indice == series.Values.Count - 1)
                             break;
                         c += gap;
                         indice++;
