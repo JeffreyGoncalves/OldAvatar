@@ -186,11 +186,26 @@
                         </Separator>
                         <StackPanel Orientation="Horizontal" Margin="10,10,10,0" Height="35.5" VerticalAlignment="Top">
                             <Button x:Name="StartRecordingButton" Command="{Binding BeginRecordingCommand}" Content="Button" HorizontalAlignment="Left" Height="25" Style="{DynamicResource StyleRecordButton}" VerticalAlignment="Top" Width="25">
+                                
+                                <!--Content="Button"-->
+                                
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Click">
                                         <ei:ControlStoryboardAction x:Name="startRecord" Storyboard="{StaticResource StartRecording}"/>
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
+                                
+                                <!--
+                                <DataTrigger Binding="{Binding isRecording}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard x:Name="startRecord" Storyboard="{StaticResource StartRecording}"/>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="startRecord"/>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                                -->
+                                
                             </Button>
                             <Label x:Name="ClickToRecordLabel" Content="Click to record" HorizontalAlignment="Left" VerticalAlignment="Top" Width="88.886" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" RenderTransformOrigin="0.428,-0.002">
                                 <Label.Foreground>

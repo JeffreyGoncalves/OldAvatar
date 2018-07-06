@@ -195,8 +195,6 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 // Hand dropped
                 return GesturePartResult.Failed;
             }
-
-
         }
 
         public enum GesturePartResult
