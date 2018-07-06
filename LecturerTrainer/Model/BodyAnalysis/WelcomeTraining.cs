@@ -10,13 +10,15 @@ namespace LecturerTrainer.Model.BodyAnalysis
     public class WelcomeTraining
     {
         public event EventHandler GestureRecognized;
+        
+        private static bool start = false;
+        private static bool goodjob = false;
+        private static bool elbows = false;
+        private static bool slow = false;
 
-        public static bool start = false;
-        public static bool goodjob = false;
-        public static bool elbows = false;
-        public static bool slow = false;
+        private static double distance, prevdist;
 
-        static double distance, prevdist;
+        private static int frames;
 
         bool _slow;
 
@@ -51,7 +53,6 @@ namespace LecturerTrainer.Model.BodyAnalysis
 
         public void Update(Skeleton sk)
         {
-
             double errorGap;
             double errorGap2;
 
@@ -61,15 +62,13 @@ namespace LecturerTrainer.Model.BodyAnalysis
             goodjob = false;
             elbows = false;
             slow = false;
-            /*
 
+            /*
                     You can write a gesture as a set of nested if-statements. The outer condition is the broadest and triggers the gesture recognition
                     process. Then you have a series of nested conditions each one more specific than the previous one.
                     If a particular condition fails, you exit with GestureRecognised and set a boolen variable to tell the avatar training where it failed
                     The innermost condition is the correct gesture and exits with bool complete = true
-
             */
-
 
             errorGap = Math.Sqrt(Geometry.distanceSquare(new Point3D(sk.Joints[JointType.ShoulderCenter].Position), new Point3D(sk.Joints[JointType.ShoulderLeft].Position)));
             errorGap2 = 3 * errorGap / 4;
@@ -79,6 +78,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 Math.Abs(sk.Joints[JointType.ElbowRight].Position.Y - sk.Joints[JointType.HandRight].Position.Y) < errorGap2)
             {
                 distance = Math.Sqrt(Geometry.distanceSquare(new Point3D(sk.Joints[JointType.HandLeft].Position), new Point3D(sk.Joints[JointType.HandRight].Position)));
+                frames++;
                 if (distance < errorGap)
                 {
                     goodjob = false;
@@ -88,7 +88,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     prevdist = distance;
                     //armsWideEvent(null, new LongFeedback("WELCOME START!", true));
                 }
-                else if (distance < 5 * errorGap && start)
+                /*else if (distance < 5 * errorGap && start)
                 {
                     if ((distance - prevdist) > 0.01 * errorGap)
                     {
@@ -107,10 +107,25 @@ namespace LecturerTrainer.Model.BodyAnalysis
                             GestureRecognized(this, new EventArgs());
                         }
                     }
+                }*/
+                else if(frames > 180)
+                {
+                    frames = 0;
+                    goodjob = false;
+                    elbows = false;
+                    start = false;
+                    _slow = true;
+                    slow = true;
+                    //armsWideEvent(null, new LongFeedback("WELCOME FAILED!", true));
+                    if (GestureRecognized != null)
+                    {
+                        GestureRecognized(this, new EventArgs());
+                    }
                 }
-                else if (start)
+                else if (distance > errorGap * 4.5 && start)
                 {
                     //armsWideEvent(null, new LongFeedback("WELCOME COMPLETE!", true));
+                    frames = 0;
                     goodjob = true;
                     _complete = true;
                     start = false;
@@ -119,13 +134,13 @@ namespace LecturerTrainer.Model.BodyAnalysis
                         GestureRecognized(this, new EventArgs());
                     }
                 }
-
             }
             else
             {
                 if (start)
                 {
                     //armsWideEvent(null, new LongFeedback("WELCOME: DROPPED ELBOW!", true));
+                    frames = 0;
                     start = false;
                     _dropped = true; elbows = true;
                     if (GestureRecognized != null)
@@ -134,7 +149,6 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     }
                 }
             }
-          
         }
     }
 

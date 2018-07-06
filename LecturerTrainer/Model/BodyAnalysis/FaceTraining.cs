@@ -11,13 +11,14 @@ namespace LecturerTrainer.Model.BodyAnalysis
     public class FaceTraining
     {
         public event EventHandler GestureRecognized;
-
-        private const bool VERBOSE = false;
+        
         private const int NB_FRAME_MAX = 460;
 
         private static bool right;
         private static bool left;
         private static int frame;
+
+        private static bool verbose = false;
 
         bool _complete;
 
@@ -80,7 +81,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 Point3D elbowLeft = new Point3D(sk.Joints[JointType.ElbowLeft].Position);
                 Point3D shoulder = new Point3D(sk.Joints[JointType.ShoulderCenter].Position);
 
-                if (VERBOSE)
+                if (verbose)
                 {
                     Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~");
                     Console.WriteLine("frame: " + frame);
@@ -105,7 +106,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                             GestureRecognized?.Invoke(this, new EventArgs());
                         }
                     }
-                    else
+                    else if(!right)
                     {
                         frame = 0;
                         right = false;
@@ -132,7 +133,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                             GestureRecognized?.Invoke(this, new EventArgs());
                         }
                     }
-                    else
+                    else if(!left)
                     {
                         frame = 0;
                         right = false;

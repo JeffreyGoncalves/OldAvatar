@@ -363,15 +363,15 @@ namespace LecturerTrainer.ViewModel
             FacePool = new FeedbackPool(faceFields);
             VoicePool = new FeedbackPool(voiceFields);
             CommentPool = new FeedbackPool(commentFields);
-
+            
             // setting up the stopwatch and the update for the limited time record
             Tools.initStopWatch();
             this.TimeToUpdate.Elapsed += UpdateChrono;
 
             beginRecordingCommand = new RelayCommand(BeginRecording,
                 () => State == IRecordingState.Stopped ||
-                      State == IRecordingState.Monitoring ||
-                      State == IRecordingState.Paused);
+                        State == IRecordingState.Monitoring ||
+                        State == IRecordingState.Paused);
             stopCommand = new RelayCommand(Stop,
                 () => State == IRecordingState.Recording);
             goToResults = new RelayCommand(ShowResults,
@@ -856,7 +856,7 @@ namespace LecturerTrainer.ViewModel
             }
             else
             {
-                string newPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\"));
+                string newPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 string combine = System.IO.Path.Combine(newPath, "PublicRecord");
 
                 if (!Directory.Exists(combine))
@@ -864,7 +864,6 @@ namespace LecturerTrainer.ViewModel
                     Directory.CreateDirectory(combine);
                 }
                 storingFeedbackThreadData = new StoringFeedbackThreadData("feedback", SavingTools.nameFolder(combine, "PublicRecord"));
-
             }
 
             storingFeedbackThread = new Thread(storingFeedbackThreadData.threadProcess);
@@ -893,8 +892,6 @@ namespace LecturerTrainer.ViewModel
                 {
                     DrawingSheetAvatarViewModel.backgroundXMLFaceRecordingEventStream += backgroundFaceXMLRecording;
                     SavingTools.StartSavingXMLFace();
-                    //Binary change
-                    //SavingTools.StartSavingBinaryFace();
                 }
 
 				if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true){
@@ -905,12 +902,12 @@ namespace LecturerTrainer.ViewModel
             }
             if (_ToggleAvatarVideoRecording)
             {
-                //DrawingSheetAvatarViewModel.backgroundRecordingEventStream += backgroundAvatarVideoRecording;
-                //DrawingSheetAvatarViewModel.Get().IsVideoRecording = true;
-                //SavingTools.StartSavingAvatarVideoRecording();
+                DrawingSheetAvatarViewModel.backgroundRecordingEventStream += backgroundAvatarVideoRecording;
+                SavingTools.StartSavingAvatarVideoRecording();
             }
             if (_ToggleStreamRecording)
             {
+                DrawingSheetAvatarViewModel.Get().IsVideoRecording = true;
                 DrawingSheetStreamViewModel.backgroundDrawEventStream += backgroundStreamVideoRecording;
                 SavingTools.StartSavingStreamRecording();
             }
@@ -983,7 +980,6 @@ namespace LecturerTrainer.ViewModel
 
             ResViewMod.getAgitationStatistics(Agitation.getAgitationStats());
             List<IGraph> temp = new List<IGraph>();
-            Console.Out.WriteLine("avant add");
             temp.AddRange(HandsJoined.getHandStatistics());
             temp.AddRange(ArmsCrossed.getArmsStatistics());
             ResViewMod.getArmsMotion(temp);
@@ -1111,6 +1107,7 @@ namespace LecturerTrainer.ViewModel
                 replayViewModel.resetInstance();
                 replayViewModel = null;
             }
+
             System.Windows.Forms.OpenFileDialog fbd = new System.Windows.Forms.OpenFileDialog();
             fbd.Filter = "Performance File (.avi,.skd)|*.avi;*.skd"; // Filter files by extension
             fbd.Title = "Select the file of the performance you want to replay";
@@ -1121,6 +1118,11 @@ namespace LecturerTrainer.ViewModel
                     ReplayViewModel.Set(fbd.FileName);
                     replayViewModel = ReplayViewModel.Get();
                     replayMode();
+                }
+                catch(XmlLoadingException e)
+                {
+                    SideToolsViewModel.Get().enableTrackingAndTrainingTab();
+                    new ErrorMessageBox(e.title, e.Message).ShowDialog();
                 }
                 catch(ArgumentException e)
                 {

@@ -404,7 +404,7 @@ namespace LecturerTrainer.ViewModel
         {
             string curItem = ((VideosList)TrainingWithAvatarView.Get().VideosList.SelectedItem).Name;
             int nbFrame = ((WaveGesture)sender).FrameGesture;
-            if (nbFrame >40 && nbFrame <60)
+            if (nbFrame > 40 && nbFrame <60)
             {
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
@@ -425,16 +425,17 @@ namespace LecturerTrainer.ViewModel
         public static void HandTraining_GestureRecognized(object sender, EventArgs e)
         {
             string curItem = ((VideosList)TrainingWithAvatarView.Get().VideosList.SelectedItem).Name;
-            double distance = ((HandTraining)sender).Distance;
+            bool complete = ((HandTraining)sender).Complete;
+            bool slow = ((HandTraining)sender).Slow;
 
-            if(distance < 0.01)
+            if(complete)
             {
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
-            else
+            else if(slow)
             {
-                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Move_Closer.skd");
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Too_Slow.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
         }
@@ -475,7 +476,7 @@ namespace LecturerTrainer.ViewModel
             }
             else if (dropped)
             {
-                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Elbows.skd");
+                string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Raise_your_elbows.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
         }
