@@ -62,6 +62,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
             goodjob = false;
             elbows = false;
             slow = false;
+
             /*
                     You can write a gesture as a set of nested if-statements. The outer condition is the broadest and triggers the gesture recognition
                     process. Then you have a series of nested conditions each one more specific than the previous one.

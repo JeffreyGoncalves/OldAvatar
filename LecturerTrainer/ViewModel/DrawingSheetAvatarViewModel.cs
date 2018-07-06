@@ -3315,7 +3315,6 @@ namespace LecturerTrainer.Model
             else if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
             {
                 fullTextToDisplay = "Your turn ! ";
-
             }
             char[] textToDisplay = fullTextToDisplay.ToCharArray();
 

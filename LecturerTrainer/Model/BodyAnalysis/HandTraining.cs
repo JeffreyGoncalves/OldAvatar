@@ -1,4 +1,5 @@
-﻿using Microsoft.Kinect;
+﻿using LecturerTrainer.ViewModel;
+using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,10 +68,12 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     break;
             }
 
+            if(TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
+            {
+                DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Clap three times";
+            }
 
-
-
-            if(start)
+            if (start)
             {
                 if(count == NB_APPLAUSE)
                 {
