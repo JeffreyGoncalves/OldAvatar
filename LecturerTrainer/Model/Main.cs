@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using LecturerTrainer.Model;
+using LecturerTrainer.View;
 
 namespace LecturerTrainer.Model
 {
@@ -58,11 +59,12 @@ namespace LecturerTrainer.Model
                 }
                 System.Environment.Exit(0);
             }
-            //catch (Exception e)
-            //{
-            //    MessageBox.Show(e.Message);
-            //    System.Environment.Exit(0);
-            //}
+            catch (Exception)
+            {
+                new ErrorMessageBox("KinectError", "Kinect no plug").ShowDialog();
+                System.Environment.Exit(0);
+                
+            }
 
         }
         #endregion    

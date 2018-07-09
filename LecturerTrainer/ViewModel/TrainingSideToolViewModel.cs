@@ -981,6 +981,7 @@ namespace LecturerTrainer.ViewModel
             ResViewMod.getAgitationStatistics(Agitation.getAgitationStats());
             List<IGraph> temp = new List<IGraph>();
             temp.AddRange(HandsJoined.getHandStatistics());
+            temp.AddRange(HandsJoined.getHandCounterStatistics());
             temp.AddRange(ArmsCrossed.getArmsStatistics());
             ResViewMod.getArmsMotion(temp);
             if (EmotionRecognition.detect && lookingDirection.detect)
