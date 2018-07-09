@@ -1,4 +1,5 @@
 ﻿using AForge.Math;
+using LecturerTrainer.ViewModel;
 using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
@@ -82,6 +83,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
             Point3D shoulderLeft = new Point3D(sk.Joints[JointType.ShoulderLeft].Position);
             Point3D head = new Point3D(sk.Joints[JointType.Head].Position);
 
+            if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
+            {
+                DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Raise your arms";
+            }
+
             //calculation of the angle formed by the right arm
             double lenghtHeadShoulderRight = Math.Sqrt(Math.Pow(head.X - shoulderRight.X, 2) + Math.Pow(head.Y - shoulderRight.Y, 2) + Math.Pow(head.Z - shoulderRight.Z, 2));
             double lenghtShoulderHandRight = Math.Sqrt(Math.Pow(shoulderRight.X - handRight.X, 2) + Math.Pow(shoulderRight.Y - handRight.Y, 2) + Math.Pow(shoulderRight.Z - handRight.Z, 2));
@@ -160,6 +166,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 frame = 0;
                 _complete = true;
 
+                DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                 GestureRecognized?.Invoke(this, new EventArgs());
             }
             else if(frame > TIME)
@@ -168,19 +175,22 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 if(!up)
                 {
                     _up = true;
-                    
+
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 else if(!stretchLeftOK || !stretchRightOK)
                 {
                     _stretch = true;
 
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 else if(!angleLeftOK || !angleRightOK)
                 {
                     _spread = true;
 
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized?.Invoke(this, new EventArgs());
                 }
             }

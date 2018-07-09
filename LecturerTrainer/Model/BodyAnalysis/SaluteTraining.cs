@@ -1,4 +1,5 @@
 ﻿using AForge.Math;
+using LecturerTrainer.ViewModel;
 using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
@@ -102,6 +103,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
             Point3D handLeft = new Point3D(sk.Joints[JointType.HandLeft].Position);
             Point3D hipLeft = new Point3D(sk.Joints[JointType.HipLeft].Position);
 
+            if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
+            {
+                DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Do the military salute";
+            }
+
             //calculation of the angle formed by the arm
             double lenghtHandElbow = Math.Sqrt(Math.Pow(hand.X - elbow.X, 2) + Math.Pow(hand.Y - elbow.Y, 2) + Math.Pow(hand.Z - elbow.Z, 2));
             double lenghtHandShoulder = Math.Sqrt(Math.Pow(hand.X - shoulder.X, 2) + Math.Pow(hand.Y - shoulder.Y, 2) + Math.Pow(hand.Z - shoulder.Z, 2));
@@ -138,6 +144,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 {
                     _leftHand = true;
 
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 //wrong arm alignment
@@ -145,6 +152,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 {
                     _alignment = true;
 
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized?.Invoke(this, new EventArgs());
                 }
                 //wrong arm angle
@@ -152,6 +160,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 {
                     _angleB = true;
 
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized?.Invoke(this, new EventArgs());
                 }
             }
@@ -172,6 +181,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     nbStay = 0;
                     _complete = true;
 
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized?.Invoke(this, new EventArgs());
                 }
             }
@@ -189,6 +199,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     start = false;
                     _stay = true;
 
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized?.Invoke(this, new EventArgs());
                 }
             }
