@@ -356,7 +356,7 @@
                                 </LinearGradientBrush>
                             </Button.Background>
                         </Button>
-                        <Button x:Name="ReplayFaceTestButton" Content="Replay Face" Command="{Binding ReplayFaceTestCommand}" HorizontalAlignment="Center" Margin="0,10,0,10" VerticalAlignment="Top" Width="{DynamicResource ButtonsWidth}" Height="{DynamicResource GeneralFieldHeight}" Foreground="#FF15202C">
+                        <!--<Button x:Name="ReplayFaceTestButton" Content="Replay Face" Command="{Binding ReplayFaceTestCommand}" HorizontalAlignment="Center" Margin="0,10,0,10" VerticalAlignment="Top" Width="{DynamicResource ButtonsWidth}" Height="{DynamicResource GeneralFieldHeight}" Foreground="#FF15202C">
                             <Button.Background>
                                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                                     <GradientStop Color="#FFF3F3F3" Offset="0"/>
@@ -365,7 +365,7 @@
                                     <GradientStop Color="#FF424242" Offset="1"/>
                                 </LinearGradientBrush>
                             </Button.Background>
-                        </Button>
+                        </Button>-->
                     </StackPanel>
                 </Border>
             </Grid>

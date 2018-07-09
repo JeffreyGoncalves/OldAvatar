@@ -329,8 +329,7 @@ namespace LecturerTrainer.Model
                 var chart = new CartesianGraph();
                 chart.title = "Hips agitation";
                 chart.subTitle = Tools.ChooseTheCorrectUnitTime();
-
-                if(!Tools.addSeriesToCharts(chart,new ColumnSeries(),"Hips", agitNotAgit[JointType.HipCenter],"Total Hips agitation: ",false))
+                if (!Tools.addSeriesToCharts(chart,new ColumnSeries(),"Hips", agitNotAgit[JointType.HipCenter],"Total Hips agitation: ",false))
                     list.Add(Tools.createEmptyGraph("Hips were not agitated"));
                 else
                     list.Add(chart);
@@ -356,7 +355,6 @@ namespace LecturerTrainer.Model
                 cl.subTitle = "Time unit: " + Tools.ChooseTheCorrectUnitTime();
                 cl.XTitle = "Time";
                 cl.YTitle = "Value";
-
                 bool leftChart = Tools.addSeriesToCharts(cl, new ColumnSeries(), "Left Hand", agitNotAgit[JointType.HandLeft],"Total Left Hand Agitation: ",true);
                 bool rightChart = Tools.addSeriesToCharts(cl, new ColumnSeries(), "Right Hand", agitNotAgit[JointType.HandRight], "Total Right Hand Agitation: ",true);
                 

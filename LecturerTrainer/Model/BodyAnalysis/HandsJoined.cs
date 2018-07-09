@@ -118,7 +118,6 @@ namespace LecturerTrainer.Model
             var chart = new CartesianGraph();
             chart.title = "Hand joined Counter";
             chart.subTitle = Tools.ChooseTheCorrectUnitTime();
-            Console.Out.WriteLine("--  HandsJoined");
             if (!Tools.addSeriesToCharts(chart, new LineSeries(), "Hand joined", handsjoined, "Total hand joined: ", false))
             {
                 list.Add(Tools.createEmptyGraph("Hands were not joined"));

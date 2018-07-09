@@ -107,7 +107,6 @@ namespace LecturerTrainer.Model.BodyAnalysis
             var chart = new CartesianGraph();
             chart.title = "Arms Crossed Counter";
             chart.subTitle = Tools.ChooseTheCorrectUnitTime();
-
             if (!Tools.addSeriesToCharts(chart, new LineSeries(), "Arms Crossed", armscrossed, "Total arms crossed: ",false))
                 list.Add(Tools.createEmptyGraph("Arms were not crossed"));
             else

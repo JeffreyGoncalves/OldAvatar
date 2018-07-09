@@ -892,8 +892,6 @@ namespace LecturerTrainer.ViewModel
                 {
                     DrawingSheetAvatarViewModel.backgroundXMLFaceRecordingEventStream += backgroundFaceXMLRecording;
                     SavingTools.StartSavingXMLFace();
-                    //Binary change
-                    //SavingTools.StartSavingBinaryFace();
                 }
 
 				if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true){
@@ -904,12 +902,12 @@ namespace LecturerTrainer.ViewModel
             }
             if (_ToggleAvatarVideoRecording)
             {
-                //DrawingSheetAvatarViewModel.backgroundRecordingEventStream += backgroundAvatarVideoRecording;
-                //DrawingSheetAvatarViewModel.Get().IsVideoRecording = true;
-                //SavingTools.StartSavingAvatarVideoRecording();
+                DrawingSheetAvatarViewModel.backgroundRecordingEventStream += backgroundAvatarVideoRecording;
+                SavingTools.StartSavingAvatarVideoRecording();
             }
             if (_ToggleStreamRecording)
             {
+                DrawingSheetAvatarViewModel.Get().IsVideoRecording = true;
                 DrawingSheetStreamViewModel.backgroundDrawEventStream += backgroundStreamVideoRecording;
                 SavingTools.StartSavingStreamRecording();
             }
@@ -982,7 +980,6 @@ namespace LecturerTrainer.ViewModel
 
             ResViewMod.getAgitationStatistics(Agitation.getAgitationStats());
             List<IGraph> temp = new List<IGraph>();
-            Console.Out.WriteLine("avant add");
             temp.AddRange(HandsJoined.getHandStatistics());
             temp.AddRange(ArmsCrossed.getArmsStatistics());
             ResViewMod.getArmsMotion(temp);
@@ -1121,6 +1118,11 @@ namespace LecturerTrainer.ViewModel
                     ReplayViewModel.Set(fbd.FileName);
                     replayViewModel = ReplayViewModel.Get();
                     replayMode();
+                }
+                catch(XmlLoadingException e)
+                {
+                    SideToolsViewModel.Get().enableTrackingAndTrainingTab();
+                    new ErrorMessageBox(e.title, e.Message).ShowDialog();
                 }
                 catch(ArgumentException e)
                 {
