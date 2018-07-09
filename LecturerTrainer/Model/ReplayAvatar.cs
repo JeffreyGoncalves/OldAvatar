@@ -165,11 +165,7 @@ namespace LecturerTrainer.Model
                 timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
                 timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
                 timeToUpdate.Tick += changeSlider;
-            }catch(ArgumentException)
-            {
-                throw;
-            }
-            catch (XmlLoadingException)
+            }catch (XmlLoadingException)
             {
                 throw;
             }
@@ -378,13 +374,13 @@ namespace LecturerTrainer.Model
                 ReplayViewModel.timeEnd = skeletonSortedListWithTime[skeletonSortedListWithTime.Count - 1].Item1;
                 return skeletonSortedListWithTime;
             }
-            catch (XmlLoadingException e)
+            catch (XmlLoadingException)
             {
-                throw e;
+                throw;
             }
             catch (Exception)
             {
-                throw new ArgumentException("Impossible to read ", path);
+                throw new XmlLoadingException("Error", "Impossible to read " + path);
             }
             
 
