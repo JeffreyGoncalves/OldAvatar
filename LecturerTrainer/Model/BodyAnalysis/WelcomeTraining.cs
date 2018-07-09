@@ -1,4 +1,5 @@
-﻿using Microsoft.Kinect;
+﻿using LecturerTrainer.ViewModel;
+using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,6 +71,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     The innermost condition is the correct gesture and exits with bool complete = true
             */
 
+            if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
+            {
+                DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Welcome the crowd";
+            }
+
             errorGap = Math.Sqrt(Geometry.distanceSquare(new Point3D(sk.Joints[JointType.ShoulderCenter].Position), new Point3D(sk.Joints[JointType.ShoulderLeft].Position)));
             errorGap2 = 3 * errorGap / 4;
             if (Math.Abs(sk.Joints[JointType.ShoulderLeft].Position.Y - sk.Joints[JointType.ElbowLeft].Position.Y) < errorGap2 &&
@@ -119,6 +125,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     //armsWideEvent(null, new LongFeedback("WELCOME FAILED!", true));
                     if (GestureRecognized != null)
                     {
+                        DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                         GestureRecognized(this, new EventArgs());
                     }
                 }
@@ -131,6 +138,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     start = false;
                     if (GestureRecognized != null)
                     {
+                        DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                         GestureRecognized(this, new EventArgs());
                     }
                 }
@@ -145,6 +153,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     _dropped = true; elbows = true;
                     if (GestureRecognized != null)
                     {
+                        DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                         GestureRecognized(this, new EventArgs());
                     }
                 }

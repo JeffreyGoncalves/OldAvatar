@@ -1197,7 +1197,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             if (intensityPF.Count > 0)
             {
                 // Check if it's a peak.
-                if (intensityPF[intensityPF.Count - 1] > 560.0f)
+                if (intensityPF[intensityPF.Count - 1] > 570.0f)
                 {
                     this.nbSyllables++;
                 }
@@ -1211,6 +1211,12 @@ namespace LecturerTrainer.Model.AudioAnalysis
         public void getSpeedRate()
         {
             Console.Out.WriteLine("\nNumber of syllables in 1 second : " + nbSyllables + "\n");
+
+            /*using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\Public\TestFolder\Syllables_Per_Sec.txt", true))
+            {
+                file.WriteLine(this.nbSyllables);
+            }*/
+
             //Console.Out.WriteLine("Number of peaks in general in 1 second : " + numberOfPeaks + "\n");
             int level = 0;
             if (this.nbSyllables <= 1)

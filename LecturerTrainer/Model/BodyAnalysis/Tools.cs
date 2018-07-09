@@ -244,7 +244,7 @@ namespace LecturerTrainer.Model
                 correctTime = (int)(Math.Ceiling((double)correctTime / 1000) * 1000);
                 int unit = (int)correctTime / 1000;
 
-                return "Unit per " + unit/60 + " min" + (unit%60 >0 ? unit % 60+" sec":"");
+                return "Unit per " + unit/60 + " min" + (unit%60 >0 ? unit % 60+" sec" : "");
             }
         }
 
