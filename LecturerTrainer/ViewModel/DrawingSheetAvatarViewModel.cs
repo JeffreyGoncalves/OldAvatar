@@ -978,14 +978,14 @@ namespace LecturerTrainer.Model
                         //Calculation of lips' position at each frame
                         if (LipsDistanceDiff > 0.003f)
                         {
-                            LipsAdjustment = 3.0f;
+                            LipsAdjustment = 2.0f;
                         }
                         else if(LipsDistanceDiff < -0.003f)
                         {
                             LipsAdjustment = 1.0f;
                         }
 
-                        Gl.glScalef(1.75f, LipsAdjustment * 0.5f, 1);
+                        Gl.glScalef(1.75f / LipsAdjustment, LipsAdjustment * 0.5f, 1);
 
                         /*Drawing of an ellipse that represents the hole of the mouth
                         this ellipse looks like a line when the mouth is closed and looks like
