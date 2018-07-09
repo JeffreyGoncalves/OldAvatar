@@ -1,4 +1,5 @@
-﻿using Microsoft.Kinect;
+﻿using LecturerTrainer.ViewModel;
+using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
             Point3D hipcentre = new Point3D(sk.Joints[JointType.HipCenter].Position);
             Point3D shoulder = new Point3D(sk.Joints[JointType.ShoulderCenter].Position);
 
+            if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
+            {
+                DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Keep your hands close to the hips";
+            }
+
             _distance = shoulder.Z - hipcentre.Z;
 
             leftpos.X = leftpos.X + (leftpos.X - rightpos.X);
@@ -44,6 +50,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
             {
                 if (GestureRecognized != null)
                 {
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized(this, new EventArgs());
                 }
             }

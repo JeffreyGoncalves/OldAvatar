@@ -1,4 +1,5 @@
-﻿using Microsoft.Kinect;
+﻿using LecturerTrainer.ViewModel;
+using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     Console.WriteLine("left: " + left);
                 }
 
+                if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
+                {
+                    DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Look towards the raised arm";
+                }
+
                 if (Math.Abs(handRight.X - elbowRight.X) > 0.05 && handRight.Y > shoulder.Y)
                 {
                     if(rightEye.Z - leftEye.Z < -0.015)
@@ -103,6 +109,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                             left = false;
                             _complete = true;
 
+                            DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                             GestureRecognized?.Invoke(this, new EventArgs());
                         }
                     }
@@ -113,6 +120,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                         left = false;
                         _lookingDir = true;
 
+                        DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                         GestureRecognized?.Invoke(this, new EventArgs());
                     }
                 }
@@ -130,6 +138,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                             left = false;
                             _complete = true;
 
+                            DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                             GestureRecognized?.Invoke(this, new EventArgs());
                         }
                     }
@@ -140,6 +149,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                         left = false;
                         _lookingDir = true;
 
+                        DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                         GestureRecognized?.Invoke(this, new EventArgs());
                     }
                 }
