@@ -39,6 +39,8 @@ namespace LecturerTrainer.Model
         /// </summary>
         public static List<int> handsjoined = null;
 
+        public static List<int> handsjoinedCounter = null;
+
         /// <summary>
         /// True if we have to record the superposition of the hand
         /// </summary>
@@ -59,11 +61,13 @@ namespace LecturerTrainer.Model
                 if (rec)
                 {
                     handsjoined = new List<int>();
+                    handsjoinedCounter = new List<int>();
                 }
             }
         }
 
         public static bool hands = false;
+        public static bool handsC = false;
         public static bool eventfinished = true;
 
         public static Stopwatch sw = new Stopwatch();
@@ -78,24 +82,35 @@ namespace LecturerTrainer.Model
             {
                 if(!sw.IsRunning)
                     sw.Start();
-                if(sw.ElapsedMilliseconds / 100 > 7)
+                if(sw.ElapsedMilliseconds / 100 > 5)
                 {
                     handsJoinedEvent(null, new InstantFeedback("Hands are joined"));
                     hands = true;
-                    if (rec)
+                }
+
+                if (rec)
+                {
+                    if (!handsjoined.Contains((int)(Tools.getStopWatch() / 100 )))
                     {
-                        if (!handsjoined.Contains((int)(Tools.getStopWatch() / 100 )))
-                        {
-                            handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
-                        }
+                        handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
                     }
                 }
+                if (rec)
+                {
+                    if (!handsjoinedCounter.Contains((int)(Tools.getStopWatch() / 100)) && !handsC)
+                    {
+                        handsjoinedCounter.Add((int)(Tools.getStopWatch() / 100));
+                    }
+                    handsC = true;
+                }
+
             }
             else
             {
                 if(sw.IsRunning)
                     sw.Reset();
                 hands = false;
+                handsC = false;
                 eventfinished = true;
             }
 
@@ -116,17 +131,36 @@ namespace LecturerTrainer.Model
         {
             List<IGraph> list = new List<IGraph>();
             var chart = new CartesianGraph();
-            chart.title = "Hand joined Counter";
+            chart.title = "Hand joined Long";
             chart.subTitle = Tools.ChooseTheCorrectUnitTime();
-            if (!Tools.addSeriesToCharts(chart, new LineSeries(), "Hand joined", handsjoined, "Total hand joined: ", false))
+            if (!Tools.addSeriesToCharts(chart, new ColumnSeries(), "Hand joined", handsjoined, "Total long hand joined: ", false))
             {
-                list.Add(Tools.createEmptyGraph("Hands were not joined"));
+                list.Add(Tools.createEmptyGraph("Hands long were not joined"));
             }
             else
             {
                 foreach(string str in chart.listTotalValue)
                     
                 list.Add(chart);
+            }
+            return list;
+        }
+
+        public static List<IGraph> getHandCounterStatistics()
+        {
+            List<IGraph> list = new List<IGraph>();
+            var chart = new CartesianGraph();
+            chart.title = "Hand joined Counter";
+            chart.subTitle = Tools.ChooseTheCorrectUnitTime();
+            if (!Tools.addSeriesToCharts(chart, new ColumnSeries(), "Hand joined", handsjoinedCounter, "Total instant hand joined: ", false))
+            {
+                list.Add(Tools.createEmptyGraph("Hands were not joined"));
+            }
+            else
+            {
+                foreach (string str in chart.listTotalValue)
+
+                    list.Add(chart);
             }
             return list;
         }

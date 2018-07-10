@@ -1,4 +1,5 @@
-﻿using Microsoft.Kinect;
+﻿using LecturerTrainer.ViewModel;
+using Microsoft.Kinect;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,6 +79,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
             GesturePartResult resultRIGHT = _segments[_currentSegment].Update(skeleton, RIGHT);
             GesturePartResult result = GesturePartResult.Failed;
 
+            if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
+            {
+                DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Wave your hand";
+            }
+
             //If the user is doing the movement with his left arm
             if (resultLEFT == GesturePartResult.Succeeded)
             {
@@ -120,6 +126,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     //If the gesture has been recognized, we throw the event
                     if (GestureRecognized != null)
                     {
+                        DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                         GestureRecognized(this, new EventArgs());
                         Reset();
                     }

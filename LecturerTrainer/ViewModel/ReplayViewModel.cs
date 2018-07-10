@@ -852,6 +852,7 @@ namespace LecturerTrainer.ViewModel
             DrawingSheetView.Get().ReplayVideo.Source = null;
             DrawingSheetView.Get().ReplayAudio.Close();
             DrawingSheetView.Get().ReplayAudio.Source = null;
+            ReplayView.Get().SoundCheckbox.IsChecked = false;
             SideToolsViewModel.Get().enableTrackingAndTrainingTab();
             TrainingSideToolViewModel.Get().recordingMode();
             DrawingSheetAvatarViewModel.Get().normalMode();

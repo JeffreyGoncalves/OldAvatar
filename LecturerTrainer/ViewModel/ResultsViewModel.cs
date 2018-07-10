@@ -440,9 +440,7 @@ namespace LecturerTrainer.ViewModel
                 FileStream fs = File.Create(path + "chart" + num + ".xml");
                 TextWriter WriteFileStream = new StreamWriter(fs);
                 type = ReadFileStream.ReadLine();
-                //Console.Out.WriteLine("-- typ -- " + type);
                 string patern = ReadFileStream.ReadLine();
-                //Console.Out.WriteLine("-- pat -- " + patern);
                 WriteFileStream.WriteLine(patern);
                 line = ReadFileStream.ReadLine();
                 if (string.IsNullOrEmpty(line)) // if it's the end of the file
