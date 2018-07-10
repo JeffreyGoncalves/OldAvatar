@@ -313,7 +313,8 @@ namespace LecturerTrainer.Model
         private float currentLipsDistance;
         private float lastLipsDistance = 0;
         private float LipsDistanceDiff;
-        private float LipsAdjustment;
+        private float verticalLipsAdjustment;
+        private float horizontalLipsAdjustment;
 
         private bool isInitialized = false, isSignalLostInitialized = false;
 
@@ -978,14 +979,16 @@ namespace LecturerTrainer.Model
                         //Calculation of lips' position at each frame
                         if (LipsDistanceDiff > 0.003f)
                         {
-                            LipsAdjustment = 2.0f;
+                            verticalLipsAdjustment = 3.0f;
+                            horizontalLipsAdjustment = 0.75f;
                         }
                         else if(LipsDistanceDiff < -0.003f)
                         {
-                            LipsAdjustment = 1.0f;
+                            verticalLipsAdjustment = 1.0f;
+                            horizontalLipsAdjustment = 1.0f;
                         }
 
-                        Gl.glScalef(1.75f / LipsAdjustment, LipsAdjustment * 0.5f, 1);
+                        Gl.glScalef(1.75f*horizontalLipsAdjustment , verticalLipsAdjustment * 0.5f, 1);
 
                         /*Drawing of an ellipse that represents the hole of the mouth
                         this ellipse looks like a line when the mouth is closed and looks like
@@ -996,7 +999,7 @@ namespace LecturerTrainer.Model
                         Vector3[] innerPoints = new Vector3[20];
                         int cnt = 0;
                         float RHori = (float)Math.Sqrt(Math.Pow(leftOuterCorner.X - rightOuterCorner.X, 2) + Math.Pow(leftOuterCorner.Y - rightOuterCorner.Y, 2) + Math.Pow(leftOuterCorner.Z - rightOuterCorner.Z, 2)) / 2;
-                        float RVert = LipsAdjustment / 500;
+                        float RVert = verticalLipsAdjustment / 500;
 
                         for (beta = 0; beta < (float)2 * Math.PI; beta += betaStep)
                         {
