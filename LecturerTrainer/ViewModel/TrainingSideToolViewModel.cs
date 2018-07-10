@@ -1001,7 +1001,46 @@ namespace LecturerTrainer.ViewModel
                 ResViewMod.getVoiceStatistics(AudioProvider.getVoicetatistics());
             }
             ResViewMod.SaveGraph(SavingTools.pathFolder + '/');
+
+			saveCSV();
         }
+
+		/// <summary>
+		/// Writes the feedback data in .csv file in order to draw charts with excel
+		/// </summary>
+		public void saveCSV()
+		{
+			string path;
+			if (Main.session.sessionPath != null)
+			{
+				path = System.IO.Path.GetDirectoryName(Main.session.sessionPath);
+				path += (SessionRecordingViewModel.inRecord ? @"\SessionRecording\" : @"\FreeRecording\");
+			}
+			else
+				path = System.Environment.GetEnvironmentVariable("USERPROFILE")+@"\Documents\PublicRecord\";
+
+			path = System.IO.Directory.GetDirectories(path).Last();
+
+
+			using (System.IO.StreamWriter file = new System.IO.StreamWriter(path + @"\Record_Data.csv", true))
+			{	
+				file.Write("Hands Joined,");
+				foreach(int value in HandsJoined.handsjoined)
+					file.Write(value+", ");
+				file.WriteLine();
+
+				file.Write("Arms Crossed,");
+				foreach(int value in ArmsCrossed.armscrossed)
+					file.Write(value+", ");
+				file.WriteLine();
+
+				file.Write("Agitation,");
+				foreach(int value in Agitation.agitNotAgit[JointType.HandLeft]) // might bea good idea to change the way agitation is recorded in Agitation.cs
+					file.Write(value+", ");
+				file.WriteLine();
+			}
+		}
+
         #endregion
 
         #region miscellaneous methods 

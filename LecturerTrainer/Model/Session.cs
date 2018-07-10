@@ -219,7 +219,7 @@ namespace LecturerTrainer.Model
                 session.sessionPath = pathString;
                 Main.session.serializeSession(pathString);
             } catch (ArgumentException) {
-                throw new CantCreateFileException("Cannot create session file.", "Some characters are not allowed in file pathisi sijg jqpgj nihdxopghbwjgf xbjfn ôifhgnfp.");
+                throw new CantCreateFileException("Cannot create session file.", "Some characters are not allowed in file path.");
             }
 
 }
