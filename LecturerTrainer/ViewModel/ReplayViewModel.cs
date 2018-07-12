@@ -845,6 +845,11 @@ namespace LecturerTrainer.ViewModel
             SideToolsViewModel.Get().enableTrackingAndTrainingTab();
             TrainingSideToolViewModel.Get().recordingMode();
             DrawingSheetAvatarViewModel.Get().normalMode();
+            if (!KinectDevice.faceTracking && TrackingSideTool.Get().ActivateFaceTrackingCheckBox.IsChecked == true)
+            {
+                KinectDevice.faceTracking = true;
+            }
+            
         }
 
         /// <summary>

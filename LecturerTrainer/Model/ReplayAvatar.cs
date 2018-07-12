@@ -59,6 +59,8 @@ namespace LecturerTrainer.Model
 
         public static bool realTime = true;
 
+        private bool isFaceTracked = KinectDevice.faceTracking;
+
         public static int offset = 0;
 
         /// <summary>
@@ -215,9 +217,9 @@ namespace LecturerTrainer.Model
                 if (face)
                 {
                     DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
-                    DrawingSheetAvatarViewModel.Get().drawFace(skeletonsList[(int)currentSkeletonNumber].Item3.depthPointsList,
-                        skeletonsList[(int)currentSkeletonNumber].Item3.colorPointsList,
-                        skeletonsList[(int)currentSkeletonNumber].Item3.faceTriangles);
+                    DrawingSheetAvatarViewModel.Get().drawFace(skeletonsList[currentSkeletonNumber].Item3.depthPointsList,
+                        skeletonsList[currentSkeletonNumber].Item3.colorPointsList,
+                        skeletonsList[currentSkeletonNumber].Item3.faceTriangles);
                 }
                 // We only draw the last skeleton
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
@@ -255,6 +257,8 @@ namespace LecturerTrainer.Model
         {
             Tools.startStopWatch();
             timeToUpdate.Start();
+            if(!isFaceTracked && TrackingSideTool.Get().ActivateFaceTrackingCheckBox.IsChecked == true)
+                KinectDevice.faceTracking = true;
         }
 
         /// <summary>
@@ -264,6 +268,8 @@ namespace LecturerTrainer.Model
         {
             Tools.stopStopWatch();
             timeToUpdate.Stop();
+            if(isFaceTracked)
+                KinectDevice.faceTracking = false;
         }
 
         /// <summary>
@@ -273,7 +279,11 @@ namespace LecturerTrainer.Model
         {
             Tools.stopStopWatch();
             timeToUpdate.Stop();
-			wiggleIndex = 0;
+            if (isFaceTracked)
+            {
+                KinectDevice.faceTracking = false;
+            }
+            wiggleIndex = 0;
             currentSkeletonNumber = 0;
             currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
             DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
