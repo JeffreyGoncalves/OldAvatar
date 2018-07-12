@@ -106,7 +106,11 @@ namespace LecturerTrainer.ViewModel
 
             Chart.Colors = new List<Color>
             {
-                (Color)Application.Current.Resources["ColorGraph1"],(Color)Application.Current.Resources["ColorGraph2"]
+                (Color)Application.Current.Resources["ColorGraph1"],
+                (Color)Application.Current.Resources["ColorGraph2"],
+                (Color)Application.Current.Resources["ColorGraph3"],
+                (Color)Application.Current.Resources["ColorGraph4"],
+                (Color)Application.Current.Resources["ColorGraph5"]
             };
         }
 
@@ -139,10 +143,6 @@ namespace LecturerTrainer.ViewModel
             ValueCheckBoxChoice[value] = enable;
         }
 
-        /// <summary>
-        /// Add charts of the list passed as parameters to the Agitation part
-        /// </summary>
-        /// <param name="listAgit"></param>
         public void getAgitationStatistics(List<IGraph> listAgit)
         {
             bool hands = false, shoulder = false, knee = false;
@@ -254,41 +254,28 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// Add charts of the list passed as parametes to the Face Statistics
         /// </summary>
-        public void getFaceStatistics(IGraph grEmotion, IGraph grLookDirec)
+        /// <remarks> Modified Alban Descottes 2018</remarks>
+        public void getFaceStatistics(List<IGraph> grFace)
         {
-
             ObservableCollection<IGraph> ItemsEmpty = new ObservableCollection<IGraph>();
             // If face emotions is checked
-            if (getValueCheckBoxChoice(ValueCbx.Emotions))
+            foreach (IGraph chart in grFace)
             {
-                if (grEmotion.GetType() == typeof(GraphEmpty))
+                // "emotions" and "faces" are for the emotion recognition
+                // "looking" is for the look direction 
+                if (((chart.title.ToLower().Contains("emotions") || chart.title.ToLower().Contains("faces")) && getValueCheckBoxChoice(ValueCbx.Emotions)) ||
+                    (chart.title.ToLower().Contains("looking") && getValueCheckBoxChoice(ValueCbx.LookDir)))
                 {
-                    GraphEmpty grEmpty = new GraphEmpty();
-                    grEmpty.title = "No emotions was detected";
-                    ItemsEmpty.Add(grEmpty);
-                }
-                else
-                {
-                    RpFace.Items.Add(grEmotion);
+                    if (chart.GetType() == typeof(GraphEmpty))
+                        ItemsEmpty.Add(chart);
+                    else
+                        RpFace.Items.Add(chart);
                 }
             }
-            // If looking direction is check
-            if (getValueCheckBoxChoice(ValueCbx.LookDir))
-            {
-                //if (grLookDirec.GetType() == typeof(GraphEmpty))
-                //{
-                GraphEmpty grEmpty = new GraphEmpty();
-                grEmpty.title = "No looking direction was detected";
-                ItemsEmpty.Add(grEmpty);
-                //}
-                //else
-                //{
-                //    RpFace.Items.Add(grEmotion);
-                //}
-            }
-
             foreach (IGraph graph in ItemsEmpty)
+            {
                 RpFace.Items.Add(graph);
+            }
         }
 
         /// <summary>
@@ -599,14 +586,13 @@ namespace LecturerTrainer.ViewModel
 
             if (listChart[2] != null && listChart[2].Count > 0)
             {
-                //getFaceStatistics(listChart[2][0], listChart[2][1]);
+                getFaceStatistics(listChart[2]);
             }
 
             if (listChart[3] != null && listChart[3].Count > 0)
             {
                 getVoiceStatistics(listChart[3]);
             }
-
         }
 
         /// <summary>

@@ -975,28 +975,23 @@ namespace LecturerTrainer.ViewModel
             //Florian Bechu Summer 2016
 
             ResultsViewModel ResViewMod = ResultsViewModel.Get();
-            ResViewMod.checkBoxSingleUpdate(9, EmotionRecognition.detect);
-            ResViewMod.checkBoxSingleUpdate(10, lookingDirection.detect);
+            //ResViewMod.checkBoxSingleUpdate(9, EmotionRecognition.detect);
+            //ResViewMod.checkBoxSingleUpdate(10, lookingDirection.detect);
 
             ResViewMod.getAgitationStatistics(Agitation.getAgitationStats());
-            List<IGraph> temp = new List<IGraph>();
-            temp.AddRange(HandsJoined.getHandStatistics());
-            temp.AddRange(HandsJoined.getHandCounterStatistics());
-            temp.AddRange(ArmsCrossed.getArmsStatistics());
-            ResViewMod.getArmsMotion(temp);
-            if (EmotionRecognition.detect && lookingDirection.detect)
+            List<IGraph> listGraphArms = new List<IGraph>();
+            listGraphArms.AddRange(HandsJoined.getHandStatistics());
+            listGraphArms.AddRange(ArmsCrossed.getArmsStatistics());
+            ResViewMod.getArmsMotion(listGraphArms);
+            // is the facetracking is activate, is adds the face feedbacks
+            if (TrackingSideToolViewModel.get().FaceTracking)
             {
-                ResViewMod.getFaceStatistics(EmotionRecognition.getStatistics(new PieGraph()), lookingDirection.getStatistics(new CartesianGraph()));
+                List<IGraph> listGraphFace = new List<IGraph>();
+                listGraphFace.AddRange(EmotionRecognition.getEmotionsStatistics());
+                listGraphFace.AddRange(lookingDirection.getLookingStatistics());
+                ResViewMod.getFaceStatistics(listGraphFace);
             }
-            else if (EmotionRecognition.detect)
-            {
-                ResViewMod.getFaceStatistics(EmotionRecognition.getStatistics(new PieGraph()), null);
-            }
-            else if (lookingDirection.detect)
-            {
-                ResViewMod.getFaceStatistics(null, lookingDirection.getStatistics(new PieGraph()));
-            }
-
+           
             if (TrackingSideToolViewModel.get().SpeedRate)
             {
                 ResViewMod.getVoiceStatistics(AudioProvider.getVoicetatistics());
@@ -1024,6 +1019,10 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+        /// <summary>
+        /// it starts the stopwatch for the recording
+        /// </summary>
+        /// <author> Alban Descottes 2018 </author>
         public void startStopwatch()
         {
             Tools.resetStopWatch();
@@ -1034,6 +1033,10 @@ namespace LecturerTrainer.ViewModel
             UpdateChrono(null, null);
         }
 
+        /// <summary>
+        /// it stops the stopwatch for the recording
+        /// </summary>
+        /// <author> Alban Descottes 2018 </author>
         public void stopStopwatch(long time)
         {
             timeRecorded = Tools.getStopWatch();

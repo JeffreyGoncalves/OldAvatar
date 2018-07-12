@@ -301,10 +301,10 @@ namespace LecturerTrainer.Model
         /// <param name="totalValue">the string for the Total Value</param>
         /// <param name="addEmpty">if is true and the data is empty, an empty serie will be add in the chart</param>
         /// <returns>true if a serie had been added in the chart, false otherwise</returns>
-        /// <remarks>Add by Florian BECHU: Summer 2016</remarks>
+        /// <author>Add by Florian BECHU: Summer 2016</author>
+        /// <remarks> Modified by Alban Descottes 2018 </remarks>
         public static bool addSeriesToCharts<U>(IGraph chart, Series series, string seriesName,U list,string totalValue,bool addEmpty) where U : ICollection<int>
         {
-
             List<string> listLabel = new List<string>();
             series.Title = seriesName;
 

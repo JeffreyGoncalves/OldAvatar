@@ -2577,15 +2577,6 @@ namespace LecturerTrainer.Model
 
             // Drawing of the top joint
             drawJoint(joint0, point0);
-            // Alban's idea
-            /*
-            if (joint0.JointType == JointType.ShoulderCenter && joint1.JointType == JointType.Spine)
-            {
-                Console.Out.WriteLine("-- " + joint0.JointType.ToString() + " -- " + joint1.JointType.ToString());
-                Console.Out.WriteLine(Math.Sqrt((point0.X - point1.X) * (point0.X - point1.X) +
-                    (point0.Y - point1.Y) * (point0.Y - point1.Y) +
-                    (point0.Z - point1.Z) * (point0.Z - point1.Z)) + "\n--");
-            }*/
             if (IsBoneDrawable(joint0, joint1))
             {
                 // We assume all drawn bones are inferred unless BOTH joints are tracked

@@ -35,10 +35,15 @@ namespace LecturerTrainer.Model
          */
 
         /// <summary>
-        /// Allow to record when the hands are joined
+        /// During a record
+        /// This list will contain all the moment when the user has his hands joined
         /// </summary>
         public static List<int> handsjoined = null;
 
+        /// <summary>
+        /// During a record
+        /// This list will contain all the moment when the user touches his hands
+        /// </summary>
         public static List<int> handsjoinedCounter = null;
 
         /// <summary>
@@ -66,52 +71,61 @@ namespace LecturerTrainer.Model
             }
         }
 
-        public static bool hands = false;
-        public static bool handsC = false;
-        public static bool eventfinished = true;
 
+        /// <summary>
+        /// bool that allowes DrawingSheetAvatarViewModel to dispay the handsJoined feedback
+        /// </summary>
+        public static bool hands = false;
+
+        /// <summary>
+        /// it is set to true when the user touches his hands and false when he takes away his hands 
+        /// </summary>
+        public static bool handsJoined = false;
+
+        /// <summary>
+        /// stopwatch for the feedback
+        /// </summary>
         public static Stopwatch sw = new Stopwatch();
 
         /// <summary>
         /// function called to detect the hands joined
         /// </summary>
         /// <param name="sk">the skeleton</param>
+        /// <author>Alban Descottes 2018</author>
         public static void startDetection(Skeleton sk)
         {
             if (Geometry.distanceSquare(new Point3D(sk.Joints[JointType.HandLeft].Position), new Point3D(sk.Joints[JointType.HandRight].Position)) < 0.01)
             {
-                if(!sw.IsRunning)
+                // it starts a timer, the feedback is displayed if the user keeps his hands joined more than 500 milliseconds 
+                if (!sw.IsRunning)
                     sw.Start();
                 if(sw.ElapsedMilliseconds / 100 > 5)
                 {
                     handsJoinedEvent(null, new InstantFeedback("Hands are joined"));
                     hands = true;
                 }
-
+                // if the user records himself, it adds in the two lists the time (rounded to one tenth of a second)
                 if (rec)
                 {
                     if (!handsjoined.Contains((int)(Tools.getStopWatch() / 100 )))
                     {
                         handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
                     }
-                }
-                if (rec)
-                {
-                    if (!handsjoinedCounter.Contains((int)(Tools.getStopWatch() / 100)) && !handsC)
+                    if (!handsjoinedCounter.Contains((int)(Tools.getStopWatch() / 100)) && !handsJoined)
                     {
                         handsjoinedCounter.Add((int)(Tools.getStopWatch() / 100));
                     }
-                    handsC = true;
+                    handsJoined = true;
                 }
 
             }
+            // else it resets the timer, and sets the handsJoined to false
             else
             {
                 if(sw.IsRunning)
                     sw.Reset();
                 hands = false;
-                handsC = false;
-                eventfinished = true;
+                handsJoined = false;
             }
 
         }
@@ -123,44 +137,30 @@ namespace LecturerTrainer.Model
 
 
         /// <summary>
-        /// function to obtain the count of the hand joined
+        /// function to obtain the number of hands joined, and the duration
         /// </summary>
         /// <returns>the graph</returns>
-        /// <remarks>Add by Florian BECHU: Summer 2016</remarks>
+        /// <author>Alban Descottes 2018</author>
         public static List<IGraph> getHandStatistics()
         {
             List<IGraph> list = new List<IGraph>();
-            var chart = new CartesianGraph();
-            chart.title = "Hand joined Long";
-            chart.subTitle = Tools.ChooseTheCorrectUnitTime();
-            if (!Tools.addSeriesToCharts(chart, new ColumnSeries(), "Hand joined", handsjoined, "Total long hand joined: ", false))
-            {
-                list.Add(Tools.createEmptyGraph("Hands long were not joined"));
-            }
-            else
-            {
-                foreach(string str in chart.listTotalValue)
-                    
-                list.Add(chart);
-            }
-            return list;
-        }
-
-        public static List<IGraph> getHandCounterStatistics()
-        {
-            List<IGraph> list = new List<IGraph>();
-            var chart = new CartesianGraph();
-            chart.title = "Hand joined Counter";
-            chart.subTitle = Tools.ChooseTheCorrectUnitTime();
-            if (!Tools.addSeriesToCharts(chart, new ColumnSeries(), "Hand joined", handsjoinedCounter, "Total instant hand joined: ", false))
+            var chart1 = new CartesianGraph();
+            chart1.title = "Hands joined counter";
+            chart1.subTitle = Tools.ChooseTheCorrectUnitTime();
+            // if there is no hands joined during all the record, it creates just a empty chart
+            if (!Tools.addSeriesToCharts(chart1, new ColumnSeries(), "Hand joined", handsjoinedCounter, "Total hands joined: ", false))
             {
                 list.Add(Tools.createEmptyGraph("Hands were not joined"));
             }
+            // else it adds the hands joined counter first and this about the duration after
             else
             {
-                foreach (string str in chart.listTotalValue)
-
-                    list.Add(chart);
+                list.Add(chart1);
+                var chart2 = new CartesianGraph();
+                chart2.title = "Hands joined duration";
+                chart2.subTitle = Tools.ChooseTheCorrectUnitTime();
+                if (Tools.addSeriesToCharts(chart2, new ColumnSeries(), "Hand joined", handsjoined, "Total time hands joined: ", false))
+                    list.Add(chart2);
             }
             return list;
         }

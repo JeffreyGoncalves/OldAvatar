@@ -220,7 +220,6 @@ namespace LecturerTrainer.ViewModel
                 if (value == false)
                 {
                     EmotionRecognition.happy = false;
-                    EmotionRecognition.neutral = false;
                     EmotionRecognition.surprised = false;
                 }              
                 IconViewModel.get().clearEmotion();

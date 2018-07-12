@@ -171,7 +171,7 @@ namespace LecturerTrainer.Model
             }
         }
         /// <summary>
-        /// Constructor for skeleton scrolling without face elements
+        /// Constructor for skeleton scrolling without face and sound files
         /// </summary>
         /// <param name="skDir"></param>
         /// <param name="rvm"></param>
@@ -180,6 +180,11 @@ namespace LecturerTrainer.Model
 
         #region replay methods
 
+        /// <summary>
+        /// method called in the dispatcherTimer of ReplayAvatar
+        /// at each tick the slider value is changed
+        /// </summary>
+        /// <author> Alban Descottes 2018</author>
         private void changeSlider(object sender, EventArgs evt)
         {
             if (realTime)

@@ -53,41 +53,20 @@ namespace LecturerTrainer.View
             return instance;
         }
 
+        /// <summary>
+        /// it displays the right value on the slider on replay mode
+        /// </summary>
+        /// <param name="time"></param>
+        /// <author> Alban Descottes 2018 </author>
         public void changeValueOfSlider(int time)
         {
             LenghtVideo.Value = (double)time / ReplayViewModel.timeEnd * 100;
         }
 
-        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            if (dragStarted)
-            {
-                var newTime = e.NewValue / 100 * ReplayViewModel.timeEnd;
-                ReplayViewModel.changeCurrentAvatar((int)newTime);
-            }
-        }
-
-        private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
-        {
-            ReplayAvatar.offset += ReplayViewModel.localOffset;
-			ReplayViewModel.localOffset = 0;
-            if(Stream.IsChecked == true)
-            {
-                if(isPlayed)
-                    DrawingSheetView.Get().ReplayVideo.Play();
-                DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
-                if(isPlayed)
-                    DrawingSheetView.Get().ReplayAudio.Play();
-                DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
-            }
-            if (isPlayed)
-            {
-                ReplayViewModel.PlayReplay();
-                isPlayed = false;
-            }
-            this.dragStarted = false;
-        }
-
+        /// <summary>
+        /// When the user strats to drag the slider the avatar/stream is paused
+        /// </summary>
+        /// <author> Alban Descottes 2018 </author>
         private void Slider_DragStarted(object sender, DragStartedEventArgs e)
         {
             this.dragStarted = true;
@@ -102,7 +81,52 @@ namespace LecturerTrainer.View
                 isPlayed = true;
                 ReplayViewModel.PauseReplay();
             }
-           
+
         }
+
+        /// <summary>
+        /// this method is called everytime, when the user drags the slider it changes the current avatar 
+        /// it selects the right avatar proportionally of the total length of the replay
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (dragStarted)
+            {
+                var newTime = e.NewValue / 100 * ReplayViewModel.timeEnd;
+                ReplayViewModel.changeCurrentAvatar((int)newTime);
+            }
+        }
+
+        /// <summary>
+        /// this method computes the offset created by the translation of the slider and replays or keeps paused the stream/avatar
+        /// </summary>
+        /// <author> Alban Descottes 2018 </author>
+        private void Slider_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            ReplayAvatar.offset += ReplayViewModel.localOffset;
+			ReplayViewModel.localOffset = 0;
+            if(Stream.IsChecked == true)
+            {
+                if(isPlayed)
+                    DrawingSheetView.Get().ReplayVideo.Play();
+                DrawingSheetView.Get().ReplayVideo.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
+            }
+
+            if (isPlayed)
+            {
+                if(DrawingSheetView.Get().ReplayAudio.Source != null)
+                {
+                    DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, 0, 0, (int)Tools.getStopWatch() - ReplayAvatar.offset);
+                    DrawingSheetView.Get().ReplayAudio.Play();
+                }
+                ReplayViewModel.PlayReplay();
+                isPlayed = false;
+            }
+            this.dragStarted = false;
+        }
+
+        
     }
 }
