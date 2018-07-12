@@ -90,7 +90,7 @@ namespace LecturerTrainer.Model
         /// Allow to record for each joint when it was agitated and when it was not.
         /// </summary>
         //public static Dictionary<JointType, Pair > agitNotAgit = null;
-        static Dictionary<JointType, List<int>> agitNotAgit = null;
+        public static Dictionary<JointType, List<int>> agitNotAgit = null;
 
         /// <summary>
         /// True if we have to record the proportion agitated / not agitated.

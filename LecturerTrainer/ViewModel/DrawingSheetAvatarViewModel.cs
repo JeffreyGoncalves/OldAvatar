@@ -942,7 +942,7 @@ namespace LecturerTrainer.Model
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
-            if (faceT )
+            if (faceT)
             {
                 GL.PushMatrix();
                 {
