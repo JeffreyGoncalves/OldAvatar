@@ -79,12 +79,6 @@ namespace LecturerTrainer.ViewModel
         }
         #endregion
 
-        #region static attributs
-        /// <summary>
-        /// Singleton patern : the single instance of the class 
-        /// </summary>
-        private static ResultsViewModel instance = null;
-        #endregion
 
         #region constructor and accessor
         /// <summary>
@@ -114,16 +108,9 @@ namespace LecturerTrainer.ViewModel
             };
         }
 
-        /// <summary>
-        /// Singleton Pattern
-        /// </summary>
         public static ResultsViewModel Get()
         {
-            if (instance == null)
-            {
-                instance = new ResultsViewModel();
-            }
-            return instance;
+            return new ResultsViewModel();
         }
 
         #endregion
@@ -227,6 +214,7 @@ namespace LecturerTrainer.ViewModel
             ObservableCollection<IGraph> ItemsEmpty = new ObservableCollection<IGraph>();
             foreach (IGraph chart in grArmsMot)
             {
+
                 if ((chart.title.ToLower().Contains("hand") && getValueCheckBoxChoice(ValueCbx.HandsJoined)) ||
                     (chart.title.ToLower().Contains("arms") && getValueCheckBoxChoice(ValueCbx.ArmsCrossed)))
                 {
@@ -303,6 +291,18 @@ namespace LecturerTrainer.ViewModel
         #endregion
 
         /// <summary>
+        /// reset all the lists, called when it records a new performance 
+        /// </summary>
+        public void resetListCharts()
+        {
+            RpAgitation.Items.Clear();
+            RpArmsMotion.Items.Clear();
+            RpFace.Items.Clear();
+            RpVoice.Items.Clear(); 
+        }
+
+
+        /// <summary>
         /// Allow to add ResultsParts to the window
         /// </summary>
         public void addResultsPartToView()
@@ -337,19 +337,20 @@ namespace LecturerTrainer.ViewModel
                 WriteFileStream.Close();
                 i++;
             }
-            RpAgitation.Items.Clear();
 
             foreach (IGraph graph in RpArmsMotion.Items)
             {
-                graph.copySeriesChartTolSeries();
-                XmlSerializer SerializerObj = new XmlSerializer(graph.GetType());
-                TextWriter WriteFileStream = new StreamWriter(path + "chart" + i + ".xml", true);
-                WriteFileStream.WriteLine("ArmsMotion");
-                SerializerObj.Serialize(WriteFileStream, graph);
-                WriteFileStream.Close();
-                i++;
+                if (graph != null)
+                {
+                    graph.copySeriesChartTolSeries();
+                    XmlSerializer SerializerObj = new XmlSerializer(graph.GetType());
+                    TextWriter WriteFileStream = new StreamWriter(path + "chart" + i + ".xml", true);
+                    WriteFileStream.WriteLine("ArmsMotion");
+                    SerializerObj.Serialize(WriteFileStream, graph);
+                    WriteFileStream.Close();
+                    i++;
+                }
             }
-            RpArmsMotion.Items.Clear();
 
             foreach (IGraph graph in RpFace.Items)
             {
@@ -365,7 +366,6 @@ namespace LecturerTrainer.ViewModel
                     i++;
                 }
             }
-            RpFace.Items.Clear();
 
             foreach (IGraph graph in RpVoice.Items)
             {
@@ -378,7 +378,8 @@ namespace LecturerTrainer.ViewModel
                 WriteFileStream.Close();
                 i++;
             }
-            RpVoice.Items.Clear();
+
+            resetListCharts();
 
             /**All files will be put together into a global file**/
             TextWriter WriteFileStream2 = new StreamWriter(path + "charts.xml", true);

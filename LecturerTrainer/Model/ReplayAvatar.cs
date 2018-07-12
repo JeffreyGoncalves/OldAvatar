@@ -156,7 +156,7 @@ namespace LecturerTrainer.Model
 				// draw the first avatar
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
                 DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
-                
+
 				// init of the DispatcherTimer that is used for the replay
                 Tools.initStopWatch();
                 timeToUpdate = new DispatcherTimer();
@@ -167,6 +167,8 @@ namespace LecturerTrainer.Model
                 timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
                 timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
                 timeToUpdate.Tick += changeSlider;
+                if (TrackingSideToolViewModel.get().FaceTracking)
+                    KinectDevice.faceTracking = false;
             }catch (XmlLoadingException)
             {
                 throw;
@@ -257,8 +259,6 @@ namespace LecturerTrainer.Model
         {
             Tools.startStopWatch();
             timeToUpdate.Start();
-            if(!isFaceTracked && TrackingSideTool.Get().ActivateFaceTrackingCheckBox.IsChecked == true)
-                KinectDevice.faceTracking = true;
         }
 
         /// <summary>
@@ -268,8 +268,6 @@ namespace LecturerTrainer.Model
         {
             Tools.stopStopWatch();
             timeToUpdate.Stop();
-            if(isFaceTracked)
-                KinectDevice.faceTracking = false;
         }
 
         /// <summary>
@@ -279,10 +277,6 @@ namespace LecturerTrainer.Model
         {
             Tools.stopStopWatch();
             timeToUpdate.Stop();
-            if (isFaceTracked)
-            {
-                KinectDevice.faceTracking = false;
-            }
             wiggleIndex = 0;
             currentSkeletonNumber = 0;
             currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;

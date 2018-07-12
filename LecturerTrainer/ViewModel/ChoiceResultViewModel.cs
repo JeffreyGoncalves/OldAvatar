@@ -224,7 +224,6 @@ namespace LecturerTrainer.ViewModel
                     choiceResultView.chkAgitationRShoulder.IsEnabled = true;
                 }
             }
-            Console.Out.WriteLine("enable");
             choiceResultView.chkArmsMotion.IsEnabled = true;
             choiceResultView.chkArmsCrossed.IsEnabled = true;
             choiceResultView.chkHandsJoined.IsEnabled = true;

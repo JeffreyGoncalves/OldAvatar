@@ -33,7 +33,6 @@ namespace LecturerTrainer.View
         {
             InitializeComponent();
             instance = this;
-            Console.Out.WriteLine("ReplayView");
             //this.DataContext = ReplayViewModel.Get();
             this.FeedbackLabel1.DataContext = TrainingSideToolViewModel.Get();
             this.FeedbackLabel2.DataContext = TrainingSideToolViewModel.Get();

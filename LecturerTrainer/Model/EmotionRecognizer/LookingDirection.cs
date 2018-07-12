@@ -151,6 +151,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the center area
                         if (rightEye.Z - leftEye.Z >= -0.015 && rightEye.Z - leftEye.Z <= 0.015)
                         {
+                            Console.Out.WriteLine("CCCCCCCCCCCCCCCCCCCC");
                             if (rec)
                             {
                                 if (!lookCenter.Contains((int)(Tools.getStopWatch() / 100)))
@@ -171,6 +172,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the right area
                         else if (rightEye.Z - leftEye.Z >= -0.057 && rightEye.Z - leftEye.Z < -0.015)
                         {
+                            Console.Out.WriteLine("RRRRRRRRRRRRRRRRRR");
                             if (rec)
                             {
                                 if (!lookRight.Contains((int)(Tools.getStopWatch() / 100)))
@@ -205,6 +207,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the left area
                         else if (rightEye.Z - leftEye.Z > 0.015 && rightEye.Z - leftEye.Z <= 0.057)
                         {
+                            Console.Out.WriteLine("LLLLLLLLLLLLLLLLL");
                             if (rec)
                             {
                                 if (!lookLeft.Contains((int)(Tools.getStopWatch() / 100)))

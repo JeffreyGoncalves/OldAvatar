@@ -94,6 +94,7 @@ namespace LecturerTrainer.Model
         /// <author>Alban Descottes 2018</author>
         public static void startDetection(Skeleton sk)
         {
+            
             if (Geometry.distanceSquare(new Point3D(sk.Joints[JointType.HandLeft].Position), new Point3D(sk.Joints[JointType.HandRight].Position)) < 0.01)
             {
                 // it starts a timer, the feedback is displayed if the user keeps his hands joined more than 500 milliseconds 

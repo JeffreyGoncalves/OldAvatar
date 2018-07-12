@@ -79,6 +79,8 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+        private bool faceTrack = KinectDevice.faceTracking;
+
         /// <summary>
         /// Time elapsed in the video, textual version
         /// </summary>
@@ -712,10 +714,7 @@ namespace LecturerTrainer.ViewModel
             {
                 DrawingSheetView.Get().ReplayAudio.Play();
             }
-            //ReplayView.Get().FastButton.IsEnabled = true;
-            //ReplayView.Get().SlowButton.IsEnabled = true;
             ReplayView.Get().PauseButton.IsEnabled = true;
-            //ManageSpeedElements();
         }
 
         /// <summary>
@@ -845,10 +844,9 @@ namespace LecturerTrainer.ViewModel
             SideToolsViewModel.Get().enableTrackingAndTrainingTab();
             TrainingSideToolViewModel.Get().recordingMode();
             DrawingSheetAvatarViewModel.Get().normalMode();
-            if (!KinectDevice.faceTracking && TrackingSideTool.Get().ActivateFaceTrackingCheckBox.IsChecked == true)
-            {
+            
+            if (faceTrack)
                 KinectDevice.faceTracking = true;
-            }
             
         }
 
