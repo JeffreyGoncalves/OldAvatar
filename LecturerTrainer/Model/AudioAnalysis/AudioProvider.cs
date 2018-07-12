@@ -1219,19 +1219,19 @@ namespace LecturerTrainer.Model.AudioAnalysis
 
             //Console.Out.WriteLine("Number of peaks in general in 1 second : " + numberOfPeaks + "\n");
             int level = 0;
-            if (this.nbSyllables <= 1)
+            if (this.nbSyllables == 0)
             {
                 level = 0;
             }
-            else if (this.nbSyllables <= 3)
+            else if (this.nbSyllables <= 2)
             {
                 level = 1;
             }
-            else if (this.nbSyllables <= 5)
+            else if (this.nbSyllables <= 4)
             {
                 level = 2;
             }
-            else if (this.nbSyllables <= 7)
+            else if (this.nbSyllables <= 6)
             {
                 level = 3;
             }
