@@ -41,6 +41,11 @@ namespace LecturerTrainer.Model
 
         public static List<int> handsjoinedCounter = null;
 
+		/// <summary>
+		/// For recording the times where the user had is hands joined
+		/// </summary>
+		public static Dictionary<double, byte> handsJoinedRecord = new Dictionary<double, byte>();
+
         /// <summary>
         /// True if we have to record the superposition of the hand
         /// </summary>
@@ -78,6 +83,7 @@ namespace LecturerTrainer.Model
         /// <param name="sk">the skeleton</param>
         public static void startDetection(Skeleton sk)
         {
+
             if (Geometry.distanceSquare(new Point3D(sk.Joints[JointType.HandLeft].Position), new Point3D(sk.Joints[JointType.HandRight].Position)) < 0.01)
             {
                 if(!sw.IsRunning)
@@ -94,15 +100,13 @@ namespace LecturerTrainer.Model
                     {
                         handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
                     }
-                }
-                if (rec)
-                {
                     if (!handsjoinedCounter.Contains((int)(Tools.getStopWatch() / 100)) && !handsC)
                     {
                         handsjoinedCounter.Add((int)(Tools.getStopWatch() / 100));
                     }
                     handsC = true;
-                }
+					handsJoinedRecord.Add(Tools.getStopWatch() / 1000.0, 1);
+				}
 
             }
             else
@@ -112,6 +116,8 @@ namespace LecturerTrainer.Model
                 hands = false;
                 handsC = false;
                 eventfinished = true;
+				if (rec)
+					handsJoinedRecord.Add(Tools.getStopWatch() / 1000.0, 0);
             }
 
         }

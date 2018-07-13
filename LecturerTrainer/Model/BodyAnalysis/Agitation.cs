@@ -99,6 +99,11 @@ namespace LecturerTrainer.Model
 
         public static bool feedAg = false;
 
+		/// <summary>
+		/// For recording the times when the user was too agitated.
+		/// </summary>
+		public static Dictionary<double, byte> agitationRecord = new Dictionary<double, byte>();
+
         /// <summary>
         /// Public attribute for rec. Allows to reset the structures.
         /// </summary>
@@ -273,6 +278,12 @@ namespace LecturerTrainer.Model
                         {
                             agitationEvent(j, new InstantFeedback(tooAgitatedText));
                         }
+
+						// Recording of the values necessary for the .csv file
+						if(rec && j == JointType.HandLeft){
+							if (feedAg) agitationRecord.Add(Tools.getStopWatch() / 1000.0, 1);
+							else agitationRecord.Add(Tools.getStopWatch() / 1000.0, 0);
+						}
                     }
                 }
             }

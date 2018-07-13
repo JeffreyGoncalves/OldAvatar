@@ -46,6 +46,12 @@ namespace LecturerTrainer.Model.BodyAnalysis
         public static bool feedArmsCrossed = false;
         public static bool eventfinished = false;
 
+
+		/// <summary>
+		/// For recording the times where the user had his arms crossed
+		/// </summary>
+		public static Dictionary<double, byte> armsCrossedRecord = new Dictionary<double, byte>();
+
         public static void testCompare(Skeleton sk)
         {
             double errorGap = 0.13; //Experimental value, by Florian BECHU, Summer 2016
@@ -61,26 +67,21 @@ namespace LecturerTrainer.Model.BodyAnalysis
             {
                 armsCrossedEvent(null, new InstantFeedback("Arms Crossed"));
                 feedArmsCrossed = true;
-                /*if (rec && eventfinished)
-                {
-                    if (!armscrossed.Contains((int)(Tools.getStopWatch() / 100 )))
-                    {
-                        Console.Out.WriteLine(" -- add armC");
-                        armscrossed.Add((int)(Tools.getStopWatch() / 100 ));
-                    }
-                    eventfinished = false;
-                }*/
+
                 if (rec)
                 {
                     if (!armscrossed.Contains((int)(Tools.getStopWatch() / 100)))
                     {
                         armscrossed.Add((int)(Tools.getStopWatch() / 100));
                     }
+					armsCrossedRecord.Add(Tools.getStopWatch() / 1000.0, 1);
                 }
             }
             else
             {
                 feedArmsCrossed = false;
+				if (rec) armsCrossedRecord.Add(Tools.getStopWatch() / 1000.0, 0);
+
                 eventfinished = true;
             }
 
