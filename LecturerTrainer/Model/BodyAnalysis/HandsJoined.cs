@@ -119,7 +119,7 @@ namespace LecturerTrainer.Model
                 }
                 if (rec)
                 {
-                    if (!handsjoinedCounter.Contains((int)(Tools.getStopWatch() / 100)) && !handsC)
+                    if (!handsjoinedCounter.Contains((int)(Tools.getStopWatch() / 100)) && !handsJoined)
                     {
                         handsjoinedCounter.Add((int)(Tools.getStopWatch() / 100));
                     }
