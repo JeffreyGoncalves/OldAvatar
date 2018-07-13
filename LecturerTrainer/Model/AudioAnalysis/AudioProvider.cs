@@ -202,10 +202,20 @@ namespace LecturerTrainer.Model.AudioAnalysis
         int nbSyllables = 0;
         int numberOfPeaks = 0;
 
+		/// <summary>
+		/// For recording the speedrate values over time. Each value is associated to a time.
+		/// </summary>
+		public static Dictionary<double, int> speechSpeedRecord = new Dictionary<double, int>();
+
         /// <summary>
         /// Intensity per frame
         /// </summary>
         List<float> intensityPF = new List<float>();
+
+		/// <summary>
+        /// True if we have to record the speed rate
+        /// </summary>
+        private static bool rec = false;
 
         #endregion
 
@@ -321,6 +331,21 @@ namespace LecturerTrainer.Model.AudioAnalysis
         public ObservableCollection<String> PossibleLanguage
         {
             get { return _PossibleLanguage; }
+        }
+
+		/// <summary>
+        /// Public attribute for rec.
+		/// </summary>
+        public static bool record
+        {
+            get
+            {
+                return rec;
+            }
+            set
+            {
+                rec = value;
+            }
         }
 
         #endregion
@@ -559,10 +584,16 @@ namespace LecturerTrainer.Model.AudioAnalysis
 
                         // make a feedback
                         counterTicTmp++;
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\Public\TestFolder\testTics.txt", true))
-                        {
-                            file.WriteLine("{0} detected, actual number of \" {0} \" : {1} ", tics.ElementAt(ind).Key, currentCount);
-                        }
+						try{
+							using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\Public\TestFolder\testTics.txt", true))
+							{
+								file.WriteLine("{0} detected, actual number of \" {0} \" : {1} ", tics.ElementAt(ind).Key, currentCount);
+							}
+						}
+						catch(Exception x){
+							System.Diagnostics.Debug.WriteLine(x.Message);
+							// TODO
+						}
                         ticEvent(null, new InstantFeedback("\" " + tics.ElementAt(ind).Key + " \" said " + currentCount + " time(s)"));
                     }
                 }
@@ -1132,7 +1163,11 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 timer.Stop();
                 return true;
             }
-            catch (Exception) { }
+            catch (Exception e)
+			{ 
+				// TODO
+				System.Diagnostics.Debug.WriteLine(e.Message);
+			}
             return false;
         }
         public bool startSpeechRateDetection()
@@ -1143,7 +1178,11 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 timer.Start();
                 return true;
             }
-            catch (Exception) { }
+            catch (Exception e)
+			{
+				// TODO
+				System.Diagnostics.Debug.WriteLine(e.Message);	
+			}
             return false;
         }
         private void speechRateCallback(object sender, WaveInEventArgs e)
@@ -1210,14 +1249,12 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// </summary>
         public void getSpeedRate()
         {
-            Console.Out.WriteLine("\nNumber of syllables in 1 second : " + nbSyllables + "\n");
 
-            /*using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\Public\TestFolder\Syllables_Per_Sec.txt", true))
-            {
-                file.WriteLine(this.nbSyllables);
-            }*/
+			if(rec)
+			{
+				speechSpeedRecord.Add(Tools.getStopWatch() / 1000.0, this.nbSyllables);
+			}
 
-            //Console.Out.WriteLine("Number of peaks in general in 1 second : " + numberOfPeaks + "\n");
             int level = 0;
             if (this.nbSyllables == 0)
             {

@@ -119,6 +119,11 @@ namespace LecturerTrainer.ViewModel
 
         private ReplayViewModel replayViewModel = null;
         public TrainingWithAvatarViewModel trainingWAVM = null;
+
+		/// <summary>
+		/// The path where the current recording will be stored
+		/// </summary>
+		private string currentPath;
         #endregion
 
         #region poolFieldsBindings
@@ -843,7 +848,8 @@ namespace LecturerTrainer.ViewModel
                     {
                         Directory.CreateDirectory(combine);
                     }
-                    storingFeedbackThreadData = new StoringFeedbackThreadData("feedback", SavingTools.nameFolder(combine, "SessionRecording"));
+					currentPath = SavingTools.nameFolder(combine, "SessionRecording");
+                    storingFeedbackThreadData = new StoringFeedbackThreadData("feedback", currentPath);
                 }
                 else
                 {
@@ -852,7 +858,8 @@ namespace LecturerTrainer.ViewModel
                     {
                         Directory.CreateDirectory(combine);
                     }
-                    storingFeedbackThreadData = new StoringFeedbackThreadData("feedback", SavingTools.nameFolder(combine, "FreeRecording"));
+					currentPath = SavingTools.nameFolder(combine, "FreeRecording");
+                    storingFeedbackThreadData = new StoringFeedbackThreadData("feedback", currentPath);
                 }
             }
             else
@@ -864,7 +871,8 @@ namespace LecturerTrainer.ViewModel
                 {
                     Directory.CreateDirectory(combine);
                 }
-                storingFeedbackThreadData = new StoringFeedbackThreadData("feedback", SavingTools.nameFolder(combine, "PublicRecord"));
+				currentPath = SavingTools.nameFolder(combine, "PublicRecord");
+                storingFeedbackThreadData = new StoringFeedbackThreadData("feedback", currentPath);
             }
 
             storingFeedbackThread = new Thread(storingFeedbackThreadData.threadProcess);
@@ -954,8 +962,6 @@ namespace LecturerTrainer.ViewModel
             if (_ToggleAudioRecording)
             {
                 MainWindow.main.audioProvider.stopRecording();
-                MainWindow.main.audioProvider.stopSpeechRateDetection();
-                //MainWindow.main.audioProvider.stopPeakDetection(); might be usefull to comment the above line as well 
             }
 				if (TrackingSideTool.Get().PeakDetectionCheckBox.IsChecked == true){
 					DrawingSheetAvatarViewModel.backgroundXMLVoiceRecordingEventStream -= backgroundVoiceXMLRecording;
@@ -1001,43 +1007,54 @@ namespace LecturerTrainer.ViewModel
             }
             ResViewMod.SaveGraph(SavingTools.pathFolder + '/');
 
-			//saveCSV();
+			saveCSVRecord();
         }
 
 		/// <summary>
-		/// Writes the feedback data in .csv file in order to draw charts with excel
+		/// Writes the feedback data in .csv file in order to draw charts with spreadsheet software such as Excel
 		/// </summary>
-		public void saveCSV()
+		public void saveCSVRecord() 
 		{
-			string path;
-			if (Main.session.sessionPath != null)
-			{
-				path = System.IO.Path.GetDirectoryName(Main.session.sessionPath);
-				path += (SessionRecordingViewModel.inRecord ? @"\SessionRecording\" : @"\FreeRecording\");
-			}
-			else
-				path = System.Environment.GetEnvironmentVariable("USERPROFILE")+@"\Documents\PublicRecord\";
 
-			path = System.IO.Directory.GetDirectories(path).Last();
-
-
-			using (System.IO.StreamWriter file = new System.IO.StreamWriter(path + @"\Record_Data.csv", true))
+			using (System.IO.StreamWriter file = new System.IO.StreamWriter(currentPath + @"\HandsJoined_Data.csv", true))
 			{	
-				file.Write("Hands Joined,");
-				foreach(int value in HandsJoined.handsjoined)
-					file.Write(value+", ");
-				file.WriteLine();
-
-				file.Write("Arms Crossed,");
-				foreach(int value in ArmsCrossed.armscrossed)
-					file.Write(value+", ");
-				file.WriteLine();
-
-				file.Write("Agitation,");
-				foreach(int value in Agitation.agitNotAgit[JointType.HandLeft]) // might bea good idea to change the way agitation is recorded in Agitation.cs
-					file.Write(value+", ");
-				file.WriteLine();
+				file.WriteLine("Hands Joined,");
+				foreach(KeyValuePair<double, byte> pair in HandsJoined.handsJoinedRecord)
+					file.WriteLine(pair.Key+", "+pair.Value);
 			}
+			HandsJoined.handsJoinedRecord = new Dictionary<double, byte>();
+
+			using (System.IO.StreamWriter file = new System.IO.StreamWriter(currentPath + @"\ArmsCrossed_Data.csv", true))
+			{
+				file.WriteLine("Arms Crossed,");
+				foreach(KeyValuePair<double, byte> pair in ArmsCrossed.armsCrossedRecord)
+					file.WriteLine(pair.Key+", "+pair.Value);
+			}
+			ArmsCrossed.armsCrossedRecord = new Dictionary<double, byte>();
+
+			using (System.IO.StreamWriter file = new System.IO.StreamWriter(currentPath + @"\Agitation_Data.csv", true))
+			{
+				file.WriteLine("Agitation,");
+				foreach(KeyValuePair<double, byte> pair in Agitation.agitationRecord)
+					file.WriteLine(pair.Key+", "+pair.Value);
+			}
+			Agitation.agitationRecord = new Dictionary<double, byte>();
+			
+			if (AudioProvider.speechSpeedRecord.Count > 0)
+			{
+				System.Diagnostics.Debug.WriteLine("if");
+				using (System.IO.StreamWriter file = new System.IO.StreamWriter(currentPath + @"\SpeechSpeed_Data.csv", true))
+				{
+					System.Diagnostics.Debug.WriteLine("file, ssize = "+ AudioProvider.speechSpeedRecord.Count);
+					file.Write("Speech Speed,");
+					foreach(KeyValuePair<double, int> pair in AudioProvider.speechSpeedRecord)
+					{
+						System.Diagnostics.Debug.WriteLine(pair.Key+" - "+pair.Value);
+						file.WriteLine(pair.Key+", "+pair.Value);
+					}
+				}
+			}
+			AudioProvider.speechSpeedRecord = new Dictionary<double, int>();
 		}
 
         #endregion
@@ -1101,6 +1118,7 @@ namespace LecturerTrainer.ViewModel
             Agitation.record = true;
             HandsJoined.record = true;
             ArmsCrossed.record = true;
+			AudioProvider.record = true;
             if (TrackingSideToolViewModel.get().FaceTracking)
             {
                 lookingDirection.record = true;
@@ -1131,6 +1149,7 @@ namespace LecturerTrainer.ViewModel
             Agitation.record = false;
             HandsJoined.record = false;
             ArmsCrossed.record = false;
+			AudioProvider.record = false;
 
             //stop the video recording by closing each file 
             if (TrackingSideToolViewModel.get().FaceTracking)
