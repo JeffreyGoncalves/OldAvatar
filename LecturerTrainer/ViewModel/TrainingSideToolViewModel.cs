@@ -1001,7 +1001,7 @@ namespace LecturerTrainer.ViewModel
             }
             ResViewMod.SaveGraph(SavingTools.pathFolder + '/');
 
-			saveCSV();
+			//saveCSV();
         }
 
 		/// <summary>

@@ -45,10 +45,6 @@ namespace LecturerTrainer.ViewModel
         private bool audioSource = false;
         // Indicates if the sound will be played or not
         private bool mute = true;
-        // Indicates if the video is stopped
-        private bool stopped = true;
-        // Indicates if the video is paused
-        private bool paused = true;
         // Indicates if the video is played
         public static bool played = false;
         // Indicates if the statistics source is detected
@@ -358,12 +354,6 @@ namespace LecturerTrainer.ViewModel
         /// <param name="evt"></param>
         public void nextFeedbackList(object sender, EventArgs evt)
         {
-            /*currentListNumber ++;
-            if(currentListNumber != listlistString.Count)
-            {
-                currentFeedbackList = listlistString.ElementAt(currentListNumber);
-            }*/
-            //currentListNumber ++;
             if(ReplayAvatar.CurrentSkeletonNumber < listlistString.Count)
             {
                 currentFeedbackList = listlistString.ElementAt(ReplayAvatar.CurrentSkeletonNumber);
@@ -655,7 +645,6 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void videoStreamDisplay()
         {
-            //pauseButtonCommand();
             if (filePathVideoStream != null)
             {
                 TimeSpan tempV = DrawingSheetView.Get().ReplayVideo.Position;
@@ -697,8 +686,6 @@ namespace LecturerTrainer.ViewModel
         public void Play()
         {
             played = true;
-            stopped = false;
-            paused = false;
 
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {
@@ -722,9 +709,7 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void Pause()
         {
-            paused = true;
             played = false;
-            stopped = false;
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {
                 //Console.Out.WriteLine(" -PAU- " + Tools.getStopWatch() + " -PAU- ");
@@ -752,8 +737,6 @@ namespace LecturerTrainer.ViewModel
         public void Stop()
         {
             timeRecord = 0;
-            stopped = true;
-            paused = false;
             played = false;
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {

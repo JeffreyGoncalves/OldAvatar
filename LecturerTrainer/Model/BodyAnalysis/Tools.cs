@@ -24,9 +24,6 @@ namespace LecturerTrainer.Model
     public class Tools
     {
         #region fields
-        //Add by Florian BECHU: Summer 2016
-        private static DispatcherTimer dispatcherTimer;
-        private static Int64 time;
         /// <summary>
         /// used for the charts. It is 1/10 of the total time of the record.
         /// </summary>

@@ -172,7 +172,7 @@ namespace LecturerTrainer.Model
                 {
                     sensor.Start();
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     sensor = null;
                     //System.Console.WriteLine("IOException " + e);

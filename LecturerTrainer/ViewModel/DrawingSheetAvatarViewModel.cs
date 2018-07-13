@@ -330,7 +330,6 @@ namespace LecturerTrainer.Model
         /// </summary>
         public bool isTraining = false;
         public bool mentor = false;
-        private static bool first = true;
 
         public struct FaceModelTriangle
         {
@@ -1552,9 +1551,9 @@ namespace LecturerTrainer.Model
                 GL.Vertex3(x - w, y - h, 0);
                 GL.End();
             }
-            catch(Exception e)
+            catch(Exception )
             {
-
+                throw;
             }
         }
 
@@ -2756,7 +2755,7 @@ namespace LecturerTrainer.Model
             GL.Disable(EnableCap.CullFace);
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
         }
 
