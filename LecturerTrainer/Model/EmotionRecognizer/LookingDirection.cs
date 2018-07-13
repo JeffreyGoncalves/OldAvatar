@@ -87,6 +87,13 @@ namespace LecturerTrainer.Model.EmotionRecognizer
         public static Dictionary<String,int > dicDirect = null;
 
 
+        private static List<int> lookCenter;
+        private static List<int> lookLeft;
+        private static List<int> lookRight;
+        private static List<int> lookExtrLeft;
+        private static List<int> lookExtrRight;
+
+
         /// <summary>
         /// True if we have to record the movment of the eyes
         /// </summary>
@@ -106,12 +113,17 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                 rec = value;
                 if (rec)
                 {
-                    dicDirect = new Dictionary<String, int>();
+                    lookCenter = new List<int>();
+                    lookLeft = new List<int>();
+                    lookRight = new List<int>();
+                    lookExtrLeft = new List<int>();
+                    lookExtrRight = new List<int>();
+                    /*dicDirect = new Dictionary<String, int>();
                     dicDirect.Add("Extrem Left", 0);
                     dicDirect.Add("Left", 0);
                     dicDirect.Add("Center", 0);
                     dicDirect.Add("Right", 0);
-                    dicDirect.Add("Extrem Right", 0);
+                    dicDirect.Add("Extrem Right", 0);*/
                 }
             }
         }
@@ -139,16 +151,20 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the center area
                         if (rightEye.Z - leftEye.Z >= -0.015 && rightEye.Z - leftEye.Z <= 0.015)
                         {
+                            Console.Out.WriteLine("CCCCCCCCCCCCCCCCCCCC");
+                            if (rec)
+                            {
+                                if (!lookCenter.Contains((int)(Tools.getStopWatch() / 100)))
+                                {
+                                    lookCenter.Add((int)(Tools.getStopWatch() / 100));
+                                }
+                            }
                             /*If he just entered the zone (!centre) 
                              * and he is not just passing by to go to another area (countC > 4)*/
                             if (!centre && countC > 4)
                             {
                                 addHistorical(CENTER); //Adding the center area to the historical
                                 boolManagement(CENTER); // Indicate that the user is looking at the center and reseting all counter
-                                if (rec)
-                                {
-                                    dicDirect["Center"] += 1; //If we are recording, we had +1 in the dictionary use for the statistics
-                                }
                             }
                             countC++; //Counter to know howlong the user is looking at the same view area
                         }
@@ -156,56 +172,70 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the right area
                         else if (rightEye.Z - leftEye.Z >= -0.057 && rightEye.Z - leftEye.Z < -0.015)
                         {
+                            Console.Out.WriteLine("RRRRRRRRRRRRRRRRRR");
+                            if (rec)
+                            {
+                                if (!lookRight.Contains((int)(Tools.getStopWatch() / 100)))
+                                {
+                                    lookRight.Add((int)(Tools.getStopWatch() / 100));
+                                }
+                            }
                             if (!right)
                             {
                                 addHistorical(RIGHT);
                                 boolManagement(RIGHT);
-                                if (rec)
-                                {
-                                    dicDirect["Right"] += 1;
-                                }
                             }
                             countR++;
                         }
                         //Test if the user is looking at the extrem right area
                         else if (rightEye.Z - leftEye.Z < -0.057)
                         {
+                            if (rec)
+                            {
+                                if (!lookExtrRight.Contains((int)(Tools.getStopWatch() / 100)))
+                                {
+                                    lookExtrRight.Add((int)(Tools.getStopWatch() / 100));
+                                }
+                            }
                             if (!extremRight)
                             {
                                 addHistorical(RIGHT);
                                 boolManagement(EXTRIGHT);
-                                if (rec)
-                                {
-                                    dicDirect["Extrem Right"] += 1;
-                                }
                             }
                             countER++;
                         }
                         //Test if the user is looking at the left area
                         else if (rightEye.Z - leftEye.Z > 0.015 && rightEye.Z - leftEye.Z <= 0.057)
                         {
+                            Console.Out.WriteLine("LLLLLLLLLLLLLLLLL");
+                            if (rec)
+                            {
+                                if (!lookLeft.Contains((int)(Tools.getStopWatch() / 100)))
+                                {
+                                    lookLeft.Add((int)(Tools.getStopWatch() / 100));
+                                }
+                            }
                             if (!left)
                             {
                                 addHistorical(LEFT);
                                 boolManagement(LEFT);
-                                if (rec)
-                                {
-                                    dicDirect["Left"] += 1;
-                                }
                             }
                             countL++;
                         }
                         //Test if the user is looking at the extrem left area
                         else if (rightEye.Z - leftEye.Z > 0.057)
                         {
+                            if (rec)
+                            {
+                                if (!lookExtrLeft.Contains((int)(Tools.getStopWatch() / 100)))
+                                {
+                                    lookExtrLeft.Add((int)(Tools.getStopWatch() / 100));
+                                }
+                            }
                             if (!extremLeft)
                             {
                                 addHistorical(LEFT);
                                 boolManagement(EXTLEFT);
-                                if (rec)
-                                {
-                                    dicDirect["Extrem Left"] += 1;
-                                }
                             }
                             countEL++;
                         }
@@ -409,50 +439,25 @@ namespace LecturerTrainer.Model.EmotionRecognizer
             }
         }
 
-        /// <summary>
-        /// Function to obtain the number of each looking direction
-        /// </summary>
-        /// <returns>The graph</returns>
-        public static T getStatistics<T>(T chart) where T : IGraph
+        public static List<IGraph> getLookingStatistics()
         {
-            chart.title = "Looking Direction";
-            PieSeries s1 = new PieSeries
-            {
-                Title = "Extrem Right",
-                Values = new ChartValues<double> { dicDirect["Extrem Right"] },
-                LabelPoint = chartPoint => string.Format("({1:P})", chartPoint.Participation)
-            };
-            PieSeries s2 = new PieSeries
-            {
-                Title = "Right",
-                Values = new ChartValues<double> { dicDirect["Right"] },
-                LabelPoint = chartPoint => string.Format("({1:P})", chartPoint.Participation)
-            };
-            PieSeries s3 = new PieSeries
-            {
-                Title = "Center",
-                Values = new ChartValues<double> { dicDirect["Center"] },
-                LabelPoint = chartPoint => string.Format("({1:P})", chartPoint.Participation)
-            };
-            PieSeries s4 = new PieSeries
-            {
-                Title = "Left",
-                Values = new ChartValues<double> { dicDirect["Left"] },
-                LabelPoint = chartPoint => string.Format("({1:P})", chartPoint.Participation)
-            };
-            PieSeries s5 = new PieSeries
-            {
-                Title = "Extrem Left",
-                Values = new ChartValues<double> { dicDirect["Extrem Left"] },
-                LabelPoint = chartPoint => string.Format("({1:P})", chartPoint.Participation)
-            };
-            chart.listSeries.Add(s1);
-            chart.listSeries.Add(s2);
-            chart.listSeries.Add(s3);
-            chart.listSeries.Add(s4);
-            chart.listSeries.Add(s5);
-
-            return chart;
+            List<IGraph> list = new List<IGraph>();
+            CartesianGraph graph = new CartesianGraph();
+            graph.title = "Looking direction";
+            graph.subTitle = "Time unit: " + Tools.ChooseTheCorrectUnitTime();
+            graph.XTitle = "Time";
+            graph.YTitle = "Value";
+            // we must execute all the methods before to add all the charts
+            bool xll = Tools.addSeriesToCharts(graph, new LineSeries(), "Extreme left look", lookExtrLeft, "Total extreme left look: ", false);
+            bool ll = Tools.addSeriesToCharts(graph, new LineSeries(), "Left look", lookLeft, "Total left look: ", false);
+            bool cl = Tools.addSeriesToCharts(graph, new LineSeries(), "Central look", lookCenter, "Total central look: ", false);
+            bool rl = Tools.addSeriesToCharts(graph, new LineSeries(), "right look", lookRight, "Total right look: ", false);
+            bool xrl = Tools.addSeriesToCharts(graph, new LineSeries(), "Extreme right look", lookExtrRight, "Total extreme right look: ", false);
+            if ( xll || ll || cl || rl || xrl)
+                list.Add(graph);
+            else
+                list.Add(Tools.createEmptyGraph("No looking direction"));
+            return list;
         }
     }
 }

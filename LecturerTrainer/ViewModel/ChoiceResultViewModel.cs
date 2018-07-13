@@ -169,12 +169,16 @@ namespace LecturerTrainer.ViewModel
                     ((ResultsViewModel)results.DataContext).getArmsMotion(temp); //temp is a union between HandsJoined.getHandStatistics() and ArmsCrossed.getArmsStatistics()
                     if (TrackingSideToolViewModel.get().FaceTracking)
                     {
-                        ((ResultsViewModel)results.DataContext).getFaceStatistics(TrackingSideToolViewModel.get().emo ?EmotionRecognition.getStatistics(new PieGraph()) :null, lookingDirection.detect?lookingDirection.getStatistics(new PieGraph()):null);
+                        List<IGraph> listGraphFace = new List<IGraph>();
+                        listGraphFace.AddRange(EmotionRecognition.getEmotionsStatistics());
+                        listGraphFace.AddRange(lookingDirection.getLookingStatistics());
+
+                        ((ResultsViewModel)results.DataContext).getFaceStatistics(listGraphFace);
                     }
                     if (TrackingSideToolViewModel.get().SpeedRate)
                         ((ResultsViewModel)results.DataContext).getVoiceStatistics(AudioProvider.getVoicetatistics());
                 }
-            ((ResultsViewModel)results.DataContext).addResultsPartToView();
+                ((ResultsViewModel)results.DataContext).addResultsPartToView();
                 results.Show();
             }
         }
@@ -338,89 +342,90 @@ namespace LecturerTrainer.ViewModel
                 choiceResultView.buttonOK.IsEnabled = false;
             }
             bool agit=false,armsmot = false, face=false,audio=false;
-            foreach (string word in list) // we verify if there is at least one chart for the data in the files
+            // it checks in the "charts.xml" file the kinf of charts that it can display
+            foreach (string word in list)
             {
-                if (!word.ToLower().Contains("caught"))
+                if (word.ToLower().Contains("hips"))
                 {
-                    if (word.ToLower().Contains("hips"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationHips.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("hands"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationLHand.IsEnabled = true;
-                        choiceResultView.chkAgitationRHand.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("right hand"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationRHand.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("left hand"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationLHand.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("knees"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationLKnee.IsEnabled = true;
-                        choiceResultView.chkAgitationRKnee.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("right knee"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationRKnee.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("left knee"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationLKnee.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("shoulders"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationLShoulder.IsEnabled = true;
-                        choiceResultView.chkAgitationRShoulder.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("right shoulder"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationRShoulder.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("left shoulder"))
-                    {
-                        agit = true;
-                        choiceResultView.chkAgitationLShoulder.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("arms") && word.ToLower().Contains("crossed"))
-                    {
-                        armsmot = true;
-                        choiceResultView.chkArmsCrossed.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("hand") && word.ToLower().Contains("joined"))
-                    {
-                        armsmot = true;
-                        choiceResultView.chkHandsJoined.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("emotion"))
-                    {
-                        face = true;
-                        choiceResultView.chkEmotion.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("look"))
-                    {
-                        face = true;
-                        choiceResultView.chkLookDirec.IsEnabled = true;
-                    }
-                    else if (word.ToLower().Contains("speech") && word.ToLower().Contains("rate"))
-                    {
-                        audio = true;
-                        choiceResultView.chkWpm.IsEnabled = true;
-                    }
+                    agit = true;
+                    choiceResultView.chkAgitationHips.IsEnabled = true;
                 }
+                else if (word.ToLower().Contains("knees"))
+                {
+                    agit = true;
+                    choiceResultView.chkAgitationLKnee.IsEnabled = true;
+                    choiceResultView.chkAgitationRKnee.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("right knee"))
+                {
+                    agit = true;
+                    choiceResultView.chkAgitationRKnee.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("left knee"))
+                {
+                    agit = true;
+                    choiceResultView.chkAgitationLKnee.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("shoulders"))
+                {
+                    agit = true;
+                    choiceResultView.chkAgitationLShoulder.IsEnabled = true;
+                    choiceResultView.chkAgitationRShoulder.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("right shoulder"))
+                {
+                    agit = true;
+                    choiceResultView.chkAgitationRShoulder.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("left shoulder"))
+                {
+                    agit = true;
+                    choiceResultView.chkAgitationLShoulder.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("arms") && word.ToLower().Contains("crossed"))
+                {
+                    armsmot = true;
+                    choiceResultView.chkArmsCrossed.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("hands were not joined") || word.ToLower().Contains("hands joined counter")
+                    || word.ToLower().Contains("hands joined duration"))
+                {
+                    armsmot = true;
+                    choiceResultView.chkHandsJoined.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("hands"))
+                {
+                    agit = true;
+                    choiceResultView.chkAgitationLHand.IsEnabled = true;
+                    choiceResultView.chkAgitationRHand.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("right hand"))
+                {
+                    agit = true;
+                    choiceResultView.chkAgitationRHand.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("left hand"))
+                {
+                    agit = true;
+                    choiceResultView.chkAgitationLHand.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("emotions") || word.ToLower().Contains("faces"))
+                {
+                    face = true;
+                    choiceResultView.chkEmotion.IsEnabled = true;
+                }
+                else if (word.ToLower().Contains("look"))
+                {
+                    face = true;
+                    choiceResultView.chkLookDirec.IsEnabled = true;
+                }
+                // TODO
+                else if (word.ToLower().Contains("speech") && word.ToLower().Contains("rate"))
+                {
+                    audio = true;
+                    choiceResultView.chkWpm.IsEnabled = true;
+                }
+                
             }
 
             if(agit)

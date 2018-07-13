@@ -29,8 +29,11 @@
 		<sys:Double x:Key="ButtonsSeparatorHeight">1</sys:Double>
 		<sys:Double x:Key="ButtonsSeparatorWidth">210</sys:Double>
 		<Color x:Key="GeneralBorderColor">#FF5C5C5E</Color>
-        <Color x:Key="ColorGraph1">#FF2847DF</Color>
-        <Color x:Key="ColorGraph2">#FF4DC129</Color>
+        <Color x:Key="ColorGraph1">#FFDA70D6</Color> <!-- Orchid-->
+        <Color x:Key="ColorGraph2">#FF6495ED</Color> <!-- Cornflowerblue-->
+        <Color x:Key="ColorGraph3">#FF2E8B57</Color> <!-- Seegreen-->
+        <Color x:Key="ColorGraph4">#FFFFD700</Color> <!-- Goldenrod-->
+        <Color x:Key="ColorGraph5">#FFFA8072</Color> <!-- Salmon-->
         <Color x:Key="FeedbackStreamColor">#FF808080</Color>
 
 

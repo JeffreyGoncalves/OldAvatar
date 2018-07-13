@@ -28,8 +28,18 @@ namespace LecturerTrainer.Model.EmotionRecognizer
         public static int count = 30;
         public static bool faceDetected = false;
 
-        public static Dictionary<String, double> dicEmotion = null;
 
+        /// <summary>
+        /// List of time when the user does a surprised face if facetracking is activated
+        /// </summary>
+        private static List<int> surprisedFace;
+
+        /// <summary>
+        /// List of time when the user does a happy face if facetracking is activated
+        /// </summary>
+        private static List<int> happyFace;
+      
+        
         /// <summary>
         /// True if we have to record the emotions
         /// </summary>
@@ -49,7 +59,8 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                 rec = value;
                 if (rec)
                 {
-                    dicEmotion = new Dictionary<string, double>();
+                    surprisedFace = new List<int>();
+                    happyFace = new List<int>();
                 }
             }
         }
@@ -83,15 +94,18 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                     }
                     */
                     //happy
-                    //if (lipSide2 >= bound2up && browLow3 > bound3down && lipDown4 < bound4down) //Xavier's values
                     if (lipSide2 >= 0.12 && lipDown4 < -0.12) //Fiona's values
                     {
                         emoEvent(null, new LongFeedback("Happy", true));
-                        if(rec)
-                            recordEmotion();
+                        if (rec)
+                        {
+                            if (!happyFace.Contains((int)(Tools.getStopWatch() / 100)))
+                            {
+                                happyFace.Add((int)(Tools.getStopWatch() / 100));
+                            }
+                        }
                         happy = true;
                         surprised = false;
-                        neutral = false;
                     }
                     //sad
                     /* else if (lipSide2 > bound2down && browLow3 >= bound3up && lipDown4 >= bound4up)
@@ -104,10 +118,14 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                     {
                         emoEvent(null, new LongFeedback("Surprised", true));
                         if (rec)
-                            recordEmotion();
+                        {
+                            if (!surprisedFace.Contains((int)(Tools.getStopWatch() / 100)))
+                            {
+                                surprisedFace.Add((int)(Tools.getStopWatch() / 100));
+                            }
+                        }
                         surprised = true;
                         happy = false;
-                        neutral = false;
                     }
                     //frightened
                     /* else if (jawLow1 >= bound1 && browLow3 <= bound3down && browHigh5 >= bound5up)
@@ -129,11 +147,8 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                     else
                     {
                         emoEvent(null, new LongFeedback("Neutral", true));
-                        if (rec)
-                            recordEmotion();
                         happy = false;
                         surprised = false;
-                        neutral = true;
                     }
                 }
                 catch (NullReferenceException) { faceDetected = false; }
@@ -142,71 +157,26 @@ namespace LecturerTrainer.Model.EmotionRecognizer
         }
 
         /// <summary>
-        /// Method that allows to record the emotion in the dictionnary
-        /// </summary>
-        public static void recordEmotion()
-        {
-            if(neutral)
-            {
-                if(dicEmotion.ContainsKey("Neutral"))
-                {
-                    dicEmotion["Neutral"] +=1;
-                }
-                else
-                {
-                    dicEmotion.Add("Neutral",1);
-                }
-                
-                
-            }
-            else if(happy)
-            {
-
-                if (dicEmotion.ContainsKey("Happy"))
-                {
-                    dicEmotion["Happy"] += 1;
-                }
-                else
-                {
-                    dicEmotion.Add("Happy", 1);
-                }
-            }
-            else if(surprised)
-            {
-
-                if (dicEmotion.ContainsKey("Suprised"))
-                {
-                    dicEmotion["Suprised"] += 1;
-
-                }
-                else
-                {
-                    dicEmotion.Add("Suprised", 1);
-                }
-            }
-        }
-
-        /// <summary>
-        /// function to obtain the proportion of each emotion
+        /// method that returns an empty graph if ther is just neutral faces or the charts of the surprised/happy faces
         /// </summary>
         /// <returns>the graph</returns>
-        /// <remarks>Author: Florian BECHU: Summer 2016</remarks>
-        public static T getStatistics<T>(T graph) where T : IGraph
+        /// <remarks>Author: Alban Descottes 2018</remarks>
+        public static List<IGraph> getEmotionsStatistics()
         {
+            List<IGraph> list = new List<IGraph>();
+            CartesianGraph graph = new CartesianGraph();
             graph.title = "Recognition of emotions";
-
-            foreach (KeyValuePair<string, double> entry in dicEmotion)
-            {
-                PieSeries s1 = new PieSeries
-                {
-                    Title = entry.Key,
-                    Values = new ChartValues<double> { entry.Value },
-                    LabelPoint = chartPoint => string.Format("({0:P})", chartPoint.Participation)
-                };
-                graph.listSeries.Add(s1);
-            }
-
-            return graph;
+            graph.subTitle = "Time unit: " + Tools.ChooseTheCorrectUnitTime();
+            graph.XTitle = "Time";
+            graph.YTitle = "Value";
+            // if there is just one of the both emotions (surprised or happy) during the record, it adds the charts
+            bool hf = Tools.addSeriesToCharts(graph, new ColumnSeries(), "Happy Face", happyFace, "Total happy faces: ", false);
+            bool sf = Tools.addSeriesToCharts(graph, new ColumnSeries(), "Surprised Face", surprisedFace, "Total surprised faces: ", false);
+            if ( hf || sf)
+                list.Add(graph);
+            else
+                list.Add(Tools.createEmptyGraph("Just neutral faces"));
+            return list;
         }
 
     }

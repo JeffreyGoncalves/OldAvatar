@@ -79,12 +79,6 @@ namespace LecturerTrainer.ViewModel
         }
         #endregion
 
-        #region static attributs
-        /// <summary>
-        /// Singleton patern : the single instance of the class 
-        /// </summary>
-        private static ResultsViewModel instance = null;
-        #endregion
 
         #region constructor and accessor
         /// <summary>
@@ -106,20 +100,17 @@ namespace LecturerTrainer.ViewModel
 
             Chart.Colors = new List<Color>
             {
-                (Color)Application.Current.Resources["ColorGraph1"],(Color)Application.Current.Resources["ColorGraph2"]
+                (Color)Application.Current.Resources["ColorGraph1"],
+                (Color)Application.Current.Resources["ColorGraph2"],
+                (Color)Application.Current.Resources["ColorGraph3"],
+                (Color)Application.Current.Resources["ColorGraph4"],
+                (Color)Application.Current.Resources["ColorGraph5"]
             };
         }
 
-        /// <summary>
-        /// Singleton Pattern
-        /// </summary>
         public static ResultsViewModel Get()
         {
-            if (instance == null)
-            {
-                instance = new ResultsViewModel();
-            }
-            return instance;
+            return new ResultsViewModel();
         }
 
         #endregion
@@ -139,10 +130,6 @@ namespace LecturerTrainer.ViewModel
             ValueCheckBoxChoice[value] = enable;
         }
 
-        /// <summary>
-        /// Add charts of the list passed as parameters to the Agitation part
-        /// </summary>
-        /// <param name="listAgit"></param>
         public void getAgitationStatistics(List<IGraph> listAgit)
         {
             bool hands = false, shoulder = false, knee = false;
@@ -227,6 +214,7 @@ namespace LecturerTrainer.ViewModel
             ObservableCollection<IGraph> ItemsEmpty = new ObservableCollection<IGraph>();
             foreach (IGraph chart in grArmsMot)
             {
+
                 if ((chart.title.ToLower().Contains("hand") && getValueCheckBoxChoice(ValueCbx.HandsJoined)) ||
                     (chart.title.ToLower().Contains("arms") && getValueCheckBoxChoice(ValueCbx.ArmsCrossed)))
                 {
@@ -254,41 +242,28 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// Add charts of the list passed as parametes to the Face Statistics
         /// </summary>
-        public void getFaceStatistics(IGraph grEmotion, IGraph grLookDirec)
+        /// <remarks> Modified Alban Descottes 2018</remarks>
+        public void getFaceStatistics(List<IGraph> grFace)
         {
-
             ObservableCollection<IGraph> ItemsEmpty = new ObservableCollection<IGraph>();
             // If face emotions is checked
-            if (getValueCheckBoxChoice(ValueCbx.Emotions))
+            foreach (IGraph chart in grFace)
             {
-                if (grEmotion.GetType() == typeof(GraphEmpty))
+                // "emotions" and "faces" are for the emotion recognition
+                // "looking" is for the look direction 
+                if (((chart.title.ToLower().Contains("emotions") || chart.title.ToLower().Contains("faces")) && getValueCheckBoxChoice(ValueCbx.Emotions)) ||
+                    (chart.title.ToLower().Contains("looking") && getValueCheckBoxChoice(ValueCbx.LookDir)))
                 {
-                    GraphEmpty grEmpty = new GraphEmpty();
-                    grEmpty.title = "No emotions was detected";
-                    ItemsEmpty.Add(grEmpty);
-                }
-                else
-                {
-                    RpFace.Items.Add(grEmotion);
+                    if (chart.GetType() == typeof(GraphEmpty))
+                        ItemsEmpty.Add(chart);
+                    else
+                        RpFace.Items.Add(chart);
                 }
             }
-            // If looking direction is check
-            if (getValueCheckBoxChoice(ValueCbx.LookDir))
-            {
-                //if (grLookDirec.GetType() == typeof(GraphEmpty))
-                //{
-                GraphEmpty grEmpty = new GraphEmpty();
-                grEmpty.title = "No looking direction was detected";
-                ItemsEmpty.Add(grEmpty);
-                //}
-                //else
-                //{
-                //    RpFace.Items.Add(grEmotion);
-                //}
-            }
-
             foreach (IGraph graph in ItemsEmpty)
+            {
                 RpFace.Items.Add(graph);
+            }
         }
 
         /// <summary>
@@ -314,6 +289,18 @@ namespace LecturerTrainer.ViewModel
                 RpVoice.Items.Add(g);
         }
         #endregion
+
+        /// <summary>
+        /// reset all the lists, called when it records a new performance 
+        /// </summary>
+        public void resetListCharts()
+        {
+            RpAgitation.Items.Clear();
+            RpArmsMotion.Items.Clear();
+            RpFace.Items.Clear();
+            RpVoice.Items.Clear(); 
+        }
+
 
         /// <summary>
         /// Allow to add ResultsParts to the window
@@ -350,19 +337,20 @@ namespace LecturerTrainer.ViewModel
                 WriteFileStream.Close();
                 i++;
             }
-            RpAgitation.Items.Clear();
 
             foreach (IGraph graph in RpArmsMotion.Items)
             {
-                graph.copySeriesChartTolSeries();
-                XmlSerializer SerializerObj = new XmlSerializer(graph.GetType());
-                TextWriter WriteFileStream = new StreamWriter(path + "chart" + i + ".xml", true);
-                WriteFileStream.WriteLine("ArmsMotion");
-                SerializerObj.Serialize(WriteFileStream, graph);
-                WriteFileStream.Close();
-                i++;
+                if (graph != null)
+                {
+                    graph.copySeriesChartTolSeries();
+                    XmlSerializer SerializerObj = new XmlSerializer(graph.GetType());
+                    TextWriter WriteFileStream = new StreamWriter(path + "chart" + i + ".xml", true);
+                    WriteFileStream.WriteLine("ArmsMotion");
+                    SerializerObj.Serialize(WriteFileStream, graph);
+                    WriteFileStream.Close();
+                    i++;
+                }
             }
-            RpArmsMotion.Items.Clear();
 
             foreach (IGraph graph in RpFace.Items)
             {
@@ -378,7 +366,6 @@ namespace LecturerTrainer.ViewModel
                     i++;
                 }
             }
-            RpFace.Items.Clear();
 
             foreach (IGraph graph in RpVoice.Items)
             {
@@ -391,7 +378,8 @@ namespace LecturerTrainer.ViewModel
                 WriteFileStream.Close();
                 i++;
             }
-            RpVoice.Items.Clear();
+
+            resetListCharts();
 
             /**All files will be put together into a global file**/
             TextWriter WriteFileStream2 = new StreamWriter(path + "charts.xml", true);
@@ -599,14 +587,13 @@ namespace LecturerTrainer.ViewModel
 
             if (listChart[2] != null && listChart[2].Count > 0)
             {
-                //getFaceStatistics(listChart[2][0], listChart[2][1]);
+                getFaceStatistics(listChart[2]);
             }
 
             if (listChart[3] != null && listChart[3].Count > 0)
             {
                 getVoiceStatistics(listChart[3]);
             }
-
         }
 
         /// <summary>

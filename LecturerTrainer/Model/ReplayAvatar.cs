@@ -59,6 +59,8 @@ namespace LecturerTrainer.Model
 
         public static bool realTime = true;
 
+        private bool isFaceTracked = KinectDevice.faceTracking;
+
         public static int offset = 0;
 
         /// <summary>
@@ -154,7 +156,7 @@ namespace LecturerTrainer.Model
 				// draw the first avatar
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
                 DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
-                
+
 				// init of the DispatcherTimer that is used for the replay
                 Tools.initStopWatch();
                 timeToUpdate = new DispatcherTimer();
@@ -165,13 +167,15 @@ namespace LecturerTrainer.Model
                 timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
                 timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
                 timeToUpdate.Tick += changeSlider;
+                if (TrackingSideToolViewModel.get().FaceTracking)
+                    KinectDevice.faceTracking = false;
             }catch (XmlLoadingException)
             {
                 throw;
             }
         }
         /// <summary>
-        /// Constructor for skeleton scrolling without face elements
+        /// Constructor for skeleton scrolling without face and sound files
         /// </summary>
         /// <param name="skDir"></param>
         /// <param name="rvm"></param>
@@ -180,6 +184,11 @@ namespace LecturerTrainer.Model
 
         #region replay methods
 
+        /// <summary>
+        /// method called in the dispatcherTimer of ReplayAvatar
+        /// at each tick the slider value is changed
+        /// </summary>
+        /// <author> Alban Descottes 2018</author>
         private void changeSlider(object sender, EventArgs evt)
         {
             if (realTime)
@@ -210,9 +219,9 @@ namespace LecturerTrainer.Model
                 if (face)
                 {
                     DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
-                    DrawingSheetAvatarViewModel.Get().drawFace(skeletonsList[(int)currentSkeletonNumber].Item3.depthPointsList,
-                        skeletonsList[(int)currentSkeletonNumber].Item3.colorPointsList,
-                        skeletonsList[(int)currentSkeletonNumber].Item3.faceTriangles);
+                    DrawingSheetAvatarViewModel.Get().drawFace(skeletonsList[currentSkeletonNumber].Item3.depthPointsList,
+                        skeletonsList[currentSkeletonNumber].Item3.colorPointsList,
+                        skeletonsList[currentSkeletonNumber].Item3.faceTriangles);
                 }
                 // We only draw the last skeleton
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
@@ -268,7 +277,7 @@ namespace LecturerTrainer.Model
         {
             Tools.stopStopWatch();
             timeToUpdate.Stop();
-			wiggleIndex = 0;
+            wiggleIndex = 0;
             currentSkeletonNumber = 0;
             currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
             DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;

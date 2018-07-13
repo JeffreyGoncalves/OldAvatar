@@ -79,6 +79,8 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+        private bool faceTrack = KinectDevice.faceTracking;
+
         /// <summary>
         /// Time elapsed in the video, textual version
         /// </summary>
@@ -417,19 +419,9 @@ namespace LecturerTrainer.ViewModel
 						if (!File.Exists(voiceData)) voiceData = "";
                         faceData = filePath.Replace("avatarSkeletonData.skd", "faceData.xml");
 						if (!File.Exists(faceData)) faceData = "";
-                        /*if(File.Exists(faceData) && File.Exists(voiceData))
-                        {
-                            skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, this, 0);
-                            tryAddOtherSources("avatarSkeletonData.skd");
-                            isReplaying = true;
-                        }
-						else if(File.Exists(faceData) && File.Exists(voiceData)) 
-                        else
-                        {*/
 						skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, voiceData, this, 0);
 						tryAddOtherSources("avatarSkeletonData.skd");
                         isReplaying = true;
-                        //}
                     }
                     catch (XmlLoadingException)
                     {
@@ -722,10 +714,7 @@ namespace LecturerTrainer.ViewModel
             {
                 DrawingSheetView.Get().ReplayAudio.Play();
             }
-            //ReplayView.Get().FastButton.IsEnabled = true;
-            //ReplayView.Get().SlowButton.IsEnabled = true;
             ReplayView.Get().PauseButton.IsEnabled = true;
-            //ManageSpeedElements();
         }
 
         /// <summary>
@@ -778,6 +767,7 @@ namespace LecturerTrainer.ViewModel
             }
             if (DrawingSheetView.Get().ReplayAudio.Source != null)
             {
+                DrawingSheetView.Get().ReplayAudio.Position = new TimeSpan(0, 0, 0, 0, 5);
                 DrawingSheetView.Get().ReplayAudio.Stop();
             }
             Tools.resetStopWatch();
@@ -790,9 +780,7 @@ namespace LecturerTrainer.ViewModel
             speedRatioIndex = 2;
             DrawingSheetView.Get().ReplayAudio.SpeedRatio = speedRatios[speedRatioIndex];
             DrawingSheetView.Get().ReplayVideo.SpeedRatio = speedRatios[speedRatioIndex];
-            //if(skeletonScrolling != null)
-            //    skeletonScrolling.Speed = speedRatios[speedRatioIndex];
-            //ManageSpeedElements();
+            
   
             // Icons cleaning and initialization of the feedback queue thanks to the save
             IconViewModel.get().clearAll();
@@ -856,6 +844,10 @@ namespace LecturerTrainer.ViewModel
             SideToolsViewModel.Get().enableTrackingAndTrainingTab();
             TrainingSideToolViewModel.Get().recordingMode();
             DrawingSheetAvatarViewModel.Get().normalMode();
+            
+            if (faceTrack)
+                KinectDevice.faceTracking = true;
+            
         }
 
         /// <summary>
