@@ -118,10 +118,10 @@ namespace EmotionRecognizer
             }
 
             //calculations of mean for each data matrix
-            vectorMean = distanceData.Mean();
-            vectorMeanM = distanceMouth.Mean();
-            vectorMeanEyeL = distanceEyeLeft.Mean();
-            vectorMeanEyeR = distanceEyeRight.Mean();
+            vectorMean = distanceData.Mean(3);
+            vectorMeanM = distanceMouth.Mean(3);
+            vectorMeanEyeL = distanceEyeLeft.Mean(3);
+            vectorMeanEyeR = distanceEyeRight.Mean(3);
             
             //calculations of reduced matrix. REMARK : "sub()" is a method created by myself you can find at the end of this class.
             mReduce = sub(distanceData, vectorMean);

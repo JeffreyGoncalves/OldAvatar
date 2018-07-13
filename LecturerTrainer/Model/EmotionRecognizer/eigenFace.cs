@@ -101,10 +101,10 @@ namespace EmotionRecognizer
             }
 
             //calculations of mean for each data matrix
-            vectorMean = data.Mean();
-            vectorMeanM = distanceMouth.Mean();
-            vectorMeanEyeL = distanceEyeLeft.Mean();
-            vectorMeanEyeR = distanceEyeRight.Mean();
+            vectorMean = data.Mean(2);
+            vectorMeanM = distanceMouth.Mean(2);
+            vectorMeanEyeL = distanceEyeLeft.Mean(2);
+            vectorMeanEyeR = distanceEyeRight.Mean(2);
 
             //calculations of reduced matrix
             mReduce = data.Subtract(vectorMean, 1);
