@@ -168,12 +168,15 @@ namespace LecturerTrainer.Model
         public static void EnqueueAvatarVideoStream(Bitmap e)
         {
             // ALBAN TODO 
-            Console.Out.WriteLine(avatarStreamQueue == null ? "avatar  null" : "avatar  not null");
             if (avatarStreamQueue != null)
             {
-                //Console.Out.WriteLine("avatar");
+            //    Console.Out.WriteLine("2.1 - " + (avatarStreamQueue == null ? "avatar  null" : "avatar  not null"));
                 if (!avatarVideoStreamWriter.IsOpen)
+                {
+
+              //      Console.Out.WriteLine("2.2 - " + (avatarStreamQueue == null ? "avatar  null" : "avatar  not null"));
                     avatarVideoStreamWriter.Open(SavingTools.pathFolder + '/' + "avatar" + ".avi", e.Width, e.Height, 30, VideoCodec.MPEG4, 1000000);
+                }
                 avatarStreamQueue.EnqueueItem(e);
             }
         }
@@ -224,7 +227,6 @@ namespace LecturerTrainer.Model
                 {
                     videoStreamWriter.Close();
                 }, "VideoRecordingTask");
-                Console.Out.WriteLine( avatarStreamQueue == null ? "str null" : "str not null");
             }
             catch (Exception ex)
             {
@@ -244,7 +246,6 @@ namespace LecturerTrainer.Model
                 {
                     avatarVideoStreamWriter.Close();
                 }, "AvatarVideoRecordingTask");
-                Console.Out.WriteLine( avatarStreamQueue == null ? "ava null" : "ava not null");
             }
             catch (Exception ex)
             {

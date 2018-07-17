@@ -97,6 +97,7 @@
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </RadioButton.Foreground>
                 </RadioButton>
+                
             </StackPanel>
         </Border>
         <Border x:Name="KinectAEButtons" Margin="0" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" RenderTransformOrigin="0.5,0.5" Grid.Row="5" Grid.Column="1">

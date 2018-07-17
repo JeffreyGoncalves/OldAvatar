@@ -1,4 +1,5 @@
-﻿using LecturerTrainer.ViewModel;
+﻿using LecturerTrainer.Model;
+using LecturerTrainer.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,5 +37,5 @@ namespace LecturerTrainer.View
                 instance = new GeneralSideTool();
             return instance;
         }
-	}
+    }
 }

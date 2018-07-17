@@ -910,12 +910,12 @@ namespace LecturerTrainer.ViewModel
             }
             if (_ToggleAvatarVideoRecording)
             {
+                DrawingSheetAvatarViewModel.Get().IsVideoAvatarRecording = true;
                 DrawingSheetAvatarViewModel.backgroundRecordingEventStream += backgroundAvatarVideoRecording;
                 SavingTools.StartSavingAvatarVideoRecording();
             }
             if (_ToggleStreamRecording)
             {
-                DrawingSheetAvatarViewModel.Get().IsVideoRecording = true;
                 DrawingSheetStreamViewModel.backgroundDrawEventStream += backgroundStreamVideoRecording;
                 SavingTools.StartSavingStreamRecording();
             }
@@ -936,13 +936,11 @@ namespace LecturerTrainer.ViewModel
             if (_ToggleStreamRecording)
             {
                 DrawingSheetStreamViewModel.backgroundDrawEventStream -= backgroundStreamVideoRecording;
-
-                
                 SavingTools.StreamDispose();
             }
             if (_ToggleAvatarVideoRecording)
             {
-                DrawingSheetAvatarViewModel.Get().IsVideoRecording = false;
+                DrawingSheetAvatarViewModel.Get().IsVideoAvatarRecording = false;
                 DrawingSheetAvatarViewModel.backgroundRecordingEventStream -= backgroundAvatarVideoRecording;
                 SavingTools.AvatarVideoDispose();
             }

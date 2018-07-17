@@ -28,10 +28,6 @@ namespace LecturerTrainer.Model
         /// used for the charts. It is 1/10 of the total time of the record.
         /// </summary>
         private static int correctTime = 0;
-        /// <summary>
-        /// time interval for the timer
-        /// </summary>
-        private static int clock;
         #endregion
 
         #region conversion methods

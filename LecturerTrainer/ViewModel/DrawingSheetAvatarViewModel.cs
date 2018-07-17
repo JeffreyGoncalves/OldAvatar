@@ -108,7 +108,7 @@ namespace LecturerTrainer.Model
         /// (if the user decides to record his performance or not)
         /// </summary>
         /// <author> Amirali Ghazi</author>
-        public bool IsVideoRecording { get; set; }
+        public bool IsVideoAvatarRecording { get; set; }
 
         ///<summary>
         /// Boolean representing the state of the skeleton recording, i.e. whether it has to record
@@ -116,6 +116,21 @@ namespace LecturerTrainer.Model
         /// </summary>
         /// <author> Amirali Ghazi</author>
         public bool IsOpenGLRecording { get; set; }
+
+        // for the grabscreenshot method
+        private bool firstScreenshot = true;
+        private Bitmap oldBmp;
+
+        public bool diplayFeedback = true;
+        public bool diplayBodyFeedback = true;
+        public bool diplayFaceFeedback = true;
+
+        public bool displayAgitationFeedback = true;
+        public bool displayHandsJoinedFeedback = true;
+        public bool displayArmsCrossedFeedback = true;
+        public bool displayEmotionFeedback = true;
+        public bool displayLookDirFeedback = true;
+
 
         /// <summary>
         /// Points situating the face
@@ -603,12 +618,13 @@ namespace LecturerTrainer.Model
 
             }
 
-            if (IsVideoRecording == true)
+            if (IsVideoAvatarRecording)
             {
-                backgroundRecordingEventStream?.Invoke(this, GrabScreenshot());
+               // TODO record avatar video
+               // backgroundRecordingEventStream?.Invoke(this, GrabScreenshot());
             }
 
-            if (IsOpenGLRecording == true && evt.GetType() == typeof(SkeletonEventArgs))
+            if (IsOpenGLRecording && evt.GetType() == typeof(SkeletonEventArgs))
             {
                 SkeletonEventArgs skEvent = (SkeletonEventArgs)evt;
                 Skeleton skeleton = skEvent.skeleton;
@@ -1315,68 +1331,72 @@ namespace LecturerTrainer.Model
 
                 if (!ReplayViewModel.isReplaying)
                 {
-                    //OpenGL feedback of the hands crossed
-                    if(Model.HandsJoined.hands)
+                    if (diplayFeedback)
                     {
-                        HudDrawImage("Hand_Joined", 0.15f, 0.15f,
-                            avatar.Joints[JointType.HandLeft].Position.X,
-                            avatar.Joints[JointType.HandLeft].Position.Y);
-                    }
+                        //OpenGL feedback of the hands crossed
+                        if(Model.HandsJoined.hands && diplayBodyFeedback && displayHandsJoinedFeedback)
+                        {
+                            HudDrawImage("Hand_Joined", 0.15f, 0.15f,
+                                avatar.Joints[JointType.HandLeft].Position.X,
+                                avatar.Joints[JointType.HandLeft].Position.Y);
+                        }
 
-                    //OpenGL feedback of the look at the center
-                    if(Model.EmotionRecognizer.lookingDirection.feedC)
-                    {
-                        HudDrawImage("Center_Arrow", 0.2f, 0.2f,
-                            headX,
-                            headY + 0.5f);
-                    }
+                        //OpenGL feedback of agitation
+                        if (Model.Agitation.feedAg && diplayBodyFeedback && displayAgitationFeedback)
+                        {
+                            HudDrawImage("Agitation", 0.2f, 0.2f,
+                                -1f,
+                                0);
+                        }
 
-                    //OpenGL feedback of the look at the left
-                    if(Model.EmotionRecognizer.lookingDirection.feedL)
-                    {
-                        HudDrawImage("Left_Arrow", 0.2f, 0.2f,
-                            headX - 0.5f,
-                            headY);
-                    }
+                        //OpenGL feedback of the arms crossed
+                        if (Model.BodyAnalysis.ArmsCrossed.feedArmsCrossed && diplayBodyFeedback && displayArmsCrossedFeedback)
+                        {
+                            HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
+                                0.75f,
+                                0);
+                        }
 
-                    //OpenGL feedback of the look at the right
-                    if(Model.EmotionRecognizer.lookingDirection.feedR)
-                    {
-                        HudDrawImage("Right_Arrow", 0.2f, 0.2f,
-                            headX + 0.5f,
-                            headY);
-                    }
+                        //OpenGL feedback of the look at the center
+                        if (Model.EmotionRecognizer.lookingDirection.feedC && diplayFaceFeedback && displayLookDirFeedback)
+                        {
+                            HudDrawImage("Center_Arrow", 0.2f, 0.2f,
+                                headX,
+                                headY + 0.5f);
+                        }
 
-                    //OpenGL feedback of the happy emotion
-                    if(Model.EmotionRecognizer.EmotionRecognition.happy)
-                    {
-                        HudDrawImage("Happy", 0.2f, 0.2f,
-                            0.75f,
-                            0.5f);
-                    }
+                        //OpenGL feedback of the look at the left
+                        if(Model.EmotionRecognizer.lookingDirection.feedL && diplayFaceFeedback && displayLookDirFeedback)
+                        {
+                            HudDrawImage("Left_Arrow", 0.2f, 0.2f,
+                                headX - 0.5f,
+                                headY);
+                        }
 
-                    //OpenGL feedback of the surprised emotion
-                    if(Model.EmotionRecognizer.EmotionRecognition.surprised)
-                    {
-                        HudDrawImage("Surprised", 0.2f, 0.2f,
-                            0.75f,
-                            0.5f);
-                    }
+                        //OpenGL feedback of the look at the right
+                        if(Model.EmotionRecognizer.lookingDirection.feedR && diplayFaceFeedback && displayLookDirFeedback)
+                        {
+                            HudDrawImage("Right_Arrow", 0.2f, 0.2f,
+                                headX + 0.5f,
+                                headY);
+                        }
 
-                    //OpenGL feedback of agitation
-                    if(Model.Agitation.feedAg)
-                    {
-                        HudDrawImage("Agitation", 0.2f, 0.2f,
-                            -1f,
-                            0);
-                    }
+                        //OpenGL feedback of the happy emotion
+                        if(Model.EmotionRecognizer.EmotionRecognition.happy && diplayFaceFeedback && displayEmotionFeedback)
+                        {
+                            HudDrawImage("Happy", 0.2f, 0.2f,
+                                0.75f,
+                                0.5f);
+                        }
 
-                    //OpenGL feedback of the arms crossed
-                    if(Model.BodyAnalysis.ArmsCrossed.feedArmsCrossed)
-                    {
-                        HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
-                            0.75f,
-                            0);
+                        //OpenGL feedback of the surprised emotion
+                        if(Model.EmotionRecognizer.EmotionRecognition.surprised && diplayFaceFeedback && displayEmotionFeedback)
+                        {
+                            HudDrawImage("Surprised", 0.2f, 0.2f,
+                                0.75f,
+                                0.5f);
+                        }
+                        
                     }
 				}
                 /* Replay Mode feedback display */
@@ -1560,7 +1580,6 @@ namespace LecturerTrainer.Model
         #endregion
 
         #region drawing methods
-
         /// <summary>
         /// Function grabbing a screenshot from the openGL current context (the 3D avatar)
         /// </summary>
@@ -1574,26 +1593,35 @@ namespace LecturerTrainer.Model
             {
                 throw new GraphicsContextMissingException();
             }
-
             int screenshotWidth = glControl.Width;
             int screenshotHeight = glControl.Height;
-            int k = glControl.Width;
-            int l = glControl.Height;
-
 
             // width/height have to have a pair size 
             if (screenshotWidth % 2 != 0)
                 screenshotWidth += 1;
             if (screenshotHeight % 2 != 0)
                 screenshotHeight += 1;
+            if (Tools.getStopWatch() % 30 > 22 || Tools.getStopWatch() % 30 < 8 || firstScreenshot)
+            {
+                if (firstScreenshot)
+                    firstScreenshot = false;
+                
 
-            Bitmap bmp = new Bitmap(screenshotWidth, screenshotHeight);
-            bmp.SetResolution(1920, 1080);
-            System.Drawing.Imaging.BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-            GL.ReadPixels(0, 0, screenshotWidth, screenshotHeight, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, bmpData.Scan0);
-            bmp.UnlockBits(bmpData);
-            bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            return bmp;
+                Bitmap bmp = new Bitmap(screenshotWidth, screenshotHeight);
+                //bmp.SetResolution(1920, 1080);
+                System.Drawing.Imaging.BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                GL.ReadPixels(0, 0, screenshotWidth, screenshotHeight, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, bmpData.Scan0);
+                GL.Finish();
+                bmp.UnlockBits(bmpData);
+                bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+                oldBmp = bmp;
+                return bmp;
+            }
+            else
+            {
+                return oldBmp;
+            }
         }
 
         /// <summary>

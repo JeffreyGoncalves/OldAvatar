@@ -305,6 +305,7 @@
     <Compile Include="Model\Exceptions\XmlLoadingException.cs" />
     <Compile Include="Model\ImageFeedbacksPerso.cs" />
     <Compile Include="Model\PCQueue.cs" />
+    <Compile Include="ViewModel\ChoiceFeedbackViewModel.cs" />
     <Compile Include="ViewModel\TrainingWithAvatarViewModel.cs" />
     <Compile Include="View\ChoiceDate.xaml.cs">
       <DependentUpon>ChoiceDate.xaml</DependentUpon>
@@ -399,6 +400,9 @@
     <Compile Include="View\NewUserView.xaml.cs">
       <DependentUpon>NewUserView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ChoiceFeedbackView.xaml.cs">
+      <DependentUpon>ChoiceFeedbackView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ReplayView.xaml.cs">
       <DependentUpon>ReplayView.xaml</DependentUpon>
     </Compile>
@@ -484,6 +488,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\NewUserView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ChoiceFeedbackView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

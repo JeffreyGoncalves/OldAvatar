@@ -88,6 +88,30 @@ namespace LecturerTrainer.ViewModel
         }
         #endregion
 
+        #region customize feedbacks
+        private ICommand feedbackCommand;
+        private ChoiceFeedbackView choiceFeedback = null;
+        public ICommand FeedbackCommand
+        {
+            get
+            {
+                if (this.feedbackCommand == null)
+                    this.feedbackCommand = new RelayCommand(() => this.displayFeedbackChoice());
+
+                return this.feedbackCommand;
+            }
+        }
+
+        private void displayFeedbackChoice()
+        {
+            choiceFeedback = new ChoiceFeedbackView();
+            //((ChoiceResultViewModel)choiceFeedback.DataContext).enableSomeCheckBox(Path.GetDirectoryName(statisticsPath));
+            //((ChoiceResultViewModel)choiceFeedback.DataContext).isLoad = true;
+            choiceFeedback.ShowDialog();
+        }
+
+        #endregion
+
         #region bindings == properties
         /// <summary>
         /// Voice monotony length of samples

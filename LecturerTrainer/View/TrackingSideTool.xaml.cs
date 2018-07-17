@@ -1,4 +1,5 @@
-﻿using LecturerTrainer.ViewModel;
+﻿using LecturerTrainer.Model;
+using LecturerTrainer.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,5 +34,62 @@ namespace LecturerTrainer.View
                 instance = new TrackingSideTool();
             return instance;
         }
-	}
+
+        private void CheckBoxF_Checked(object sender, RoutedEventArgs e)
+        {
+            DrawingSheetAvatarViewModel.Get().diplayFeedback = false;
+            {
+                FeedbackBodyCheckBox.IsChecked = true;
+                DrawingSheetAvatarViewModel.Get().diplayBodyFeedback = false;
+            }
+            if(FeedbackFaceCheckBox.IsEnabled)
+            {
+                FeedbackFaceCheckBox.IsChecked = true;
+                DrawingSheetAvatarViewModel.Get().diplayFaceFeedback = false;
+            }
+        }
+
+        private void CheckBoxF_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DrawingSheetAvatarViewModel.Get().diplayFeedback = true;
+            {
+                FeedbackBodyCheckBox.IsChecked = false;
+                DrawingSheetAvatarViewModel.Get().diplayBodyFeedback = true;
+            }
+            {
+                FeedbackFaceCheckBox.IsChecked = false;
+                DrawingSheetAvatarViewModel.Get().diplayFaceFeedback = true;
+            }
+        }
+
+        private void CheckBoxFB_Checked(object sender, RoutedEventArgs e)
+        {
+            DrawingSheetAvatarViewModel.Get().diplayBodyFeedback = false;
+            if (FeedbackFaceCheckBox.IsChecked.Value)
+            {
+                DrawingSheetAvatarViewModel.Get().diplayFeedback = false;
+                FeedbackCheckBox.IsChecked = true;
+            }
+        }
+
+        private void CheckBoxFB_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DrawingSheetAvatarViewModel.Get().diplayBodyFeedback = true;
+        }
+
+        private void CheckBoxFF_Checked(object sender, RoutedEventArgs e)
+        {
+            DrawingSheetAvatarViewModel.Get().diplayFaceFeedback = false;
+            if (FeedbackBodyCheckBox.IsChecked.Value)
+            {
+                DrawingSheetAvatarViewModel.Get().diplayFeedback = false;
+                FeedbackCheckBox.IsChecked = true;
+            }
+        }
+
+        private void CheckBoxFF_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DrawingSheetAvatarViewModel.Get().diplayFaceFeedback = true;
+        }
+    }
 }
