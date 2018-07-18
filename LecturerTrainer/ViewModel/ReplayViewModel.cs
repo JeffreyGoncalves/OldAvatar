@@ -77,6 +77,8 @@ namespace LecturerTrainer.ViewModel
 
         private bool faceTrack = KinectDevice.faceTracking;
 
+        public bool speedRateActive;
+
         /// <summary>
         /// Time elapsed in the video, textual version
         /// </summary>
@@ -830,6 +832,7 @@ namespace LecturerTrainer.ViewModel
             
             if (faceTrack)
                 KinectDevice.faceTracking = true;
+            TrackingSideToolViewModel.get().SpeedRate = speedRateActive;
             
         }
 

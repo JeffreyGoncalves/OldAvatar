@@ -169,7 +169,10 @@ namespace LecturerTrainer.Model
                 timeToUpdate.Tick += changeSlider;
                 if (TrackingSideToolViewModel.get().FaceTracking)
                     KinectDevice.faceTracking = false;
-            }catch (XmlLoadingException)
+                ReplayViewModel.Get().speedRateActive = TrackingSideToolViewModel.get().SpeedRate;
+                TrackingSideToolViewModel.get().SpeedRate = false;
+            }
+            catch (XmlLoadingException)
             {
                 throw;
             }

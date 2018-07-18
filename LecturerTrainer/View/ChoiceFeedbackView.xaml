@@ -6,6 +6,7 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" xmlns:Controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Layout.Toolkit" x:Class="LecturerTrainer.View.ChoiceFeedbackView"
         mc:Ignorable="d"
         Title="Customize your feedbacks" Height="270" Width="300">
+    <!-- Added by Alban Descottes 2018 -->
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
     </Window.Resources>

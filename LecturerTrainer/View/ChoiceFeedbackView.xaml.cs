@@ -23,6 +23,9 @@ namespace LecturerTrainer.View
         private static ChoiceFeedbackView instance = null;
 
         #region Contructor and Getter
+        /// <summary>
+        /// Constructor of the view to customize the user feedbacks
+        /// </summary>
         public ChoiceFeedbackView()
         {
             instance = this;
@@ -30,6 +33,7 @@ namespace LecturerTrainer.View
             ChoiceFeedbackViewModel cfvm = new ChoiceFeedbackViewModel();
             this.DataContext = cfvm;
             InitCheckbox();
+            // if facetracking is activate
             if (TrackingSideTool.Get().ActivateFaceTrackingCheckBox.IsChecked.Value)
             {
                 FaceChoiceFeedback.IsEnabled = true;
@@ -43,6 +47,7 @@ namespace LecturerTrainer.View
                 LookDirecChoiceFeedback.Opacity = 0.5;
 
             }
+            // audio not available yet
             AudioChoiceFeedback.Opacity = 0.5;
             WpmChoiceFeedback.Opacity = 0.5;
 
@@ -56,6 +61,9 @@ namespace LecturerTrainer.View
         }
         #endregion
 
+        /// <summary>
+        /// initialize the view according the current feedbacks selected or not
+        /// </summary>
         private void InitCheckbox()
         {
             AgitationChoiceFeedback.IsChecked = DrawingSheetAvatarViewModel.Get().displayAgitationFeedback;
@@ -71,7 +79,7 @@ namespace LecturerTrainer.View
                 LookDirecChoiceFeedback.IsChecked = DrawingSheetAvatarViewModel.Get().displayLookDirFeedback;
             }
         }
-
+        #region uncheked and checked methods
         private void FeedbackArms_Checked(object sender, RoutedEventArgs e)
         {
             HandsJoinedChoiceFeedback.IsChecked = true;
@@ -133,5 +141,6 @@ namespace LecturerTrainer.View
             FaceChoiceFeedback.IsChecked = false;
             FaceChoiceFeedback.Unchecked += FeedbackFace_Unchecked;
         }
+        #endregion
     }
 }
