@@ -38,7 +38,7 @@ namespace LecturerTrainer.Model
             try
             {
                 //Initiate the FaceRecognition
-                FaceRecognition.init();
+                //FaceRecognition.init();
                 kinect = new KinectDevice();
 
                 if (isReady != null)

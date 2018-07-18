@@ -1,4 +1,5 @@
-﻿using LecturerTrainer.ViewModel;
+﻿using LecturerTrainer.View;
+using LecturerTrainer.ViewModel;
 using LiveCharts.Wpf;
 using Microsoft.Kinect;
 using System;

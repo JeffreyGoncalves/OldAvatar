@@ -1,4 +1,5 @@
-﻿using LecturerTrainer.ViewModel;
+﻿using LecturerTrainer.Model;
+using LecturerTrainer.ViewModel;
 using LecturerTrainer.Model;
 using System;
 using System.Collections.Generic;

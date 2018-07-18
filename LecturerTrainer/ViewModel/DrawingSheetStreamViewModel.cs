@@ -172,7 +172,7 @@ namespace LecturerTrainer.ViewModel
             if (width % 2 == 1)
                 width += 1;
             if (height % 2 == 1)
-                height += 1; 
+                height += 1;
 
             byte[] pixeldata = new byte[Image.PixelDataLength];
             Image.CopyPixelDataTo(pixeldata);
@@ -316,226 +316,92 @@ namespace LecturerTrainer.ViewModel
         /// <param name="avatar">use only in the live videostream</param>
         public void ShowFeedbacksOnVideoStream(Skeleton avatar = null)
         {
-			#region oldNonReplayDisplay
-            //hideFeedbacks();
-            if (!ReplayViewModel.isReplaying)
+			if(ReplayViewModel.isReplaying && ReplayView.Get().Stream.IsChecked.Value)
             {
-                /*if (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Too agitated!")))
-                {
-                    ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Hands are joined")))
-                {
-                    avatarJointsPosition("Hand_Joined", avatar, true, 2.5, 0, -1, 0, 6);
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Arms Crossed")))
-                {
-                    avatarJointsPosition("Arms_Crossed", avatar, true, 2.5, 50, -1, -50, 5);
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the center")))
-                {
-                    avatarJointsPosition("Center_Arrow", avatar, false, 2.3, 0, -0.3, 0, 5);
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the left")))
-                {
-                    avatarJointsPosition("Left_Arrow", avatar, false, 1.8, 0, -1, -50, 5);
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the right")))
-                {
-                    avatarJointsPosition("Right_Arrow", avatar, false, 2.9, 0, -1, -50, 5);
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Happy")))
-                {
-                    avatarJointsPosition("Happy", avatar, false, 1.8, 0, -1, -50, 5);
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Suprised")))
-                {
-                    avatarJointsPosition("Surprised", avatar, false, 1.8, 0, -1, -50, 5);
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]].Visibility = Visibility.Visible;
-                }*/
-            }
-            #endregion
-			if(ReplayViewModel.isReplaying){
                 List<String> feedbacksToDisplay = ReplayViewModel.Get().currentFeedbackList;
                 
 				if (feedbacksToDisplay != null)
 				{
-
 					foreach (String message in feedbacksToDisplay)
 					{
 						switch (message)
 						{
-							case ("Hands are joined"):
-								Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]), dsv.CanvasFeedback.ActualHeight / 3);
-								Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]), 0);
-								((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                            
-								dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]].Visibility = Visibility.Visible;
+                            // agitation 
+                            case ("Too agitated!"):
+                                ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]).Height = dsv.ActualHeight / 4;
+                                Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]),
+                                    dsv.ActualHeight / 5 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]).ActualHeight / 2);
+                                Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]),
+                                    dsv.ActualWidth / 7 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]).ActualWidth / 2);
+                                dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]].Visibility = Visibility.Visible;
+                                break;
+
+                            // arms and hands
+                            case ("Arms Crossed"):
+                                ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]).Height = dsv.ActualHeight / 4;
+                                Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]),
+                                    dsv.ActualHeight / 2 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]).ActualHeight / 2);
+                                Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]),
+                                    dsv.ActualWidth / 7 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]).ActualWidth / 2);
+                                dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]].Visibility = Visibility.Visible;
+                                break;
+
+                            case ("Hands are joined"):
+								((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]).Height = dsv.ActualHeight / 4;
+                                Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]),
+                                    dsv.ActualHeight / 5 * 4 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]).ActualHeight / 2);
+                                Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]),
+                                    dsv.ActualWidth / 7 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]).ActualWidth / 2);
+                                dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]].Visibility = Visibility.Visible;
 								break;
 
+                            // looking direction
 							case ("Look to the center"):
-								Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]]), 0);
-								((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-								dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]].Visibility = Visibility.Visible;
+                                ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]]).Height = dsv.CanvasFeedback.ActualHeight / 6;
+                                Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]]),
+                                    dsv.ActualHeight / 6 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]]).ActualHeight / 2);
+                                Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]]),
+                                    dsv.ActualWidth / 2 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]]).ActualWidth / 2);
+                                dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]].Visibility = Visibility.Visible;
 								break;
 
 							case ("Look to the left"):
-								Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]]), 0);
-								((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-								dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]].Visibility = Visibility.Visible;
+                                ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]]).Height = dsv.CanvasFeedback.ActualHeight / 6;
+                                Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]]),
+                                    dsv.ActualHeight / 6 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]]).ActualHeight / 2);
+                                Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]]),
+                                    dsv.ActualWidth / 4 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]]).ActualWidth / 2);
+                                dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]].Visibility = Visibility.Visible;
 								break;
 
 							case ("Look to the right"):
-								Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]]), 0);
-								((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-								dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]].Visibility = Visibility.Visible;
+                                ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]]).Height = dsv.CanvasFeedback.ActualHeight / 6;
+                                Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]]),
+                                    dsv.ActualHeight / 6 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]]).ActualHeight / 2);
+                                Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]]),
+                                    dsv.ActualWidth * 3 / 4 - ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]]).ActualWidth / 2);
+                                dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]].Visibility = Visibility.Visible;
 								break;
 
+                            // emotion
 							case ("Happy"):
-								Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]]), 0);
+								((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]]).Height = dsv.CanvasFeedback.ActualHeight / 5;
+								Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]]), dsv.CanvasFeedback.ActualHeight /6);
 								Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]]), dsv.CanvasFeedback.ActualHeight / 3);
-								((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
 								dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]].Visibility = Visibility.Visible;
 								break;
 
-							case ("Too agitated!"):
-								((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-								dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]].Visibility = Visibility.Visible;
-								break;
+                            case ("Surprised"):
+                                ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]]).Height = dsv.CanvasFeedback.ActualHeight / 5;
+                                Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]]), dsv.CanvasFeedback.ActualHeight / 6);
+                                Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]]), dsv.CanvasFeedback.ActualHeight / 3);
+                                dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]].Visibility = Visibility.Visible;
+                                break;
 
-							case ("Arms Crossed"):
-							Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]), 2 * dsv.CanvasFeedback.ActualHeight / 3);
-							Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]), 0);
-							((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;                    
-						dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]].Visibility = Visibility.Visible;
-						break;
+                            
 						}
 					}
                 }
-                #region oldDisplay
-                /*if (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Too agitated!")))
-                {
-                    ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Agitation"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Hands are joined")))
-                {
-                    if(avatar != null && !ReplayViewModel.Get().isReplaying)
-                    {
-                        avatarJointsPosition("Hand_Joined", avatar, true, 2.5, 0, -1, 0, 6);
-                    }
-                    else
-                    {
-                        Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]), dsv.CanvasFeedback.ActualHeight / 3);
-                        Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]), 0);
-                        ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                    }
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Hand_Joined"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().BodyPool.isPresent(new Feedback("Arms Crossed")))
-                {
-                    if (avatar != null && !ReplayViewModel.Get().isReplaying)
-                    {
-                        avatarJointsPosition("Arms_Crossed", avatar, true, 2.5, 50, -1, -50, 5);
-                    }
-                    else
-                    {
-                        Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]), 2 * dsv.CanvasFeedback.ActualHeight / 3);
-                        Canvas.SetLeft(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]), 0);
-                        ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                    }
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Arms_Crossed"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the center")))
-                {
-                    if (avatar != null && !ReplayViewModel.Get().isReplaying)
-                    {
-                        avatarJointsPosition("Center_Arrow", avatar, false, 2.3, 0, -0.3, 0, 5);
-                    }
-                    else
-                    {
-                        Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]]), 0);
-                        ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                    }
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Center_Arrow"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the left")))
-                {
-                    if (avatar != null && !ReplayViewModel.Get().isReplaying)
-                    {
-                        avatarJointsPosition("Left_Arrow", avatar, false, 1.8, 0, -1, -50, 5);
-                    }
-                    else
-                    {
-                        Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]]), 0);
-                        ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                    }
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Left_Arrow"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Look to the right")))
-                {
-                    if (avatar != null && !ReplayViewModel.Get().isReplaying)
-                    {
-                        avatarJointsPosition("Right_Arrow", avatar, false, 2.9, 0, -1, -50, 5);
-                    }
-                    else
-                    {
-                        Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]]), 0);
-                        ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                    }
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Right_Arrow"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Happy")))
-                {
-                    if (avatar != null && !ReplayViewModel.Get().isReplaying)
-                    {
-                        avatarJointsPosition("Happy", avatar, false, 1.8, 0, -1, -50, 5);
-                    }
-                    else
-                    {
-                        Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]]), 0);
-                        Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]]), dsv.CanvasFeedback.ActualHeight / 3);
-                        ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                    }
-
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Happy"]].Visibility = Visibility.Visible;
-                }
-
-                if (TrainingSideToolViewModel.Get().FacePool.isPresent(new Feedback("Suprised")))
-                {
-                    if (avatar != null && !ReplayViewModel.Get().isReplaying)
-                    {
-                        avatarJointsPosition("Surprised", avatar, false, 1.8, 0, -1, -50, 5);
-                    }
-                    else
-                    {
-                        Canvas.SetRight(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]]), 0);
-                        Canvas.SetTop(((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]]), dsv.CanvasFeedback.ActualHeight / 3);
-                        ((System.Windows.Controls.Image)dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]]).Height = dsv.CanvasFeedback.ActualHeight / 3.5;
-                    }
-                    dsv.CanvasFeedback.Children[correspondIndiceName["Surprised"]].Visibility = Visibility.Visible;
-                }*/
-                #endregion
             }
             dsv.CanvasFeedback.UpdateLayout();
             
