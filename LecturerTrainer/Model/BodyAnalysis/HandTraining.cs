@@ -68,7 +68,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     break;
             }
 
-            if(TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
+            if(TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted && count == 0)
             {
                 DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Clap three times";
             }
