@@ -512,10 +512,7 @@ namespace LecturerTrainer.ViewModel
         {
             if (f.display)
             {
-                if (f.value == 0)
-                    SpeedOpacity = 0.3;
-                else
-                    SpeedOpacity = maxOpacity;
+                SpeedOpacity = maxOpacity;
 
                 if (f.value == 0)
                     SpeedSource = "Icons/speed0.png";
