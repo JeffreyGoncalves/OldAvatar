@@ -36,6 +36,16 @@ namespace LecturerTrainer.View
                 EmotionChoiceFeedback.IsEnabled = true;
                 LookDirecChoiceFeedback.IsEnabled = true;
             }
+            else
+            {
+                FaceChoiceFeedback.Opacity = 0.5;
+                EmotionChoiceFeedback.Opacity = 0.5;
+                LookDirecChoiceFeedback.Opacity = 0.5;
+
+            }
+            AudioChoiceFeedback.Opacity = 0.5;
+            WpmChoiceFeedback.Opacity = 0.5;
+
         }
 
         public static ChoiceFeedbackView Get()
@@ -49,10 +59,17 @@ namespace LecturerTrainer.View
         private void InitCheckbox()
         {
             AgitationChoiceFeedback.IsChecked = DrawingSheetAvatarViewModel.Get().displayAgitationFeedback;
-            HandsJoinedChoiceFeedback.IsChecked = DrawingSheetAvatarViewModel.Get().displayHandsJoinedFeedback;
-            ArmsCrossedChoiceFeedback.IsChecked = DrawingSheetAvatarViewModel.Get().displayArmsCrossedFeedback;
             if (DrawingSheetAvatarViewModel.Get().displayHandsJoinedFeedback && DrawingSheetAvatarViewModel.Get().displayArmsCrossedFeedback)
                 ArmsChoiceFeedback.IsChecked = true;
+            HandsJoinedChoiceFeedback.IsChecked = DrawingSheetAvatarViewModel.Get().displayHandsJoinedFeedback;
+            ArmsCrossedChoiceFeedback.IsChecked = DrawingSheetAvatarViewModel.Get().displayArmsCrossedFeedback;
+            if (TrackingSideTool.Get().ActivateFaceTrackingCheckBox.IsChecked.Value)
+            {
+                if (DrawingSheetAvatarViewModel.Get().displayEmotionFeedback && DrawingSheetAvatarViewModel.Get().displayLookDirFeedback)
+                    FaceChoiceFeedback.IsChecked = true;
+                EmotionChoiceFeedback.IsChecked = DrawingSheetAvatarViewModel.Get().displayEmotionFeedback;
+                LookDirecChoiceFeedback.IsChecked = DrawingSheetAvatarViewModel.Get().displayLookDirFeedback;
+            }
         }
 
         private void FeedbackArms_Checked(object sender, RoutedEventArgs e)
@@ -79,5 +96,42 @@ namespace LecturerTrainer.View
             LookDirecChoiceFeedback.IsChecked = false;
         }
 
+        private void FeedbackHandsJoined_Checked(object sender, RoutedEventArgs e)
+        {
+            if (ArmsCrossedChoiceFeedback.IsChecked.Value)
+                ArmsChoiceFeedback.IsChecked = true;
+        }
+
+        private void FeedbackArmsCrossed_Checked(object sender, RoutedEventArgs e)
+        {
+            if (HandsJoinedChoiceFeedback.IsChecked.Value)
+                ArmsChoiceFeedback.IsChecked = true;
+        }
+
+        private void FeedbackA_UnChecked(object sender, RoutedEventArgs e)
+        {
+            ArmsChoiceFeedback.Unchecked -= FeedbackArms_Unchecked;
+            ArmsChoiceFeedback.IsChecked = false;
+            ArmsChoiceFeedback.Unchecked += FeedbackArms_Unchecked;
+        }
+
+        private void FeedbackEmotion_Checked(object sender, RoutedEventArgs e)
+        {
+            if (LookDirecChoiceFeedback.IsChecked.Value)
+                FaceChoiceFeedback.IsChecked = true;
+        }
+
+        private void FeedbackLookDir_Checked(object sender, RoutedEventArgs e)
+        {
+            if (EmotionChoiceFeedback.IsChecked.Value)
+                FaceChoiceFeedback.IsChecked = true;
+        }
+
+        private void FeedbackF_UnChecked(object sender, RoutedEventArgs e)
+        {
+            FaceChoiceFeedback.Unchecked -= FeedbackFace_Unchecked;
+            FaceChoiceFeedback.IsChecked = false;
+            FaceChoiceFeedback.Unchecked += FeedbackFace_Unchecked;
+        }
     }
 }

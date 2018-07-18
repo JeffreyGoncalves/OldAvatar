@@ -33,36 +33,45 @@
                 </CheckBox.Foreground>
             </CheckBox>
             <WrapPanel Margin=" 20,5,0,0" x:Name="PanelArmsMot">
-                <CheckBox x:Name="HandsJoinedChoiceFeedback" Content="Hands Joined" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" >
+                <CheckBox x:Name="HandsJoinedChoiceFeedback" Content="Hands Joined" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" 
+                          Checked="FeedbackHandsJoined_Checked" Unchecked="FeedbackA_UnChecked">
                     <CheckBox.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </CheckBox.Foreground>
                 </CheckBox>
-                <CheckBox x:Name="ArmsCrossedChoiceFeedback" Content="Arms Crossed" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" >
+                <CheckBox x:Name="ArmsCrossedChoiceFeedback" Content="Arms Crossed" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" 
+                          Checked="FeedbackArmsCrossed_Checked" Unchecked="FeedbackA_UnChecked">
                     <CheckBox.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </CheckBox.Foreground>
                 </CheckBox>
             </WrapPanel>
-            <CheckBox x:Name="FaceChoiceFeedback" Content="Face" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="Auto" VerticalAlignment="Center" IsEnabled="False"
-                      Checked="FeedbackFace_Checked" Unchecked="FeedbackFace_Unchecked">
-                <CheckBox.Foreground>
-                    <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                </CheckBox.Foreground>
-            </CheckBox>
+            <WrapPanel Margin=" 0,5,0,0" x:Name="PanelMainFace">
+                <CheckBox x:Name="FaceChoiceFeedback" Margin="0,5,0,0 " Content="Face" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="Auto" VerticalAlignment="Center" IsEnabled="False"
+                          Checked="FeedbackFace_Checked" Unchecked="FeedbackFace_Unchecked">
+                    <CheckBox.Foreground>
+                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+                    </CheckBox.Foreground>
+                </CheckBox>
+                <Image x:Name="questionMark" Width = "24" VerticalAlignment = "Center"  Margin = "30,0,0,0" Opacity = "1" Source="/LecturerTrainer;component/question_mark.png" 
+                       ToolTip="Available only after activating the face tracking" />
+                <!-- Icon made by Daniel Bruce from www.flaticon.com -->
+            </WrapPanel>
             <WrapPanel Margin=" 20,5,0,0"  x:Name="PanelFace">
-                <CheckBox x:Name="EmotionChoiceFeedback" Content="Emotion" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" IsEnabled="False">
+                <CheckBox x:Name="EmotionChoiceFeedback" Content="Emotion" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" IsEnabled="False"
+                          Checked="FeedbackEmotion_Checked" Unchecked="FeedbackF_UnChecked">
                     <CheckBox.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </CheckBox.Foreground>
                 </CheckBox>
-                <CheckBox x:Name="LookDirecChoiceFeedback" Content="Looking Direction" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" IsEnabled="False">
+                <CheckBox x:Name="LookDirecChoiceFeedback" Content="Looking Direction" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" IsEnabled="False"
+                          Checked="FeedbackLookDir_Checked" Unchecked="FeedbackF_UnChecked">
                     <CheckBox.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </CheckBox.Foreground>
                 </CheckBox>
             </WrapPanel>
-            <CheckBox x:Name="Audio" Content="Audio" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="Auto" VerticalAlignment="Center" IsEnabled="False">
+            <CheckBox x:Name="AudioChoiceFeedback" Content="Audio" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="Auto" VerticalAlignment="Center" IsEnabled="False">
                 <CheckBox.Foreground>
                     <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                 </CheckBox.Foreground>

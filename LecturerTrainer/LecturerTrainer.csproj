@@ -694,6 +694,7 @@
     <Content Include="postproc-52.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="question_mark.png" />
     <Content Include="swresample-0.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

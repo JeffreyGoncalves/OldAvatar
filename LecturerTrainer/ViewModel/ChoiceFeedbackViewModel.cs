@@ -14,8 +14,6 @@ namespace LecturerTrainer.ViewModel
 
         private ChoiceFeedbackView choiceFeedbackView;
 
-       
-
         public ChoiceFeedbackViewModel()
         {
             choiceFeedbackView = ChoiceFeedbackView.Get();
@@ -50,6 +48,11 @@ namespace LecturerTrainer.ViewModel
             DrawingSheetAvatarViewModel.Get().displayAgitationFeedback = choiceFeedbackView.AgitationChoiceFeedback.IsChecked.Value;
             DrawingSheetAvatarViewModel.Get().displayArmsCrossedFeedback = choiceFeedbackView.ArmsCrossedChoiceFeedback.IsChecked.Value;
             DrawingSheetAvatarViewModel.Get().displayHandsJoinedFeedback = choiceFeedbackView.HandsJoinedChoiceFeedback.IsChecked.Value;
+            if (TrackingSideTool.Get().ActivateFaceTrackingCheckBox.IsChecked.Value)
+            {
+                DrawingSheetAvatarViewModel.Get().displayEmotionFeedback = choiceFeedbackView.EmotionChoiceFeedback.IsChecked.Value;
+                DrawingSheetAvatarViewModel.Get().displayLookDirFeedback = choiceFeedbackView.LookDirecChoiceFeedback.IsChecked.Value;
+            }
             choiceFeedbackView.Close();
         }
 
