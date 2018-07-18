@@ -8,188 +8,212 @@
 	mc:Ignorable="d"
 	x:Class="LecturerTrainer.View.GeneralSideTool"
 	x:Name="GeneralSideToolUserControl"
-	d:DesignWidth="300" d:DesignHeight="560">
-    <UserControl.Resources>
-        <Storyboard x:Key="showSlider"/>
-        <sys:Double x:Key="ButtonsWidth">208</sys:Double>
-        <Storyboard x:Key="hideSlider"/>
-        <Style TargetType="StackPanel">
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value="0.7" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Resources>
+	d:DesignWidth="300" d:DesignHeight="680">
+	<UserControl.Resources>
+		<Storyboard x:Key="showSlider"/>
+		<sys:Double x:Key="ButtonsWidth">208</sys:Double>
+		<Storyboard x:Key="hideSlider"/>
+		<Style TargetType="StackPanel">
+			<Style.Triggers>
+				<Trigger Property="IsEnabled" Value="False">
+					<Setter Property="Opacity" Value="0.7" />
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+	</UserControl.Resources>
 
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard Storyboard="{StaticResource hideSlider}"/>
-            <BeginStoryboard Storyboard="{StaticResource showSlider}"/>
-        </EventTrigger>
-    </UserControl.Triggers>
-    <Grid x:Name="LeftPanel" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0.167,0,0,-8.99" Width="300">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="30"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="25"/>
-        </Grid.RowDefinitions>
-        <Border x:Name="VoiceControl" Margin="0" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" Grid.Row="1" Grid.Column="1">
-            <Border.BorderBrush>
-                <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
-            </Border.BorderBrush>
-            <StackPanel x:Name="VoiceControlLayout" Margin="-10,-6,-10,0">
-                <Label x:Name="VoiceControlLabel" Content="Voice Control" VerticalAlignment="Top" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="10,0">
-                    <Label.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </Label.Foreground>
-                </Label>
-                <Separator Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0" VerticalAlignment="Top">
-                    <Separator.Background>
-                        <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
-                    </Separator.Background>
-                </Separator>
-                <CheckBox x:Name="VoiceControlCheckBox" Content="Activate voice control" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
-                    <CheckBox.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </CheckBox.Foreground>
-                </CheckBox>
-            </StackPanel>
-        </Border>
-        <Border x:Name="DisplayButtons" Margin="0" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" Grid.Row="3" Grid.Column="1">
-            <Border.BorderBrush>
-                <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
-            </Border.BorderBrush>
-            <StackPanel x:Name="DisplayButtonsLayout" Margin="-10,-6,-10,0">
-                <Label x:Name="Display_Label" Content="Display" VerticalAlignment="Top" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="10,0">
-                    <Label.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </Label.Foreground>
-                </Label>
-                <Separator Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0" VerticalAlignment="Top">
-                    <Separator.Background>
-                        <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
-                    </Separator.Background>
-                </Separator>
-                <RadioButton GroupName="displayButtonsGroup" x:Name="Avatar" Content="Avatar" Command ="{Binding SelectAvatar}" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" IsChecked="True" >
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Checked">
-                            <ei:ControlStoryboardAction/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <RadioButton.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </RadioButton.Foreground>
-                </RadioButton>
-                <RadioButton GroupName="displayButtonsGroup" x:Name="Stream" Content="VideoStream" Command="{Binding SelectStream}" Margin="15,0,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
-                    <RadioButton.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </RadioButton.Foreground>
-                </RadioButton>
-            </StackPanel>
-        </Border>
-        <Border x:Name="KinectAEButtons" Margin="0" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" RenderTransformOrigin="0.5,0.5" Grid.Row="5" Grid.Column="1">
-            <Border.BorderBrush>
-                <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
-            </Border.BorderBrush>
-            <Border.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Border.RenderTransform>
-            <StackPanel x:Name="KinectAEButtonsLayout" Margin="-10,-6,-10,0" IsEnabled="{Binding ElevationVisible}">
-                <Label x:Name="KinectElevation_Label" Content="Kinect Elevation" VerticalAlignment="Top" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="10,0">
-                    <Label.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </Label.Foreground>
-                </Label>
-                <Separator Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0" VerticalAlignment="Top">
-                    <Separator.Background>
-                        <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
-                    </Separator.Background>
-                </Separator>
-                <RadioButton GroupName="kinectButtonsGroup" Name="AutoElevation" Content="Auto" IsChecked="{Binding UseAutoElevation}" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Checked">
-                            <ei:ControlStoryboardAction x:Name="HideSlider" Storyboard="{StaticResource hideSlider}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <RadioButton.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </RadioButton.Foreground>
-                </RadioButton>
-                <StackPanel Orientation="Horizontal" Margin="15,0,10,10">
-                    <RadioButton GroupName="kinectButtonsGroup" x:Name="ManualElevation" Content="Manual" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" Width="65" FontSize="{DynamicResource GeneralFontSize}" IsChecked="True" >
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="Checked">
-                                <ei:ControlStoryboardAction x:Name="ShowSlider" Storyboard="{StaticResource showSlider}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <RadioButton.Foreground>
-                            <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                        </RadioButton.Foreground>
-                    </RadioButton>
-                    <ComboBox x:Name="ManualElevationCB" ItemsSource="{Binding ElevationList}" SelectedIndex="{Binding SelectedElevation}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,0,0,0" Height="{DynamicResource GeneralFieldHeight}" Width="120" Grid.RowSpan="1"/>
-                </StackPanel>
-            </StackPanel>
-        </Border>
-        <Border x:Name="MicrophoneButtons" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" RenderTransformOrigin="0.5,0.5" Grid.Row="7" Grid.Column="1" Margin="0,0,0,0">
-            <Border.BorderBrush>
-                <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
-            </Border.BorderBrush>
-            <Border.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Border.RenderTransform>
-            <StackPanel x:Name="MicrophoneButtonsLayout" Margin="-10,-6,-10,0">
-                <Label x:Name="MicrophoneLabel" Content="Microphone" VerticalAlignment="Top" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="10,0">
-                    <Label.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </Label.Foreground>
-                </Label>
-                <Separator Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0" VerticalAlignment="Top">
-                    <Separator.Background>
-                        <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
-                    </Separator.Background>
-                </Separator>
-                <Label x:Name="MicrophoneSelection" Content="Microphone selection :" Margin="10,10,10,0" VerticalAlignment="Top" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}">
-                    <Label.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </Label.Foreground>
-                </Label>
-                <ComboBox x:Name="MicrophoneSelectionComboBox" ItemsSource="{Binding MicrophoneList}" SelectedIndex="{Binding SelectedDevice, Mode=TwoWay}" Margin="15,5,15,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="{DynamicResource GeneralFieldHeight}" FontWeight="Bold"/>
-                <Label x:Name="microphoneVolumeLabel" Content="Volume selection" Margin="10,10,10,0" VerticalAlignment="Top" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}">
-                    <Label.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </Label.Foreground>
-                </Label>
-                <TextBlock Text="     0%                                                         100%" 
+	<UserControl.Triggers>
+		<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+			<BeginStoryboard Storyboard="{StaticResource hideSlider}"/>
+			<BeginStoryboard Storyboard="{StaticResource showSlider}"/>
+		</EventTrigger>
+	</UserControl.Triggers>
+	<Grid x:Name="LeftPanel" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0.167,0,0,-8.99" Width="300">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="20"/>
+			<ColumnDefinition Width="250"/>
+			<ColumnDefinition Width="30"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="20"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="20"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="20"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="20"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="25"/>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="25"/>
+		</Grid.RowDefinitions>
+		<Border x:Name="VoiceControl" Margin="0" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" Grid.Row="1" Grid.Column="1">
+			<Border.BorderBrush>
+				<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+			</Border.BorderBrush>
+			<StackPanel x:Name="VoiceControlLayout" Margin="-10,-6,-10,0">
+				<Label x:Name="VoiceControlLabel" Content="Voice Control" VerticalAlignment="Top" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="10,0">
+					<Label.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</Label.Foreground>
+				</Label>
+				<Separator Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0" VerticalAlignment="Top">
+					<Separator.Background>
+						<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+					</Separator.Background>
+				</Separator>
+				<CheckBox x:Name="VoiceControlCheckBox" Content="Activate voice control" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
+					<CheckBox.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</CheckBox.Foreground>
+				</CheckBox>
+			</StackPanel>
+		</Border>
+		<Border x:Name="DisplayButtons" Margin="0" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" Grid.Row="3" Grid.Column="1">
+			<Border.BorderBrush>
+				<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+			</Border.BorderBrush>
+			<StackPanel x:Name="DisplayButtonsLayout" Margin="-10,-6,-10,0">
+				<Label x:Name="Display_Label" Content="Display" VerticalAlignment="Top" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="10,0">
+					<Label.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</Label.Foreground>
+				</Label>
+				<Separator Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0" VerticalAlignment="Top">
+					<Separator.Background>
+						<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+					</Separator.Background>
+				</Separator>
+				<RadioButton GroupName="displayButtonsGroup" x:Name="Avatar" Content="Avatar" Command ="{Binding SelectAvatar}" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" IsChecked="True" >
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Checked">
+							<ei:ControlStoryboardAction/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+					<RadioButton.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</RadioButton.Foreground>
+				</RadioButton>
+				<RadioButton GroupName="displayButtonsGroup" x:Name="Stream" Content="VideoStream" Command="{Binding SelectStream}" Margin="15,0,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
+					<RadioButton.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</RadioButton.Foreground>
+				</RadioButton>
+			</StackPanel>
+		</Border>
+		<Border x:Name="KinectAEButtons" Margin="0" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" RenderTransformOrigin="0.5,0.5" Grid.Row="5" Grid.Column="1">
+			<Border.BorderBrush>
+				<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+			</Border.BorderBrush>
+			<Border.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform/>
+					<SkewTransform/>
+					<RotateTransform/>
+					<TranslateTransform/>
+				</TransformGroup>
+			</Border.RenderTransform>
+			<StackPanel x:Name="KinectAEButtonsLayout" Margin="-10,-6,-10,0" IsEnabled="{Binding ElevationVisible}">
+				<Label x:Name="KinectElevation_Label" Content="Kinect Elevation" VerticalAlignment="Top" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="10,0">
+					<Label.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</Label.Foreground>
+				</Label>
+				<Separator Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0" VerticalAlignment="Top">
+					<Separator.Background>
+						<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+					</Separator.Background>
+				</Separator>
+				<RadioButton GroupName="kinectButtonsGroup" Name="AutoElevation" Content="Auto" IsChecked="{Binding UseAutoElevation}" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Checked">
+							<ei:ControlStoryboardAction x:Name="HideSlider" Storyboard="{StaticResource hideSlider}"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+					<RadioButton.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</RadioButton.Foreground>
+				</RadioButton>
+				<StackPanel Orientation="Horizontal" Margin="15,0,10,10">
+					<RadioButton GroupName="kinectButtonsGroup" x:Name="ManualElevation" Content="Manual" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" Width="65" FontSize="{DynamicResource GeneralFontSize}" IsChecked="True" >
+						<i:Interaction.Triggers>
+							<i:EventTrigger EventName="Checked">
+								<ei:ControlStoryboardAction x:Name="ShowSlider" Storyboard="{StaticResource showSlider}"/>
+							</i:EventTrigger>
+						</i:Interaction.Triggers>
+						<RadioButton.Foreground>
+							<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+						</RadioButton.Foreground>
+					</RadioButton>
+					<ComboBox x:Name="ManualElevationCB" ItemsSource="{Binding ElevationList}" SelectedIndex="{Binding SelectedElevation}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,0,0,0" Height="{DynamicResource GeneralFieldHeight}" Width="120" Grid.RowSpan="1"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+		<Border x:Name="MicrophoneButtons" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" RenderTransformOrigin="0.5,0.5" Grid.Row="7" Grid.Column="1" Margin="0,0,0,0">
+			<Border.BorderBrush>
+				<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+			</Border.BorderBrush>
+			<Border.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform/>
+					<SkewTransform/>
+					<RotateTransform/>
+					<TranslateTransform/>
+				</TransformGroup>
+			</Border.RenderTransform>
+			<StackPanel x:Name="MicrophoneButtonsLayout" Margin="-10,-6,-10,0">
+				<Label x:Name="MicrophoneLabel" Content="Microphone" VerticalAlignment="Top" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="10,0">
+					<Label.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</Label.Foreground>
+				</Label>
+				<Separator Height="{DynamicResource ButtonsSeparatorHeight}" Margin="10,0" VerticalAlignment="Top">
+					<Separator.Background>
+						<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+					</Separator.Background>
+				</Separator>
+				<Label x:Name="MicrophoneSelection" Content="Microphone selection :" Margin="10,10,10,0" VerticalAlignment="Top" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}">
+					<Label.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</Label.Foreground>
+				</Label>
+				<ComboBox x:Name="MicrophoneSelectionComboBox" ItemsSource="{Binding MicrophoneList}" SelectedIndex="{Binding SelectedDevice, Mode=TwoWay}" Margin="15,5,15,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="{DynamicResource GeneralFieldHeight}" FontWeight="Bold"/>
+				<Label x:Name="microphoneVolumeLabel" Content="Volume selection" Margin="10,10,10,0" VerticalAlignment="Top" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}">
+					<Label.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</Label.Foreground>
+				</Label>
+				<TextBlock Text="     0%                                                         100%" 
                            FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" HorizontalAlignment="Left">
-                    <TextBlock.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </TextBlock.Foreground>
-                </TextBlock>
-               
-                <Slider x:Name="microphoneVolumeSlider" Value="{Binding SliderVolume, Mode=TwoWay}" Margin="15,5,10,10" VerticalAlignment="Top" Height="{DynamicResource GeneralFieldHeight}" Maximum="100" Background="#00000000" Foreground="#FFC4C4C4"/>
-            </StackPanel>
-        </Border>
-    </Grid>
+					<TextBlock.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</TextBlock.Foreground>
+				</TextBlock>
+
+				<Slider x:Name="microphoneVolumeSlider" Value="{Binding SliderVolume, Mode=TwoWay}" Margin="15,5,10,10" VerticalAlignment="Top" Height="{DynamicResource GeneralFieldHeight}" Maximum="100" Background="#00000000" Foreground="#FFC4C4C4"/>
+			</StackPanel>
+		</Border>
+		<Border x:Name="Audience" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" Grid.Row="9" Grid.Column="1">
+			<Border.BorderBrush>
+				<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+			</Border.BorderBrush>
+			<StackPanel x:Name="AudienceEnablerLayout" Margin="-10,-6,-10,-0">
+				<Label x:Name="AudienceEnablerLabel" Content="Audience" VerticalAlignment="Top" Height="27" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="0,0,10,0" HorizontalAlignment="Right" Width="228">
+					<Label.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</Label.Foreground>
+				</Label>
+				<Separator Height="14" Margin="10,0" VerticalAlignment="Top">
+					<Separator.Background>
+						<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
+					</Separator.Background>
+				</Separator>
+				<CheckBox x:Name="AudienceControlCheckBox" Content="Display the virtual audience" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" Checked="AudienceControlCheckBox_Checked">
+					<CheckBox.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</CheckBox.Foreground>
+				</CheckBox>
+			</StackPanel>
+		</Border>
+	</Grid>
 </UserControl>

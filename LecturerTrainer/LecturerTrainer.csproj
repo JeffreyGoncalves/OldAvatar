@@ -313,6 +313,7 @@
     <Compile Include="Model\Exceptions\XmlLoadingException.cs" />
     <Compile Include="Model\ImageFeedbacksPerso.cs" />
     <Compile Include="Model\PCQueue.cs" />
+    <Compile Include="ViewModel\AudienceMember.cs" />
     <Compile Include="ViewModel\TrainingWithAvatarViewModel.cs" />
     <Compile Include="View\ChoiceDate.xaml.cs">
       <DependentUpon>ChoiceDate.xaml</DependentUpon>

@@ -207,7 +207,7 @@ namespace LecturerTrainer.Model
             }
             else
             {
-                this.name = "";
+                this.name = name;
             }
         }
         #endregion

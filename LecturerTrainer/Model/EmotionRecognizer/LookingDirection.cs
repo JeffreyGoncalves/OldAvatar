@@ -1,4 +1,5 @@
 ﻿using LecturerTrainer.ViewModel;
+using LecturerTrainer.View;
 using LiveCharts;
 using LiveCharts.Wpf;
 using System;
@@ -139,6 +140,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
             if (count == 30 || faceDetected ==true)
             {
                 count = 0;
+				int direction = 0;
                 try
                 {
                     var temp = KinectDevice.skeletonFaceTracker.facePoints3D;
@@ -151,7 +153,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the center area
                         if (rightEye.Z - leftEye.Z >= -0.015 && rightEye.Z - leftEye.Z <= 0.015)
                         {
-                            Console.Out.WriteLine("CCCCCCCCCCCCCCCCCCCC");
+                            //Console.Out.WriteLine("CCCCCCCCCCCCCCCCCCCC");
                             if (rec)
                             {
                                 if (!lookCenter.Contains((int)(Tools.getStopWatch() / 100)))
@@ -167,12 +169,13 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                                 boolManagement(CENTER); // Indicate that the user is looking at the center and reseting all counter
                             }
                             countC++; //Counter to know howlong the user is looking at the same view area
+							direction = CENTER;
                         }
 
                         //Test if the user is looking at the right area
                         else if (rightEye.Z - leftEye.Z >= -0.057 && rightEye.Z - leftEye.Z < -0.015)
                         {
-                            Console.Out.WriteLine("RRRRRRRRRRRRRRRRRR");
+                           // Console.Out.WriteLine("RRRRRRRRRRRRRRRRRR");
                             if (rec)
                             {
                                 if (!lookRight.Contains((int)(Tools.getStopWatch() / 100)))
@@ -186,6 +189,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                                 boolManagement(RIGHT);
                             }
                             countR++;
+							direction = RIGHT;
                         }
                         //Test if the user is looking at the extrem right area
                         else if (rightEye.Z - leftEye.Z < -0.057)
@@ -203,11 +207,12 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                                 boolManagement(EXTRIGHT);
                             }
                             countER++;
+							direction = EXTRIGHT;
                         }
                         //Test if the user is looking at the left area
                         else if (rightEye.Z - leftEye.Z > 0.015 && rightEye.Z - leftEye.Z <= 0.057)
                         {
-                            Console.Out.WriteLine("LLLLLLLLLLLLLLLLL");
+                            //Console.Out.WriteLine("LLLLLLLLLLLLLLLLL");
                             if (rec)
                             {
                                 if (!lookLeft.Contains((int)(Tools.getStopWatch() / 100)))
@@ -221,6 +226,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                                 boolManagement(LEFT);
                             }
                             countL++;
+							direction = LEFT;
                         }
                         //Test if the user is looking at the extrem left area
                         else if (rightEye.Z - leftEye.Z > 0.057)
@@ -238,7 +244,12 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                                 boolManagement(EXTLEFT);
                             }
                             countEL++;
+							direction = EXTLEFT;
                         }
+
+						if(GeneralSideTool.Get().AudienceControlCheckBox.IsChecked == true)
+							AudienceMember.updateAudienceInterest(direction);
+			
 
                         //If the user is still looking at the same view area and if the counter reached the limit
                         if (centre && countC > limitHigh)

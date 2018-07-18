@@ -629,6 +629,15 @@ namespace LecturerTrainer.ViewModel
                 rw.AddResource(Path.GetFileNameWithoutExtension(s), bp);
                 byteStream.Close();
             }
+			foreach (string s in Directory.EnumerateFiles(@"..\..\View\Audience"))
+            {
+                FileStream byteStream = new FileStream(s, FileMode.Open);
+                byte[] bytes = new byte[(int)byteStream.Length];
+                byteStream.Read(bytes, 0, (int)byteStream.Length);
+                Bitmap bp = new Bitmap(byteStream);
+                rw.AddResource(Path.GetFileNameWithoutExtension(s), bp);
+                byteStream.Close();
+            }
             rw.Generate();
             rw.Close();
         }
@@ -685,9 +694,13 @@ namespace LecturerTrainer.ViewModel
                     case "Left_Arrow":
                     case "Right_Arrow":
                     case "Center_Arrow":
+					case "Audience_Body":
+					case "Audience_Bore":
+					case "Audience_SlightBore":
+					case "Audience_Interest":
                         dsv.CanvasFeedback.Children.Add(ifp.image);
                         correspondIndiceName.Add(ifp.name, dsv.CanvasFeedback.Children.IndexOf(ifp.image));
-                        dsv.CanvasFeedback.Children[dsv.CanvasFeedback.Children.IndexOf(ifp.image)].Visibility = Visibility.Hidden;
+                        dsv.CanvasFeedback.Children[dsv.CanvasFeedback.Children.IndexOf(ifp.image)].Visibility = Visibility.Visible;
                         break;
                 }
             }

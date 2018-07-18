@@ -1,4 +1,5 @@
 ﻿using LecturerTrainer.ViewModel;
+using LecturerTrainer.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,6 +29,7 @@ namespace LecturerTrainer.View
             this.DataContext = gstvm;
             SideToolsViewModel.Get().setGeneralV(this);
             SideToolsViewModel.Get().setGeneralVM(gstvm); 
+			instance = this;
 		}
         
         public static GeneralSideTool Get()
@@ -36,5 +38,10 @@ namespace LecturerTrainer.View
                 instance = new GeneralSideTool();
             return instance;
         }
+
+		private void AudienceControlCheckBox_Checked(object sender, RoutedEventArgs e)
+		{
+			
+		}
 	}
 }

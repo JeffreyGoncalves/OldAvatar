@@ -393,7 +393,6 @@ namespace LecturerTrainer.Model
             }
         }
 
-
         #endregion
 
         #region constructor and Get()
@@ -624,16 +623,15 @@ namespace LecturerTrainer.Model
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.PushMatrix();
+            
+            // If no replay skeleton is detected, display of the initial avatar
+            if (skToDrawInReplay == null)
             {
-                // If no replay skeleton is detected, display of the initial avatar
-                if (skToDrawInReplay == null)
-                {
-                    DrawAxes();
-                    drawInitialAvatar();
-                }
-                else
-                    drawAvatar(skToDrawInReplay, drawFaceInReplay);
-            }
+				DrawAxes();
+                drawInitialAvatar();
+			}
+            else
+                drawAvatar(skToDrawInReplay, drawFaceInReplay);
             GL.PopMatrix();
             GL.Flush();
 
@@ -1181,6 +1179,12 @@ namespace LecturerTrainer.Model
         /// <param name="evt"></param>
         private void drawAvatar(EventArgs evt)
         {
+			if(GeneralSideTool.Get().AudienceControlCheckBox.IsChecked == true)
+			{
+				if (AudienceMember.WholeAudience.Count == 0) initAudience(); 
+				drawAudience();
+			}
+
             // Test if there is a replay avatar to display
             if (skToDrawInReplay == null)
             {
@@ -1221,6 +1225,32 @@ namespace LecturerTrainer.Model
             properShoulderCenterToSpine = distance2Vectors(initialShoulderCenter, initialSpine);
             properSpineToHipCenter = distance2Vectors(initialSpine, initialHipCenter);
         }
+
+		private void initAudience()
+		{
+			AudienceMember.GlobalInterest = 0.5f;
+			for(int i = -9; i <= 9; i= i + 3){
+				new AudienceMember(1, i/10.0f, 0.3f, 0.7f);
+			}
+		}
+
+		private void drawAudience(){
+			float[] interest = new float[3];
+			GL.Color3(0f, 0f, 0f);
+            GL.Normal3(0f, 0f, 1f);
+
+			foreach(AudienceMember mem in AudienceMember.WholeAudience)
+			{
+				paint(mem.currentFace, 0.1f, 0.1f, mem.horizontalPosition, -0.61f);
+				paint("Audience_Body", 0.1f, 0.1f, mem.horizontalPosition, -0.8f);
+				if(mem.horizontalPosition == 0.9f) interest[0] = mem.Interest;
+				if(mem.horizontalPosition == 0) interest[1] = mem.Interest;
+				if(mem.horizontalPosition == -0.9f) interest[2] = mem.Interest;
+			}
+			//System.Diagnostics.Debug.WriteLine("{0} - {1} - {2}", interest[0], interest[1], interest[2]);
+			
+			GL.BindTexture(TextureTarget.Texture2D, 0);
+		}
 
         /// <summary>
         /// Return the distance separating two vectors
@@ -1304,6 +1334,8 @@ namespace LecturerTrainer.Model
             float headX = avatar.Joints[JointType.Head].Position.X,
                 headY = avatar.Joints[JointType.Head].Position.Y;
 
+			bool fb = false;
+
             //Test for 3D feedback by ASu 25 March 2016 ad modified by F Bechu June 2016
             /*The second part of the if (after the ||) is used to display the feedbacks when replaying an avatar, it's the same for all the feedbacks below*/
             /*OpenGL feedback of the hands crossed*/           
@@ -1319,6 +1351,7 @@ namespace LecturerTrainer.Model
                     //OpenGL feedback of the hands crossed
                     if(Model.HandsJoined.hands)
                     {
+						fb = true;
                         HudDrawImage("Hand_Joined", 0.15f, 0.15f,
                             avatar.Joints[JointType.HandLeft].Position.X,
                             avatar.Joints[JointType.HandLeft].Position.Y);
@@ -1327,6 +1360,7 @@ namespace LecturerTrainer.Model
                     //OpenGL feedback of the look at the center
                     if(Model.EmotionRecognizer.lookingDirection.feedC)
                     {
+						fb = true;
                         HudDrawImage("Center_Arrow", 0.2f, 0.2f,
                             headX,
                             headY + 0.5f);
@@ -1335,6 +1369,7 @@ namespace LecturerTrainer.Model
                     //OpenGL feedback of the look at the left
                     if(Model.EmotionRecognizer.lookingDirection.feedL)
                     {
+						fb = true;
                         HudDrawImage("Left_Arrow", 0.2f, 0.2f,
                             headX - 0.5f,
                             headY);
@@ -1343,6 +1378,7 @@ namespace LecturerTrainer.Model
                     //OpenGL feedback of the look at the right
                     if(Model.EmotionRecognizer.lookingDirection.feedR)
                     {
+						fb = true;
                         HudDrawImage("Right_Arrow", 0.2f, 0.2f,
                             headX + 0.5f,
                             headY);
@@ -1351,6 +1387,7 @@ namespace LecturerTrainer.Model
                     //OpenGL feedback of the happy emotion
                     if(Model.EmotionRecognizer.EmotionRecognition.happy)
                     {
+						fb = true;
                         HudDrawImage("Happy", 0.2f, 0.2f,
                             0.75f,
                             0.5f);
@@ -1359,6 +1396,7 @@ namespace LecturerTrainer.Model
                     //OpenGL feedback of the surprised emotion
                     if(Model.EmotionRecognizer.EmotionRecognition.surprised)
                     {
+						fb = true;
                         HudDrawImage("Surprised", 0.2f, 0.2f,
                             0.75f,
                             0.5f);
@@ -1367,6 +1405,7 @@ namespace LecturerTrainer.Model
                     //OpenGL feedback of agitation
                     if(Model.Agitation.feedAg)
                     {
+						fb = true;
                         HudDrawImage("Agitation", 0.2f, 0.2f,
                             -1f,
                             0);
@@ -1375,10 +1414,16 @@ namespace LecturerTrainer.Model
                     //OpenGL feedback of the arms crossed
                     if(Model.BodyAnalysis.ArmsCrossed.feedArmsCrossed)
                     {
+						fb = true;
                         HudDrawImage("Arms_Crossed", 0.2f, 0.2f,
                             0.75f,
                             0);
                     }
+
+					if (fb && AudienceMember.GlobalInterest > 0)
+						AudienceMember.GlobalInterest -= 0.002f;
+					else if (AudienceMember.GlobalInterest < 1)
+						AudienceMember.GlobalInterest += 0.002f;
 				}
                 /* Replay Mode feedback display */
                 else{
@@ -1551,10 +1596,37 @@ namespace LecturerTrainer.Model
                 GL.TexCoord2(0.0, 0.0);
                 GL.Vertex3(x - w, y - h, 0);
                 GL.End();
-            }
+			}
             catch(Exception e)
             {
+				Console.Out.WriteLine(e.Message);
+            }
+        }
 
+		private void paint(String imgName, float w, float h, float x = 0f, float y = 0f)
+        {
+            try
+            {
+                GL.BindTexture(TextureTarget.Texture2D, (from p in DrawingSheetStreamViewModel.Get().listImg where p.name == imgName select p.idTextureOpenGL).First());
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+
+                GL.Begin(PrimitiveType.Polygon);
+                GL.TexCoord2(1.0, 0.0);
+                GL.Vertex3(x + w, y - h, -5);
+                GL.TexCoord2(1.0, 1.0);
+                GL.Vertex3(x + w, y + h, -5);
+                GL.TexCoord2(0.0, 1.0);
+                GL.Vertex3(x - w, y + h, -5);
+                GL.TexCoord2(0.0, 0.0);
+                GL.Vertex3(x - w, y - h, -5);
+                GL.End();
+			}
+            catch(Exception e)
+            {
+				Console.Out.WriteLine(e.Message);
             }
         }
 

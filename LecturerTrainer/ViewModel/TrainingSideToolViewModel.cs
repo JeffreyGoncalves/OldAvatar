@@ -1042,14 +1042,11 @@ namespace LecturerTrainer.ViewModel
 			
 			if (AudioProvider.speechSpeedRecord.Count > 0)
 			{
-				System.Diagnostics.Debug.WriteLine("if");
 				using (System.IO.StreamWriter file = new System.IO.StreamWriter(currentPath + @"\SpeechSpeed_Data.csv", true))
 				{
-					System.Diagnostics.Debug.WriteLine("file, ssize = "+ AudioProvider.speechSpeedRecord.Count);
 					file.Write("Speech Speed,");
 					foreach(KeyValuePair<double, int> pair in AudioProvider.speechSpeedRecord)
 					{
-						System.Diagnostics.Debug.WriteLine(pair.Key+" - "+pair.Value);
 						file.WriteLine(pair.Key+", "+pair.Value);
 					}
 				}
