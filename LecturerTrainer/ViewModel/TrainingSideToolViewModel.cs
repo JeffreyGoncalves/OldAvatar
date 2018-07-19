@@ -1017,7 +1017,10 @@ namespace LecturerTrainer.ViewModel
 			
 			string date = DateTime.Now.ToString().Replace(":","_").Replace("/","_");
 
-			using (StreamWriter file = new StreamWriter(currentPath + @"\HandsJoined_Data_"+ date +"_.csv", true))
+			string dataPath = Path.Combine(currentPath, "Feedback Data");
+			Directory.CreateDirectory(dataPath);
+
+			using (StreamWriter file = new StreamWriter(dataPath + @"\HandsJoined_Data_"+ date +"_.csv", true))
 			{	
 				file.WriteLine("Hands Joined,");
 				foreach(KeyValuePair<double, byte> pair in HandsJoined.handsJoinedRecord)
@@ -1025,7 +1028,7 @@ namespace LecturerTrainer.ViewModel
 			}
 			HandsJoined.handsJoinedRecord = new Dictionary<double, byte>();
 
-			using (StreamWriter file = new StreamWriter(currentPath + @"\ArmsCrossed_Data_"+ date +"_.csv", true))
+			using (StreamWriter file = new StreamWriter(dataPath + @"\ArmsCrossed_Data_"+ date +"_.csv", true))
 			{
 				file.WriteLine("Arms Crossed,");
 				foreach(KeyValuePair<double, byte> pair in ArmsCrossed.armsCrossedRecord)
@@ -1033,7 +1036,7 @@ namespace LecturerTrainer.ViewModel
 			}
 			ArmsCrossed.armsCrossedRecord = new Dictionary<double, byte>();
 
-			using (StreamWriter file = new StreamWriter(currentPath + @"\Agitation_Data_"+ date +"_.csv", true))
+			using (StreamWriter file = new StreamWriter(dataPath + @"\Agitation_Data_"+ date +"_.csv", true))
 			{
 				file.WriteLine("Agitation,");
 				foreach(KeyValuePair<double, byte> pair in Agitation.agitationRecord)
@@ -1043,16 +1046,25 @@ namespace LecturerTrainer.ViewModel
 			
 			if (AudioProvider.speechSpeedRecord.Count > 0)
 			{
-				using (StreamWriter file = new StreamWriter(currentPath + @"\SpeechSpeed_Data_"+ date +"_.csv", true))
+				using (StreamWriter file = new StreamWriter(dataPath + @"\SpeechSpeed_Data_"+ date +"_.csv", true))
 				{
-					file.Write("Speech Speed,");
+					file.WriteLine("Speech Speed,");
 					foreach(KeyValuePair<double, int> pair in AudioProvider.speechSpeedRecord)
-					{
 						file.WriteLine(pair.Key+", "+pair.Value);
-					}
+				}
+				AudioProvider.speechSpeedRecord = new Dictionary<double, int>();
+			}
+
+			if (lookingDirection.lookingDirectionRecord.Count > 0)
+			{
+				using (StreamWriter file = new StreamWriter(dataPath + @"\LookingDirection_Data_"+ date +"_.csv", true))
+				{
+					file.WriteLine("Looked too long,");
+					foreach(KeyValuePair<double, byte> pair in lookingDirection.lookingDirectionRecord)
+						file.WriteLine(pair.Key+", "+pair.Value);
 				}
 			}
-			AudioProvider.speechSpeedRecord = new Dictionary<double, int>();
+			
 		}
 
         #endregion
