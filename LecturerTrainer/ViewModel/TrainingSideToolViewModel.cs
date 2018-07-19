@@ -843,7 +843,7 @@ namespace LecturerTrainer.ViewModel
                 string combine;
                 if (SessionRecordingViewModel.inRecord == true)
                 {
-                    combine = System.IO.Path.Combine(Path.GetDirectoryName(Main.session.sessionPath), "SessionRecording");
+                    combine = Path.Combine(Path.GetDirectoryName(Main.session.sessionPath), "SessionRecording");
                     if (!Directory.Exists(combine))
                     {
                         Directory.CreateDirectory(combine);
@@ -853,7 +853,7 @@ namespace LecturerTrainer.ViewModel
                 }
                 else
                 {
-                    combine = System.IO.Path.Combine(Path.GetDirectoryName(Main.session.sessionPath), "FreeRecording");
+                    combine = Path.Combine(Path.GetDirectoryName(Main.session.sessionPath), "FreeRecording");
                     if (!Directory.Exists(combine))
                     {
                         Directory.CreateDirectory(combine);
@@ -865,7 +865,7 @@ namespace LecturerTrainer.ViewModel
             else
             {
                 string newPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                string combine = System.IO.Path.Combine(newPath, "PublicRecord");
+                string combine = Path.Combine(newPath, "PublicRecord");
 
                 if (!Directory.Exists(combine))
                 {
@@ -1013,8 +1013,10 @@ namespace LecturerTrainer.ViewModel
 		/// </summary>
 		public void saveCSVRecord() 
 		{
+			
+			string date = DateTime.Now.ToString().Replace(":","_").Replace("/","_");
 
-			using (System.IO.StreamWriter file = new System.IO.StreamWriter(currentPath + @"\HandsJoined_Data.csv", true))
+			using (StreamWriter file = new StreamWriter(currentPath + @"\HandsJoined_Data_"+ date +"_.csv", true))
 			{	
 				file.WriteLine("Hands Joined,");
 				foreach(KeyValuePair<double, byte> pair in HandsJoined.handsJoinedRecord)
@@ -1022,7 +1024,7 @@ namespace LecturerTrainer.ViewModel
 			}
 			HandsJoined.handsJoinedRecord = new Dictionary<double, byte>();
 
-			using (System.IO.StreamWriter file = new System.IO.StreamWriter(currentPath + @"\ArmsCrossed_Data.csv", true))
+			using (StreamWriter file = new StreamWriter(currentPath + @"\ArmsCrossed_Data_"+ date +"_.csv", true))
 			{
 				file.WriteLine("Arms Crossed,");
 				foreach(KeyValuePair<double, byte> pair in ArmsCrossed.armsCrossedRecord)
@@ -1030,7 +1032,7 @@ namespace LecturerTrainer.ViewModel
 			}
 			ArmsCrossed.armsCrossedRecord = new Dictionary<double, byte>();
 
-			using (System.IO.StreamWriter file = new System.IO.StreamWriter(currentPath + @"\Agitation_Data.csv", true))
+			using (StreamWriter file = new StreamWriter(currentPath + @"\Agitation_Data_"+ date +"_.csv", true))
 			{
 				file.WriteLine("Agitation,");
 				foreach(KeyValuePair<double, byte> pair in Agitation.agitationRecord)
@@ -1040,7 +1042,7 @@ namespace LecturerTrainer.ViewModel
 			
 			if (AudioProvider.speechSpeedRecord.Count > 0)
 			{
-				using (System.IO.StreamWriter file = new System.IO.StreamWriter(currentPath + @"\SpeechSpeed_Data.csv", true))
+				using (StreamWriter file = new StreamWriter(currentPath + @"\SpeechSpeed_Data_"+ date +"_.csv", true))
 				{
 					file.Write("Speech Speed,");
 					foreach(KeyValuePair<double, int> pair in AudioProvider.speechSpeedRecord)
@@ -1064,7 +1066,7 @@ namespace LecturerTrainer.ViewModel
         /// <param name="pathfield"> The path of the file </param>
         private void saveTextInFile(List<String> textToSave, string pathfield)
         {
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(pathfield))
+            using (StreamWriter file = new StreamWriter(pathfield))
             {
                 foreach (string line in textToSave)
                 {
