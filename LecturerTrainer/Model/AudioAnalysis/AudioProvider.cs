@@ -210,7 +210,9 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// <summary>
         /// Intensity per frame
         /// </summary>
-        List<float> intensityPF = new List<float>();
+        private List<float> intensityPF = new List<float>();
+
+        public static float currentIntensity = 0.0f;
 
 		/// <summary>
         /// True if we have to record the speed rate
@@ -1240,6 +1242,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 {
                     this.nbSyllables++;
                 }
+                currentIntensity = intensityPF[intensityPF.Count - 1];
             }
         }
 
