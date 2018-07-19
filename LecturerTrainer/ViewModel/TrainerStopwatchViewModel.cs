@@ -76,11 +76,13 @@ namespace LecturerTrainer.ViewModel
                 /*Added by Baptiste Germond
                  Use for recording a session, it will access only when it is a record and when the timer is finished
                  It controlled the end of the record*/
-                else if (value == 0 && alreadyLaunched == true && SessionRecordingViewModel.inRecord == true)
+                else if ((value % 360) == 0 && alreadyLaunched == true && TrainingSideToolViewModel.Get().isRecording == true)
                 {
                     alreadyLaunched = false;
                     SessionRecordingViewModel.inRecord = false;
+                    TrainingSideToolViewModel.Get().isRecording = false;
                     TrainingSideToolViewModel.Get().stopSessionRecording();
+                    TrainingSideToolViewModel.Get().stopStopwatch();
                 }
             }
         }

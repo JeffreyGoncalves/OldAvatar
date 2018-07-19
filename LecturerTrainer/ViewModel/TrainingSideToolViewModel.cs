@@ -800,6 +800,7 @@ namespace LecturerTrainer.ViewModel
             ButtonAutomationPeer peer = new ButtonAutomationPeer(TrainingSideTool.Get().StopRecordingButton);
             IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
             invokeProv.Invoke();
+            Stop();
         }
 
 
@@ -1091,7 +1092,7 @@ namespace LecturerTrainer.ViewModel
         /// it stops the stopwatch for the recording
         /// </summary>
         /// <author> Alban Descottes 2018 </author>
-        public void stopStopwatch(long time)
+        public void stopStopwatch()
         {
             timeRecorded = Tools.getStopWatch();
             Tools.resetStopWatch();
@@ -1139,7 +1140,7 @@ namespace LecturerTrainer.ViewModel
         private void Stop()
         {
             isRecording = false;
-            stopStopwatch(timeRecorded);
+            stopStopwatch();
             SideToolsViewModel.Get().allTabsSelectable();
             Agitation.record = false;
             HandsJoined.record = false;
