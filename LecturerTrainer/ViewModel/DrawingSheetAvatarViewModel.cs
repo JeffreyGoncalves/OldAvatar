@@ -852,6 +852,7 @@ namespace LecturerTrainer.Model
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 				
+                
 				GL.PushAttrib(AttribMask.ColorBufferBit);
                 for (i = 0; i < Model.AudioAnalysis.Pitch.WIGGLE_SIZE - 1; i++)
                 {
@@ -861,9 +862,38 @@ namespace LecturerTrainer.Model
                     xw = -3.6f + (i+130) / 60.0f;
                     float xw1 = -3.6f + (i + 1+130) / 60.0f;
 
+                    
+
                     GL.PushMatrix();
                     GL.Begin(PrimitiveType.Lines);
-                    GL.Color4(0.5, 0.5, 0.5, 1.0);
+
+                    
+
+                    //Change the color of the rising tone line according to the volume of the voice, speed detection has to be activated
+                    if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity == 0.0f)
+                    {
+                        GL.Color4(0.0, 0.0, 0.5, 1.0);
+                    }
+                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity > 0.0f && AudioAnalysis.AudioProvider.currentIntensity < 560.0f)
+                    {
+                        GL.Color4(0.0, 0.5, 0.5, 1.0);
+                    }
+                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 800.0f && AudioAnalysis.AudioProvider.currentIntensity < 900.0f)
+                    {
+                        GL.Color4(0.5, 0.5, 0.0, 1.0);
+                    }
+                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 900.0f)
+                    {
+                        GL.Color4(0.5, 0.0, 0.0, 1.0);
+                    }
+                    else GL.Color4(0.5, 0.5, 0.5, 1.0);
+
+                    if(AudioAnalysis.AudioProvider.detectionActive == false)
+                    {
+                        GL.Color4(0.5, 0.5, 0.5, 1.0);
+                    }
+                    
+
                     GL.Normal3(0.0f, 0.0f, 1.0f);
                     GL.LineWidth(1.0f);
 
