@@ -1,0 +1,25 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LecturerTrainer.View"
+        xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" xmlns:Controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Layout.Toolkit" x:Class="LecturerTrainer.View.ExportAvatarVideoView"
+        mc:Ignorable="d"
+        Title="Export avatar video" Height="100" Width="300"
+        ContentRendered="Window_ContentRendered">
+    <!-- Added by Alban Descottes 2018 -->
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+    </Window.Resources>
+    <Window.Background>
+        <SolidColorBrush Color="{DynamicResource SelectedTabColor}"/>
+    </Window.Background>
+    <Grid>
+        <Label x:Name="ExportTitle" Content="Exporting" HorizontalAlignment="Center" VerticalAlignment="Top" Width="{DynamicResource GeneralFieldWidth}" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="-8.545,-5,-9.435,0">
+            <Label.Foreground>
+                <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+            </Label.Foreground>
+        </Label>
+        <ProgressBar x:Name="ExportProgressBar" Minimum="0" Maximum="0" Margin="20,25,20,20" />
+    </Grid>
+</Window>

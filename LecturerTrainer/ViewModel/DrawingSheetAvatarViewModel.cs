@@ -172,6 +172,7 @@ namespace LecturerTrainer.Model
         /// The control allowing to create a 3D scene
         /// </summary>
         private GLControl glControl;
+        public GLControl GLControl { get; set; }
 
         /// <summary>
         /// Stacks and slices of glut elements composing the avatar
@@ -196,45 +197,25 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// Avatar initial position.
         /// </summary>
-        //private readonly Vector3 initialHead = new Vector3(0.135897f, 0.7635499f, 2.229455f);
         private readonly Vector3 initialHead = new Vector3(0, 0.7f, 2.229455f);
-        //private readonly Vector3 initialShoulderCenter = new Vector3(0.1280521f, 0.5663089f, 2.229455f);
         private readonly Vector3 initialShoulderCenter = new Vector3(0, 0.55f, 2.229455f);
-        //private readonly Vector3 initialShoulderLeft = new Vector3(-0.03456776f, 0.4672897f, 2.229455f);
         private readonly Vector3 initialShoulderLeft = new Vector3(-0.18f, 0.45f, 2.229455f);
-        //private readonly Vector3 initialShoulderRight = new Vector3(0.3046574f, 0.4610354f, 2.229455f);
         private readonly Vector3 initialShoulderRight = new Vector3(0.18f, 0.45f, 2.229455f);
-        //private readonly Vector3 initialElbowLeft = new Vector3(-0.1046979f, 0.2168238f, 2.21722f);
         private readonly Vector3 initialElbowLeft = new Vector3(-0.24f, 0.2f, 2.229455f);
-        //private readonly Vector3 initialElbowRight = new Vector3(0.3838935f, 0.2056853f, 2.254441f);
         private readonly Vector3 initialElbowRight = new Vector3(0.24f, 0.2f, 2.229455f);
-        //private readonly Vector3 initialWristLeft = new Vector3(-0.1332553f, -0.02705427f, 2.115675f);
         private readonly Vector3 initialWristLeft = new Vector3(-0.2f, -0.05f, 2.229455f);
-        //private readonly Vector3 initialWristRight = new Vector3(0.4350696f, 0.007437438f, 2.160146f);
         private readonly Vector3 initialWristRight = new Vector3(0.2f, -0.05f, 2.229455f);
-        //private readonly Vector3 initialHandLeft = new Vector3(-0.1316205f, -0.1162565f, 2.085958f);
         private readonly Vector3 initialHandLeft = new Vector3(-0.19f, -0.2f, 2.229455f);
-        //private readonly Vector3 initialHandRight = new Vector3(0.4430848f, -0.0936875f, 2.119174f);
         private readonly Vector3 initialHandRight = new Vector3(0.19f, -0.2f, 2.229455f);
-        //private readonly Vector3 initialSpine = new Vector3(0.1352139f, 0.1978379f, 2.229455f);
         private readonly Vector3 initialSpine = new Vector3(0, 0.1f, 2.229455f);
-        //private readonly Vector3 initialHipCenter = new Vector3(0.1422898f, 0.1372883f, 2.229455f);
         private readonly Vector3 initialHipCenter = new Vector3(0, 0.05f, 2.229455f);
-        //private readonly Vector3 initialHipLeft = new Vector3(0.06824586f, 0.06192002f, 2.204764f);
         private readonly Vector3 initialHipLeft = new Vector3(-0.075f, 0, 2.229455f);
-        //private readonly Vector3 initialHipRight = new Vector3(0.2213473f, 0.06250456f, 2.221346f);
         private readonly Vector3 initialHipRight = new Vector3(0.075f, 0, 2.229455f);
-        //private readonly Vector3 initialKneeLeft = new Vector3(0.002393939f, -0.4226111f, 2.23532f);
         private readonly Vector3 initialKneeLeft = new Vector3(-0.085f, -0.4f, 2.229455f);
-        //private readonly Vector3 initialKneeRight = new Vector3(0.2920577f, -0.4315554f, 2.239343f);
         private readonly Vector3 initialKneeRight = new Vector3(0.085f, -0.4f, 2.229455f);
-        //private readonly Vector3 initialAnkleLeft = new Vector3(-0.04282022f, -0.804864f, 2.239705f);
         private readonly Vector3 initialAnkleLeft = new Vector3(-0.075f, -0.8f, 2.229455f);
-        //private readonly Vector3 initialAnkleRight = new Vector3(0.3301864f, -0.8169076f, 2.264407f);
         private readonly Vector3 initialAnkleRight = new Vector3(0.075f, -0.8f, 2.229455f);
-        //private readonly Vector3 initialFootLeft = new Vector3(-0.06813762f, -0.8776183f, 2.208368f);
         private readonly Vector3 initialFootLeft = new Vector3(-0.12f, -0.8776183f, 2.2f);
-        //private readonly Vector3 initialFootRight = new Vector3(0.3620958f, -0.8851607f, 2.2292f);
         private readonly Vector3 initialFootRight = new Vector3(0.12f, -0.8776183f, 2.2f);
 
         /// <summary>
@@ -502,7 +483,6 @@ namespace LecturerTrainer.Model
         /// </summary>
         private void display(EventArgs evt)
         {
-            
             if (KinectDevice.faceTracking && !KinectDevice.SwitchDraw)
             {
                 drawFace(evt);
@@ -829,12 +809,6 @@ namespace LecturerTrainer.Model
         {
             drawAvatar(avatar, faceT);
         }
-
-        public void drawAvatarReplay(Skeleton sk)
-        {
-            display();
-        }
-
 
         private void drawAvatar(Skeleton avatar, bool faceT)
         {
@@ -1673,27 +1647,31 @@ namespace LecturerTrainer.Model
                 screenshotWidth += 1;
             if (screenshotHeight % 2 != 0)
                 screenshotHeight += 1;
-            if (Tools.getStopWatch() % 30 > 22 || Tools.getStopWatch() % 30 < 8 || firstScreenshot)
-            {
-                if (firstScreenshot)
-                    firstScreenshot = false;
-                
 
-                Bitmap bmp = new Bitmap(screenshotWidth, screenshotHeight);
-                //bmp.SetResolution(1920, 1080);
-                System.Drawing.Imaging.BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                GL.ReadPixels(0, 0, screenshotWidth, screenshotHeight, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, bmpData.Scan0);
-                GL.Finish();
-                bmp.UnlockBits(bmpData);
-                bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            Bitmap bmp = new Bitmap(screenshotWidth, screenshotHeight);
+            System.Drawing.Imaging.BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            GL.ReadPixels(0, 0, screenshotWidth, screenshotHeight, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, bmpData.Scan0);
+            GL.Finish();
+            bmp.UnlockBits(bmpData);
+            bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            return bmp;
+        }
 
-                oldBmp = bmp;
-                return bmp;
-            }
-            else
-            {
-                return oldBmp;
-            }
+        /// <summary>
+        /// It returns the width and the height of the DrawingSheetView
+        /// This method is for the exporting of the avatar video
+        /// </summary>
+        public Tuple<int, int> getWidthAndHeight()
+        {
+            int screenshotWidth = glControl.Width;
+            int screenshotHeight = glControl.Height;
+
+            // width/height have to have a pair size 
+            if (screenshotWidth % 2 != 0)
+                screenshotWidth += 1;
+            if (screenshotHeight % 2 != 0)
+                screenshotHeight += 1;
+            return new Tuple<int, int>(screenshotWidth, screenshotHeight);
         }
 
         /// <summary>

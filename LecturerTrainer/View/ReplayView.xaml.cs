@@ -87,8 +87,7 @@ namespace LecturerTrainer.View
         /// this method is called everytime, when the user drags the slider it changes the current avatar 
         /// it selects the right avatar proportionally of the total length of the replay
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <author> Alban Descottes 2018 </author>
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (dragStarted)

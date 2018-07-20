@@ -1,17 +1,16 @@
-﻿<Window x:Class="LecturerTrainer.View.ErrorMessageBox"
+﻿<Window x:Class="LecturerTrainer.View.MessageBoxPerso"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
-        Height="250" Width="450" ResizeMode="NoResize" x:Name="TitleErrorBox" WindowStartupLocation="CenterScreen">
-        <!--Message box for any errors - Added by Baptiste Germond-->
+        Height="250" Width="550" ResizeMode="NoResize" x:Name="TitleBox" WindowStartupLocation="CenterScreen">
+    <!--Message box for messages- Added by Alban Descottes -->
     <Window.Background>
         <SolidColorBrush Color="{DynamicResource SelectedTabColor}"/>
     </Window.Background>
     <StackPanel Orientation="Vertical" Margin="0 5 0 0">
-    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-        <Image Source="Icons/error_icon.png" Height="64" HorizontalAlignment="Left" Margin="5 0 5 0"></Image>
-        <Grid Width="360" Height="152">
-                <TextBlock x:Name="TextError" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource LargerTitleFontSize}" VerticalAlignment="Center" TextAlignment="Center" Margin="0,64,67,64"></TextBlock>
+        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+            <Grid Width="550" Height="162">
+                <TextBlock x:Name="TextMessage" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource LargerTitleFontSize}" TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center" HorizontalAlignment="Center"></TextBlock>
                 <TextBlock.Foreground>
                     <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                 </TextBlock.Foreground>

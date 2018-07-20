@@ -27,6 +27,7 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Border x:Name="TitleReplayBorder" Margin="0" Padding="{DynamicResource Padding1}" BorderThickness="{DynamicResource Thickness1}" CornerRadius="{DynamicResource CornerRadius1}" Grid.Row="1" Grid.Column="1">
@@ -108,11 +109,6 @@
                     </Separator.Background>
                 </Separator>
                 <RadioButton GroupName="replayDisplayButtonsGroup" x:Name="Avatar" Content="Avatar" Command ="{Binding AvatarDisplayCommand}" HorizontalAlignment="Left" Margin="0,30,0,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" Width="{DynamicResource ButtonsWidth}" FontSize="{DynamicResource GeneralFontSize}" IsEnabled="False">
-                    <RadioButton.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </RadioButton.Foreground>
-                </RadioButton>
-                <RadioButton GroupName="replayDisplayButtonsGroup" x:Name="VideoAvatar" Content="Video of the Avatar" Command="{Binding VideoAvatarDisplayCommand}" HorizontalAlignment="Left" Margin="0,55,0,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" Width="{DynamicResource ButtonsWidth}" FontSize="{DynamicResource GeneralFontSize}" IsChecked="True" IsEnabled="False">
                     <RadioButton.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </RadioButton.Foreground>
@@ -220,7 +216,7 @@
                 </TextBlock>
             </Grid>
         </Border>
-        <Button x:Name="DisplayResultsButton" Content="Display the results" Command="{Binding ResultsCommand}" HorizontalAlignment="Center" Margin="0 5 0 5" Width="{DynamicResource ButtonsWidth}" Height="{DynamicResource GeneralFieldHeight}" Foreground="#FF15202C" Grid.Row="12" Grid.Column="1">
+        <Button x:Name="ExportAvatarVideo" Content="Export the avatar video" Command="{Binding ExportAvatarVideoCommand}" HorizontalAlignment="Center" Margin="0 5 0 5" Width="{DynamicResource ButtonsWidth}"  Height="{DynamicResource GeneralFieldHeight}" Foreground="#FF15202C" Grid.Row="12" Grid.Column="1">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                     <GradientStop Color="#FFF3F3F3" Offset="0"/>
@@ -230,7 +226,7 @@
                 </LinearGradientBrush>
             </Button.Background>
         </Button>
-        <Button x:Name="OtherReplayButton" Content="Choose another replay" Command="{Binding OtherReplayCommand}" HorizontalAlignment="Center" Margin="0 5 0 0" Width="{DynamicResource ButtonsWidth}" Height="{DynamicResource GeneralFieldHeight}" Foreground="#FF15202C" Grid.Row="13" Grid.Column="1">
+        <Button x:Name="DisplayResultsButton" Content="Display the results" Command="{Binding ResultsCommand}" HorizontalAlignment="Center" Margin="0 5 0 0" Width="{DynamicResource ButtonsWidth}" Height="{DynamicResource GeneralFieldHeight}" Foreground="#FF15202C" Grid.Row="13" Grid.Column="1">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                     <GradientStop Color="#FFF3F3F3" Offset="0"/>
@@ -240,7 +236,18 @@
                 </LinearGradientBrush>
             </Button.Background>
         </Button>
-        <Button x:Name="ReplayReturnButton" Content="Quit Replay" Command="{Binding QuitCommand}" HorizontalAlignment="Center" Margin="0 5 0 0"  Width="{DynamicResource ButtonsWidth}" Height="{DynamicResource GeneralFieldHeight}" Foreground="#FF15202C" Grid.Row="14" Grid.Column="1">
+        
+        <Button x:Name="OtherReplayButton" Content="Choose another replay" Command="{Binding OtherReplayCommand}" HorizontalAlignment="Center" Margin="0 5 0 0" Width="{DynamicResource ButtonsWidth}" Height="{DynamicResource GeneralFieldHeight}" Foreground="#FF15202C" Grid.Row="14" Grid.Column="1">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FFF3F3F3" Offset="0"/>
+                    <GradientStop Color="#FFEBEBEB" Offset="0.5"/>
+                    <GradientStop Color="#FFDDDDDD" Offset="0.382"/>
+                    <GradientStop Color="#FF424242" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
+        <Button x:Name="ReplayReturnButton" Content="Quit Replay" Command="{Binding QuitCommand}" HorizontalAlignment="Center" Margin="0 5 0 0"  Width="{DynamicResource ButtonsWidth}" Height="{DynamicResource GeneralFieldHeight}" Foreground="#FF15202C" Grid.Row="15" Grid.Column="1">
             <Button.Background>
                 <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
                     <GradientStop Color="#FFF3F3F3" Offset="0"/>

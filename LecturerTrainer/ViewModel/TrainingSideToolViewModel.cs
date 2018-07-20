@@ -1169,14 +1169,16 @@ namespace LecturerTrainer.ViewModel
             }
 
             System.Windows.Forms.OpenFileDialog fbd = new System.Windows.Forms.OpenFileDialog();
-            fbd.Filter = "Performance File (.avi,.skd)|*.avi;*.skd"; // Filter files by extension
+            fbd.Filter = "Performance File (.avi,.skd)|stream.avi;*.skd"; // Filter files by extension
             fbd.Title = "Select the file of the performance you want to replay";
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 try
                 {
+
                     ReplayViewModel.Set(fbd.FileName);
                     replayViewModel = ReplayViewModel.Get();
+
                     replayMode();
                 }
                 catch(XmlLoadingException e)

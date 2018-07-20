@@ -386,6 +386,9 @@
     <Compile Include="View\ErrorMessageBox.xaml.cs">
       <DependentUpon>ErrorMessageBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\ExportAvatarVideoView.xaml.cs">
+      <DependentUpon>ExportAvatarVideoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\GeneralSideTool.xaml.cs">
       <DependentUpon>GeneralSideTool.xaml</DependentUpon>
     </Compile>
@@ -397,6 +400,9 @@
     </Compile>
     <Compile Include="View\InformationView.xaml.cs">
       <DependentUpon>InformationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MessageBoxPerso.xaml.cs">
+      <DependentUpon>MessageBoxPerso.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NewUserView.xaml.cs">
       <DependentUpon>NewUserView.xaml</DependentUpon>
@@ -472,6 +478,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ExportAvatarVideoView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\GeneralSideTool.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -487,6 +497,10 @@
     <Page Include="View\InformationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MessageBoxPerso.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\NewUserView.xaml">
       <SubType>Designer</SubType>
