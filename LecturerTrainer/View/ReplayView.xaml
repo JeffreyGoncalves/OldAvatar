@@ -15,7 +15,7 @@
             <RowDefinition Height="20"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="110"/>
+            <RowDefinition Height="85"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="180"/>
             <RowDefinition Height="20"/>
@@ -97,7 +97,7 @@
             <Border.BorderBrush>
                 <SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
             </Border.BorderBrush>
-            <Grid x:Name="DisplayButtonsLayout" Margin="0,0,-11,-1">
+            <Grid x:Name="DisplayButtonsLayout" Margin="0,0,-11,0">
                 <Label x:Name="Display_Label" Content="Display" HorizontalAlignment="Left" VerticalAlignment="Top" Width="{DynamicResource GeneralFieldWidth}" Height="{DynamicResource TitleLabelHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="-8.545,-5,-9.435,0">
                     <Label.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
@@ -113,7 +113,7 @@
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </RadioButton.Foreground>
                 </RadioButton>
-                <RadioButton GroupName="replayDisplayButtonsGroup" x:Name="Stream" Content="VideoStream" Command="{Binding StreamDisplayCommand}"  HorizontalAlignment="Left" Margin="0,80,0,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" Width="{DynamicResource ButtonsWidth}" FontSize="{DynamicResource GeneralFontSize}" IsEnabled="False">
+                <RadioButton GroupName="replayDisplayButtonsGroup" x:Name="Stream" Content="VideoStream" Command="{Binding StreamDisplayCommand}"  HorizontalAlignment="Left" Margin="0,55,0,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" Width="{DynamicResource ButtonsWidth}" FontSize="{DynamicResource GeneralFontSize}" IsEnabled="False">
                     <RadioButton.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </RadioButton.Foreground>

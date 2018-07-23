@@ -59,7 +59,7 @@ namespace LecturerTrainer.View
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            for (int i = 0; i <= lengthSkeletonList; i++)
+            for (int i = 0; i <= lengthSkeletonList ; i++)
             {
                 (sender as BackgroundWorker).ReportProgress(i);
             }
@@ -67,16 +67,35 @@ namespace LecturerTrainer.View
 
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            // it changes the current skeleton to draw, next it draws, grabs a screenshot and writes on the video
-            DrawingSheetAvatarViewModel.Get().skToDrawInReplay = ReplayAvatar.SkeletonList[e.ProgressPercentage].Item2;
-            DrawingSheetAvatarViewModel.Get().draw(this, new EventArgs());
-            ReplayViewModel.Get().nextFeedbackList(this, new EventArgs());
-            avatarVideoStreamWriter.WriteVideoFrame(DrawingSheetAvatarViewModel.Get().GrabScreenshot());
+            // if the replay has faces, it displays the face plus the skeleton
+            // and it takes two screenshot because during a recording with facetracking on it records two time less skeletons 
+            if (ReplayAvatar.faceTracking)
+            {
+                DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
+                DrawingSheetAvatarViewModel.Get().drawFace(ReplayAvatar.SkeletonList[e.ProgressPercentage].Item3.depthPointsList,
+                    ReplayAvatar.SkeletonList[e.ProgressPercentage].Item3.colorPointsList,
+                    ReplayAvatar.SkeletonList[e.ProgressPercentage].Item3.faceTriangles);
+                DrawingSheetAvatarViewModel.Get().skToDrawInReplay = ReplayAvatar.SkeletonList[e.ProgressPercentage].Item2;
+                ReplayViewModel.Get().currentFeedbackList = ReplayViewModel.listlistString[e.ProgressPercentage];
+                DrawingSheetAvatarViewModel.Get().draw(this, new EventArgs());
+                //ReplayViewModel.Get().nextFeedbackList(this, new EventArgs());
+                avatarVideoStreamWriter.WriteVideoFrame(DrawingSheetAvatarViewModel.Get().GrabScreenshot());
+                avatarVideoStreamWriter.WriteVideoFrame(DrawingSheetAvatarViewModel.Get().GrabScreenshot());
+            }
+            // else it displays just the skeleton and takes one screenshot
+            else
+            {
+                // it changes the current skeleton to draw, next it draws, grabs a screenshot and writes on the video
+                DrawingSheetAvatarViewModel.Get().skToDrawInReplay = ReplayAvatar.SkeletonList[e.ProgressPercentage].Item2;
+                ReplayViewModel.Get().currentFeedbackList = ReplayViewModel.listlistString[e.ProgressPercentage];
+                DrawingSheetAvatarViewModel.Get().draw(this, new EventArgs());
+                avatarVideoStreamWriter.WriteVideoFrame(DrawingSheetAvatarViewModel.Get().GrabScreenshot());
+            }
             
             // it changes the value for the progressBar
             ExportProgressBar.Value = e.ProgressPercentage;
 
-            //if it's the last one it closes the video, the view and opens a messageBox to inform the user that is complete
+            //if it's the last one it closes the video, the view and opens a messageBox to inform the user that is complete and the localization of the file
             if(e.ProgressPercentage == lengthSkeletonList)
             {
                 avatarVideoStreamWriter.Close();

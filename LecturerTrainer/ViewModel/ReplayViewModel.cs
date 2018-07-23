@@ -233,7 +233,7 @@ namespace LecturerTrainer.ViewModel
             }
             else
             {
-                new ErrorMessageBox("Export impossible", "The video of the avatar is already export").ShowDialog();
+                new ErrorMessageBox("Export impossible", "The video of the avatar is already exported").ShowDialog();
             }
         }
         #endregion

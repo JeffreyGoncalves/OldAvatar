@@ -334,7 +334,6 @@
     <Compile Include="Model\EventsAnalysis\Epicness.cs" />
     <Compile Include="Model\EventsLinker.cs" />
     <Compile Include="Model\Exceptions\CantCreateFileException.cs" />
-    <Compile Include="Model\KeyValuePairPerso.cs" />
     <Compile Include="Model\Main.cs" />
     <Compile Include="Model\BodyAnalysis\Posture.cs" />
     <Compile Include="Model\BodyAnalysis\Geometry.cs" />

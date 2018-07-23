@@ -90,7 +90,6 @@ namespace LecturerTrainer.ViewModel
         public static int nbVideos = 1;
 
         private bool _ToggleStreamRecording;
-        private bool _ToggleAvatarVideoRecording;
         private bool _ToggleAudioRecording;
         private bool _ToggleAvatarOpenGLRecording;
 
@@ -384,7 +383,6 @@ namespace LecturerTrainer.ViewModel
             replayModeCommand = new RelayCommand(ChoosePerfToReplay);
 
             // prepare video recorders 
-            ToggleAvatarVideoRecording = false;
             ToggleStreamRecording = false;
             ToggleAudioRecording = false;
             ToggleAvatarOpenGLRecording = true;
@@ -620,17 +618,6 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
-        public bool ToggleAvatarVideoRecording
-        {
-            get { return _ToggleAvatarVideoRecording; }
-
-            set
-            {
-                _ToggleAvatarVideoRecording = value;
-                OnPropertyChanged("ToggleAvatarVideoRecording");
-            }
-        }
-
         public bool ToggleAvatarOpenGLRecording
         {
             get { return _ToggleAvatarOpenGLRecording; }
@@ -815,11 +802,6 @@ namespace LecturerTrainer.ViewModel
 
         }
         
-        private void backgroundAvatarVideoRecording(object sender, Bitmap e)
-        {
-            SavingTools.EnqueueAvatarVideoStream(e);
-        }
-
         private void backgroundAvatarXMLRecording(object sender, Skeleton sk)
         {
             SavingTools.EnqueueXMLSkeleton(sk);
@@ -909,12 +891,6 @@ namespace LecturerTrainer.ViewModel
 				}
 
             }
-            if (_ToggleAvatarVideoRecording)
-            {
-                DrawingSheetAvatarViewModel.Get().IsVideoAvatarRecording = true;
-                DrawingSheetAvatarViewModel.backgroundRecordingEventStream += backgroundAvatarVideoRecording;
-                SavingTools.StartSavingAvatarVideoRecording();
-            }
             if (_ToggleStreamRecording)
             {
                 DrawingSheetStreamViewModel.backgroundDrawEventStream += backgroundStreamVideoRecording;
@@ -938,12 +914,6 @@ namespace LecturerTrainer.ViewModel
             {
                 DrawingSheetStreamViewModel.backgroundDrawEventStream -= backgroundStreamVideoRecording;
                 SavingTools.StreamDispose();
-            }
-            if (_ToggleAvatarVideoRecording)
-            {
-                DrawingSheetAvatarViewModel.Get().IsVideoAvatarRecording = false;
-                DrawingSheetAvatarViewModel.backgroundRecordingEventStream -= backgroundAvatarVideoRecording;
-                SavingTools.AvatarVideoDispose();
             }
             if (_ToggleAvatarOpenGLRecording)
             {
@@ -1007,6 +977,7 @@ namespace LecturerTrainer.ViewModel
             ResViewMod.SaveGraph(SavingTools.pathFolder + '/');
 
 			saveCSVRecord();
+            new MessageBoxPerso("Record complete", "Record sucessful\nThe replay is located in " + SavingTools.pathFolder + '\\').ShowDialog();
         }
 
 		/// <summary>

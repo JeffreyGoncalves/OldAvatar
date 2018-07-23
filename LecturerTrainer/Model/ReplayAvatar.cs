@@ -215,12 +215,10 @@ namespace LecturerTrainer.Model
         /// <author>Alban Descottes</author>
         private void nextSkeleton(object sender, EventArgs evt)
         {
-            bool face = (faceDir == "") ? false : true;
-
             // it selects the next skeleton number, if it's a replay with the face, it change the currentSkeleton one time 
             // if it's the last skeleton is the last one it sets to null
-            if ((currentSkeletonNumber < skeletonList.Count && (replayFace % 2) == 0 && face)
-                || (currentSkeletonNumber < skeletonList.Count && !face))
+            if ((currentSkeletonNumber < skeletonList.Count && (replayFace % 2) == 0 && faceTracking)
+                || (currentSkeletonNumber < skeletonList.Count && !faceTracking))
             {
                 currentSkeleton = skeletonList[currentSkeletonNumber].Item2;
             }
@@ -231,14 +229,13 @@ namespace LecturerTrainer.Model
             // else it stops the replay with the command of stop button
             if (currentSkeleton != null)
             {
-                if (face)
+                if (faceTracking)
                 {
                     DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
                     DrawingSheetAvatarViewModel.Get().drawFace(skeletonList[currentSkeletonNumber].Item3.depthPointsList,
                         skeletonList[currentSkeletonNumber].Item3.colorPointsList,
                         skeletonList[currentSkeletonNumber].Item3.faceTriangles);
                 }
-                // We only draw the last skeleton
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
                 setDisplayedTime();
             }
@@ -248,7 +245,7 @@ namespace LecturerTrainer.Model
             }
 
             // if the replay has a face it augments the currentSkeletonNumber
-			if(face)
+			if(faceTracking)
 			{
                 if ((replayFace % 2) == 1)
                     currentSkeletonNumber += 1;

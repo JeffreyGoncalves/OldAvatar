@@ -78,13 +78,6 @@ namespace LecturerTrainer.Model
         /// </summary>
         private static DrawingSheetAvatarViewModel dsavm = null;
 
-
-        /// <summary>
-        /// Raise an event when we want to transfer a frame to the recorder
-        /// </summary>
-        /// <author> Amirali Ghazi</author>
-        public static EventHandler<Bitmap> backgroundRecordingEventStream;
-
         /// <summary>
         /// Raise an event when we want to transfer a frame to the recorder
         /// </summary>
@@ -1662,7 +1655,6 @@ namespace LecturerTrainer.Model
         /// <returns>a Bitmap of the current 3D rendering</returns>
         /// <remarks>Excerpt from the openTK website : http://www.opentk.com/doc/graphics/save-opengl-rendering-to-disk </remarks>
         /// <author>Amirali Ghazi</author>
-        /// <remarks>Find a way to prevent video recording / grabing a screenshot if the kinect does not detect a body</remarks>
         public Bitmap GrabScreenshot()
         {
             if (GraphicsContext.CurrentContext == null)
@@ -1750,7 +1742,6 @@ namespace LecturerTrainer.Model
         /// <param name="sk"></param>
         private void DrawBonesAndJoints(Skeleton sk)
         {
-            // YOYO
             if (sk != null)
             {
                 // Head and Shoulders
@@ -2203,7 +2194,7 @@ namespace LecturerTrainer.Model
        /// <param name="left"></param>
         private void DrawHand(Vector3 wrist, Vector3 handEnd, OpenTK.Vector4 color, bool left)
         {
-            DrawHandSecondversion(wrist.X, wrist.Y, wrist.Z, handEnd.X, handEnd.Y, handEnd.Z, color, left);                       
+            DrawHandOpenGL(wrist.X, wrist.Y, wrist.Z, handEnd.X, handEnd.Y, handEnd.Z, color, left);                       
         }
 
         /// <summary>
@@ -3022,15 +3013,7 @@ namespace LecturerTrainer.Model
         /// Better shape of the hands
         /// <author>Alban Descottes</author>
         /// </summary>
-        /// <param name="X1"></param>
-        /// <param name="Y1"></param>
-        /// <param name="Z1"></param>
-        /// <param name="X2"></param>
-        /// <param name="Y2"></param>
-        /// <param name="Z2"></param>
-        /// <param name="color"></param>
-        /// <param name="left"></param>
-        void DrawHandSecondversion(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color, bool left)
+        void DrawHandOpenGL(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color, bool left)
         {
             Z1 = -Z1;
             Z2 = -Z2;
@@ -3052,7 +3035,7 @@ namespace LecturerTrainer.Model
             float rY = vX * vZ;
             GL.PushMatrix();
             {
-                //draw the cylinder body
+                // initialization of the hand, it rotates the hand if it's the left hand or the right one 
                 GL.Translate(X1, Y1, Z1);
                 GL.Rotate(aX, rX, rY, 0.0);
                 if(left)
@@ -3070,16 +3053,16 @@ namespace LecturerTrainer.Model
                     Gl.glVertex3f(-0.025f, 0.01f, 0);
                     Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
                     Gl.glVertex3f(-0.02f, 0.02f, 0);
-                    Gl.glNormal3f(0.0f, 1.0f, 0.0f);//GL.Color4(Color.Blue);
+                    Gl.glNormal3f(0.0f, 1.0f, 0.0f);
                     Gl.glVertex3f(0.02f, 0.02f, 0.02f);
                     Gl.glVertex3f(0.02f, 0.02f, 0);
-                    Gl.glNormal3f(1.0f, 1.0f, 0.0f);// GL.Color4(Color.Green);
+                    Gl.glNormal3f(1.0f, 1.0f, 0.0f);
                     Gl.glVertex3f(0.04f, 0.01f, 0.02f);
                     Gl.glVertex3f(0.025f, 0.01f, 0);
-                    Gl.glNormal3f(1.0f, 0.0f, 0.0f);// GL.Color4(Color.Yellow);
+                    Gl.glNormal3f(1.0f, 0.0f, 0.0f);
                     Gl.glVertex3f(0.04f, -0.01f, 0.02f);
                     Gl.glVertex3f(0.025f, -0.01f, 0);
-                    Gl.glNormal3f(-1.0f, -1.0f, 0.0f);// GL.Color4(Color.Red);
+                    Gl.glNormal3f(-1.0f, -1.0f, 0.0f);
                     Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
                     Gl.glVertex3f(-0.025f, -0.01f, 0);
                     Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
@@ -3087,54 +3070,41 @@ namespace LecturerTrainer.Model
 
                 }
                 Gl.glEnd();
+                // thoses lines represent the palm of the hand
                 Gl.glBegin(Gl.GL_QUAD_STRIP);
                 {
-                    /*if (left)
-                    {*/
-                        Gl.glNormal3f(-1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
-                        Gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, -0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
-                        Gl.glNormal3f(1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(0.04f, -0.01f, 0.07f);
-                        Gl.glVertex3f(0.04f, -0.01f, 0.02f);
-                        Gl.glNormal3f(1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(0.04f, 0.01f, 0.02f);
-                        Gl.glVertex3f(0.02f, 0.02f, 0.07f);
-                        Gl.glVertex3f(0.02f, 0.02f, 0.02f);
-                        Gl.glVertex3f(-0.02f, 0.02f, 0.07f);
-                        Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
-                        Gl.glNormal3f(-1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
-                   /* }
-                    else
-                    {
-                        Gl.glNormal3f(0.0f, 1.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
-                        Gl.glVertex3f(-0.02f, 0.02f, 0.07f);
-                        Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
-                        Gl.glNormal3f(1.0f, 0.0f, 0.0f);
-                        Gl.glVertex3f(0.02f, 0.02f, 0.07f);
-                        Gl.glVertex3f(0.02f, 0.02f, 0.02f);
-                        Gl.glNormal3f(0.0f, 0.0f, 1.0f);
-                        Gl.glVertex3f(0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(0.04f, 0.01f, 0.02f);
-                        Gl.glVertex3f(0.04f, -0.01f, 0.07f);
-                        Gl.glVertex3f(0.04f, -0.01f, 0.02f);
-                        Gl.glNormal3f(0.0f, -1.0f, 0.0f);
-                        Gl.glVertex3f(-0.04f, -0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
-                        Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
-                    }*/
+                    Gl.glNormal3f(-1.0f, 0.0f, 0.0f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
+                    Gl.glNormal3f(0.0f, 1.0f, 0.0f);
+                    Gl.glVertex3f(-0.04f, -0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, -0.01f, 0.02f);
+                    Gl.glNormal3f(1.0f, 0.0f, 0.0f);
+                    Gl.glVertex3f(0.04f, -0.01f, 0.07f);
+                    Gl.glVertex3f(0.04f, -0.01f, 0.02f);
+                    Gl.glNormal3f(1.0f, 0.0f, 0.0f);
+                    Gl.glVertex3f(0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(0.04f, 0.01f, 0.02f);
+                    Gl.glVertex3f(0.02f, 0.02f, 0.07f);
+                    Gl.glVertex3f(0.02f, 0.02f, 0.02f);
+                    Gl.glVertex3f(-0.02f, 0.02f, 0.07f);
+                    Gl.glVertex3f(-0.02f, 0.02f, 0.02f);
+                    Gl.glNormal3f(-1.0f, 0.0f, 0.0f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.02f);
                 }
                 Gl.glEnd();
-                //Gl.glShadeModel(Gl.GL_SMOOTH);
+
+                // it represents the link between the fingers and the palm
+                Gl.glBegin(Gl.GL_QUAD_STRIP);
+                {
+                    Gl.glNormal3f(0.0f, 0.0f, 1.0f);
+                    Gl.glVertex3f(-0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(-0.04f, -0.01f, 0.07f);
+                    Gl.glVertex3f(0.04f, 0.01f, 0.07f);
+                    Gl.glVertex3f(0.04f, -0.01f, 0.07f);
+                }
+                Gl.glEnd();
                 // thumb
                 if (left)
                 {
