@@ -28,7 +28,7 @@ namespace LecturerTrainer.View
         /// </summary>
         public GLControl glControl = null;
 
-        private static DrawingSheetView instance = null;
+        public static DrawingSheetView instance = null;
 
         public DrawingSheetView()
         {

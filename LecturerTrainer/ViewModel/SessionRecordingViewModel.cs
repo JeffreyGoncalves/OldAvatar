@@ -303,7 +303,6 @@ namespace LecturerTrainer.ViewModel
              * the session recording will record the view the user was using*/
             if (MainWindow.drawingSheet.getMode() == SheetMode.AvatarMode)
             {
-                tstvm.ToggleAvatarVideoRecording = true;
                 tstvm.ToggleAvatarOpenGLRecording = true;
             }
             else if (MainWindow.drawingSheet.getMode() == SheetMode.StreamMode)

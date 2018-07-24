@@ -39,11 +39,6 @@ namespace LecturerTrainer.Model
         private static PCQueue<Bitmap> videoStreamQueue;
         
         /// <summary>
-        /// PCQueue for the openGL video stream recording
-        /// </summary>
-        private static PCQueue<Bitmap> avatarStreamQueue;
-        
-        /// <summary>
         /// PCQueue for the openGL Avatar data recording (body)
         /// </summary>
         private static PCQueue<Skeleton> xmlSkeletonQueue;
@@ -64,7 +59,6 @@ namespace LecturerTrainer.Model
         /// </summary>
         #region writerFields
         private static VideoFileWriter videoStreamWriter;
-        private static VideoFileWriter avatarVideoStreamWriter;
         private static XmlWriter xmlSkeletonWriter;
         private static XmlWriter xmlFaceWriter;
 		private static XmlWriter xmlVoiceWriter;
@@ -162,25 +156,6 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Enqueue a Bitmap to the avatar videoStream recording queue
-        /// </summary>
-        /// <param name="e">The bitmap to enqueue</param>
-        public static void EnqueueAvatarVideoStream(Bitmap e)
-        {
-            // ALBAN TODO 
-            if (avatarStreamQueue != null)
-            {
-            //    Console.Out.WriteLine("2.1 - " + (avatarStreamQueue == null ? "avatar  null" : "avatar  not null"));
-                if (!avatarVideoStreamWriter.IsOpen)
-                {
-
-              //      Console.Out.WriteLine("2.2 - " + (avatarStreamQueue == null ? "avatar  null" : "avatar  not null"));
-                    avatarVideoStreamWriter.Open(SavingTools.pathFolder + '/' + "avatar" + ".avi", e.Width, e.Height, 30, VideoCodec.MPEG4, 1000000);
-                }
-                avatarStreamQueue.EnqueueItem(e);
-            }
-        }
-        /// <summary>
         /// Enqueue a skeleton to the skeleton recording queue
         /// </summary>
         /// <param name="sk">The skeleton to enqueue</param>
@@ -233,26 +208,6 @@ namespace LecturerTrainer.Model
                 Console.WriteLine(ex.ToString());
             }
         }
-
-        public static void StartSavingAvatarVideoRecording()
-        {
-            try
-            {
-                avatarVideoStreamWriter = new VideoFileWriter();
-                avatarStreamQueue = new PCQueue<Bitmap>(bm =>
-                {
-                    avatarVideoStreamWriter.WriteVideoFrame(bm);
-                }, () =>
-                {
-                    avatarVideoStreamWriter.Close();
-                }, "AvatarVideoRecordingTask");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
-
 
         public static void StartSavingXMLSkeleton()
         {
@@ -430,11 +385,6 @@ namespace LecturerTrainer.Model
         public static void StreamDispose()
         {
             videoStreamQueue?.Dispose();
-        }
-
-        public static void AvatarVideoDispose()
-        {
-            avatarStreamQueue?.Dispose();
         }
 
         public static void XMLSkeletonDispose()

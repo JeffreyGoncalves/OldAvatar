@@ -230,11 +230,11 @@
                             </CheckBox.Foreground>
                         </CheckBox>
                         -->
-                        <CheckBox x:Name="AvatarVideoRecordingCheckbox" Content="Video avatar recording" IsChecked="{Binding ToggleAvatarVideoRecording}" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Top" Width="198" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Background="White">
+                        <!--<CheckBox x:Name="AvatarVideoRecordingCheckbox" Content="Video avatar recording" IsChecked="{Binding ToggleAvatarVideoRecording}" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Top" Width="198" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Background="White">
                             <CheckBox.Foreground>
                                 <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                             </CheckBox.Foreground>
-                        </CheckBox>
+                        </CheckBox>-->
                         <CheckBox x:Name="AudioRecordingCheckbox" Content="Audio recording" IsChecked="{Binding ToggleAudioRecording}" HorizontalAlignment="Left" Margin="15,0,0,0" VerticalAlignment="Top" Width="198" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}">
                             <CheckBox.Foreground>
                                 <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>

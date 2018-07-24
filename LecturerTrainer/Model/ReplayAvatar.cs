@@ -57,8 +57,15 @@ namespace LecturerTrainer.Model
             }
         }
 
+        /// <summary>
+        /// true if the user never drags the slider during a replay
+        /// </summary>
         public static bool realTime = true;
 
+
+        /// <summary>
+        /// This boolean keeps the value of the facetracking to set the old value after quitting a replay
+        /// </summary>
         private bool isFaceTracked = KinectDevice.faceTracking;
 
         public static int offset = 0;
@@ -99,13 +106,13 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// The sorted list (the key being the frame number) of loaded skeletons
         /// </summary>
-        private static SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> skeletonsList;
+        private static SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> skeletonList;
 
         public static SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>> SkeletonList
         {
             get
             {
-                return skeletonsList;
+                return skeletonList;
             }
         }
 
@@ -125,8 +132,8 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// Time ellapsed in ms. It is not the real elapsed time, it depends on the speed
         /// </summary>
-
-        public ReplayAvatar(string avDir, string fDir, string vDir,ReplayViewModel rvm, int num)
+        /// <remarks> Modified by Alban Descottes 2018 </remarks>
+        public ReplayAvatar(string avDir, string fDir, string vDir,ReplayViewModel rvm)
         {
             try
             {
@@ -138,20 +145,17 @@ namespace LecturerTrainer.Model
                 DrawingSheetAvatarViewModel.Get().drawFaceInReplay = false;
 
                 //Load the list of the skeletons
-                currentSkeletonNumber = num;
-                skeletonsList = new SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>>();
-                skeletonsList = LoadSkeletonsFromXML(avatarDir, faceDir);
+                currentSkeletonNumber = 0;
+                skeletonList = new SortedList<int, Tuple<int, Skeleton, FaceDataWrapper>>();
+                skeletonList = LoadSkeletonsFromXML(avatarDir, faceDir);
 
                 //Load the voice data if it exists
                 if (vDir != "")
                 {
 					replaySoundBar = LoadVoiceDataFromXML(vDir);
                 }
-				//Initilise the first skeleton to be displayed, depending if the replay is on play or stop
-                if (currentSkeletonNumber >= skeletonsList.Count)
-                    currentSkeleton = skeletonsList[skeletonsList.Count - 1].Item2;
-                else
-                    currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
+				//Initilise the first skeleton to be displayed
+                currentSkeleton = skeletonList[currentSkeletonNumber].Item2;
                 
 				// draw the first avatar
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
@@ -160,6 +164,7 @@ namespace LecturerTrainer.Model
 				// init of the DispatcherTimer that is used for the replay
                 Tools.initStopWatch();
                 timeToUpdate = new DispatcherTimer();
+                // this interval is the most accurate to display the different skeletons like during the recording
                 timeToUpdate.Interval = TimeSpan.FromMilliseconds(31.2);
                 timeToUpdate.IsEnabled = true;
                 timeToUpdate.Stop();
@@ -167,10 +172,13 @@ namespace LecturerTrainer.Model
                 timeToUpdate.Tick += ReplayViewModel.Get().nextFeedbackList;
                 timeToUpdate.Tick += DrawingSheetAvatarViewModel.Get().draw;
                 timeToUpdate.Tick += changeSlider;
+
+                // desactivate all the tracker: body, face, voice
                 if (TrackingSideToolViewModel.get().FaceTracking)
                     KinectDevice.faceTracking = false;
                 ReplayViewModel.Get().speedRateActive = TrackingSideToolViewModel.get().SpeedRate;
                 TrackingSideToolViewModel.get().SpeedRate = false;
+                KinectDevice.sensor.SkeletonStream.Disable();
             }
             catch (XmlLoadingException)
             {
@@ -182,7 +190,7 @@ namespace LecturerTrainer.Model
         /// </summary>
         /// <param name="skDir"></param>
         /// <param name="rvm"></param>
-        public ReplayAvatar(string skDir, ReplayViewModel rvm, int num) : this(skDir, "", "", rvm, num) { }
+        public ReplayAvatar(string skDir, ReplayViewModel rvm) : this(skDir, "", "", rvm) { }
         #endregion
 
         #region replay methods
@@ -204,29 +212,30 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// update the current skeleton in the folder
         /// </summary>
-        /// <returns></returns>
+        /// <author>Alban Descottes</author>
         private void nextSkeleton(object sender, EventArgs evt)
         {
-            bool face = (faceDir == "") ? false : true;
-
-            if ((currentSkeletonNumber < skeletonsList.Count && (replayFace % 2) == 0 && face)
-                || (currentSkeletonNumber < skeletonsList.Count && !face))
+            // it selects the next skeleton number, if it's a replay with the face, it change the currentSkeleton one time 
+            // if it's the last skeleton is the last one it sets to null
+            if ((currentSkeletonNumber < skeletonList.Count && (replayFace % 2) == 0 && faceTracking)
+                || (currentSkeletonNumber < skeletonList.Count && !faceTracking))
             {
-                currentSkeleton = skeletonsList[(int)currentSkeletonNumber].Item2;
+                currentSkeleton = skeletonList[currentSkeletonNumber].Item2;
             }
-            else if (currentSkeletonNumber == skeletonsList.Count)
+            else if (currentSkeletonNumber == skeletonList.Count)
                 currentSkeleton = null;
 
+            // if there's skeleton yet it dispalys the face if there's a face
+            // else it stops the replay with the command of stop button
             if (currentSkeleton != null)
             {
-                if (face)
+                if (faceTracking)
                 {
                     DrawingSheetAvatarViewModel.Get().drawFaceInReplay = true;
-                    DrawingSheetAvatarViewModel.Get().drawFace(skeletonsList[currentSkeletonNumber].Item3.depthPointsList,
-                        skeletonsList[currentSkeletonNumber].Item3.colorPointsList,
-                        skeletonsList[currentSkeletonNumber].Item3.faceTriangles);
+                    DrawingSheetAvatarViewModel.Get().drawFace(skeletonList[currentSkeletonNumber].Item3.depthPointsList,
+                        skeletonList[currentSkeletonNumber].Item3.colorPointsList,
+                        skeletonList[currentSkeletonNumber].Item3.faceTriangles);
                 }
-                // We only draw the last skeleton
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
                 setDisplayedTime();
             }
@@ -235,7 +244,8 @@ namespace LecturerTrainer.Model
                 replayViewModel.stopButtonCommand();
             }
 
-			if(face)
+            // if the replay has a face it augments the currentSkeletonNumber
+			if(faceTracking)
 			{
                 if ((replayFace % 2) == 1)
                     currentSkeletonNumber += 1;
@@ -248,7 +258,7 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Updates the displayed time
+        /// Updates the displayed time on the ReplayView
         /// </summary>
         public static void setDisplayedTime()
         {
@@ -256,7 +266,7 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Starts the scrolling
+        /// Starts the stopwatch for the displayed time and the DispatcherTimer that displays all the skeletons
         /// </summary>
         public void Start()
         {
@@ -265,7 +275,7 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Stops the scrolling
+        /// Pauses the stopwatch and the DispatchTimer
         /// </summary>
         public void Pause()
         {
@@ -274,7 +284,7 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Stops and resets the scrolling
+        /// Stops and resets to the initial value of the skeleton (i.e. the number 0)
         /// </summary>
         public void Stop()
         {
@@ -282,7 +292,7 @@ namespace LecturerTrainer.Model
             timeToUpdate.Stop();
             wiggleIndex = 0;
             currentSkeletonNumber = 0;
-            currentSkeleton = skeletonsList[currentSkeletonNumber].Item2;
+            currentSkeleton = skeletonList[currentSkeletonNumber].Item2;
             DrawingSheetAvatarViewModel.Get().skToDrawInReplay = currentSkeleton;
             DrawingSheetAvatarViewModel.Get().forceDraw(currentSkeleton, false);
         }

@@ -51,7 +51,6 @@ namespace LecturerTrainer.View
             App.Current.Dispatcher.Invoke((Action)delegate
             {
                 StreamRecordingCheckbox.IsEnabled = value;
-                AvatarVideoRecordingCheckbox.IsEnabled = value;
                 AudioRecordingCheckbox.IsEnabled = value;
             });
         }
