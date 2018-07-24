@@ -891,37 +891,39 @@ namespace LecturerTrainer.Model
                     
 
                     GL.PushMatrix();
+
+                    if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity == 0.0f)
+                    {
+                        GL.LineWidth(0.1f);
+                    }
+                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity > 0.0f && AudioAnalysis.AudioProvider.currentIntensity < 560.0f)
+                    {
+                        GL.LineWidth(1.0f);
+                    }
+                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 800.0f && AudioAnalysis.AudioProvider.currentIntensity < 900.0f)
+                    {
+                        GL.LineWidth(5.0f);
+                    }
+                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 900.0f)
+                    {
+                        GL.LineWidth(10.0f);
+                    }
+                    else GL.LineWidth(2.0f);
+
+                    if (!AudioAnalysis.AudioProvider.detectionActive)
+                    {
+                        GL.LineWidth(2.0f);
+                    }
+
                     GL.Begin(PrimitiveType.Lines);
 
                     
 
-                    //Change the color of the rising tone line according to the volume of the voice, speed detection has to be activated
-                    if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity == 0.0f)
-                    {
-                        GL.Color4(0.0, 0.0, 0.5, 1.0);
-                    }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity > 0.0f && AudioAnalysis.AudioProvider.currentIntensity < 560.0f)
-                    {
-                        GL.Color4(0.0, 0.5, 0.5, 1.0);
-                    }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 800.0f && AudioAnalysis.AudioProvider.currentIntensity < 900.0f)
-                    {
-                        GL.Color4(0.5, 0.5, 0.0, 1.0);
-                    }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 900.0f)
-                    {
-                        GL.Color4(0.5, 0.0, 0.0, 1.0);
-                    }
-                    else GL.Color4(0.5, 0.5, 0.5, 1.0);
-
-                    if(AudioAnalysis.AudioProvider.detectionActive == false)
-                    {
-                        GL.Color4(0.5, 0.5, 0.5, 1.0);
-                    }
+                    GL.Color4(0.5, 0.5, 0.5, 1.0);                   
                     
 
                     GL.Normal3(0.0f, 0.0f, 1.0f);
-                    GL.LineWidth(1.0f);
+                    
 
                     GL.TexCoord2((xw + 2.5f) / 5.0, (yw - 0.6) / 1.15);
                     GL.Vertex3(xw, yw, 1.0f);
