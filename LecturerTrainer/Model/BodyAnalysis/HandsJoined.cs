@@ -112,6 +112,7 @@ namespace LecturerTrainer.Model
                 // if the user records himself, it adds in the two lists the time (rounded to one tenth of a second)
                 if (rec)
                 {
+                    //Console.WriteLine("add rec");
                     if (!handsjoined.Contains((int)(Tools.getStopWatch() / 100 )))
                     {
                         handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
@@ -121,6 +122,7 @@ namespace LecturerTrainer.Model
                 {
                     if (!handsjoinedCounter.Contains((int)(Tools.getStopWatch() / 100)) && !handsJoined)
                     {
+                        Console.WriteLine("add counter");
                         handsjoinedCounter.Add((int)(Tools.getStopWatch() / 100));
                     }
                     handsJoined = true;  
@@ -134,6 +136,7 @@ namespace LecturerTrainer.Model
                 if(sw.IsRunning)
                     sw.Reset();
                 hands = false;
+                handsJoined = false;
                 if (rec)
 					handsJoinedRecord.Add(Tools.getStopWatch() / 1000.0, 0);
             }
@@ -165,6 +168,8 @@ namespace LecturerTrainer.Model
             // else it adds the hands joined counter first and this about the duration after
             else
             {
+                foreach (int i in handsjoinedCounter)
+                    Console.WriteLine(" -- " + i);
                 list.Add(chart1);
                 var chart2 = new CartesianGraph();
                 chart2.title = "Hands joined duration";
