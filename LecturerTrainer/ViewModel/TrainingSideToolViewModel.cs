@@ -1166,7 +1166,7 @@ namespace LecturerTrainer.ViewModel
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 try
-                {
+                { 
 
                     ReplayViewModel.Set(fbd.FileName);
                     replayViewModel = ReplayViewModel.Get();

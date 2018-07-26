@@ -78,7 +78,6 @@ namespace LecturerTrainer.View
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = ReplayAvatar.SkeletonList[e.ProgressPercentage].Item2;
                 ReplayViewModel.Get().currentFeedbackList = ReplayViewModel.listlistString[e.ProgressPercentage];
                 DrawingSheetAvatarViewModel.Get().draw(this, new EventArgs());
-                //ReplayViewModel.Get().nextFeedbackList(this, new EventArgs());
                 avatarVideoStreamWriter.WriteVideoFrame(DrawingSheetAvatarViewModel.Get().GrabScreenshot());
                 avatarVideoStreamWriter.WriteVideoFrame(DrawingSheetAvatarViewModel.Get().GrabScreenshot());
             }
