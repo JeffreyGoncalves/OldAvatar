@@ -1238,14 +1238,20 @@ namespace LecturerTrainer.Model
             properSpineToHipCenter = distance2Vectors(initialSpine, initialHipCenter);
         }
 
+		/// <summary>
+		/// Initializes every member of the audience
+		/// </summary>
 		private void initAudience()
 		{
 			AudienceMember.GlobalInterest = 0.5f;
 			for(int i = -9; i <= 9; i= i + 3){
 				new AudienceMember(1, i/10.0f, 0.3f, 0.7f);
 			}
-		}
+		}                                                                                                                                                                                                                                                                 
 
+		/// <summary>
+		/// Draws the audience
+		/// </summary>
 		private void drawAudience(){
 			float[] interest = new float[3];
 			GL.Color3(0f, 0f, 0f);
@@ -1253,14 +1259,12 @@ namespace LecturerTrainer.Model
 
 			foreach(AudienceMember mem in AudienceMember.WholeAudience)
 			{
-				paint(mem.currentFace, 0.1f, 0.1f, mem.horizontalPosition, -0.61f);
-				paint("Audience_Body", 0.1f, 0.1f, mem.horizontalPosition, -0.8f);
-				if(mem.horizontalPosition == 0.9f) interest[0] = mem.Interest;
-				if(mem.horizontalPosition == 0) interest[1] = mem.Interest;
-				if(mem.horizontalPosition == -0.9f) interest[2] = mem.Interest;
+				backgroundDrawImage(mem.currentFace, 0.1f, 0.1f, mem.horizontalPosition, -0.61f);
+				backgroundDrawImage("Audience_Body", 0.1f, 0.1f, mem.horizontalPosition, -0.8f);
+ 
 			}
-			//System.Diagnostics.Debug.WriteLine("{0} - {1} - {2}", interest[0], interest[1], interest[2]);
 			
+			// Resets the texture applied
 			GL.BindTexture(TextureTarget.Texture2D, 0);
 		}
 
@@ -1509,53 +1513,6 @@ namespace LecturerTrainer.Model
 					}
 				}
 			}
-            else // Training mode
-            {
-                /*if (TrainingWithAvatarViewModel.Get().PlayMode & mentor)
-                {
-                    if (Model.BodyAnalysis.WelcomeTraining.goodjob)
-                    {
-                        HudDrawImage("GoodJob", 0.25f, 0.25f,
-                            -1f,
-                            0);
-                    }
-                    else if (Model.BodyAnalysis.WelcomeTraining.elbows)
-                    {
-                        HudDrawImage("Elbows", 0.25f, 0.25f,
-                            -1f,
-                            0.75f);
-
-                        HudDrawImage("Center_Arrow", 0.2f, 0.2f,
-                            avatar.Joints[JointType.ElbowLeft].Position.X,
-                            avatar.Joints[JointType.ElbowLeft].Position.Y + 0.4f);
-                    }
-                    else if (Model.BodyAnalysis.WelcomeTraining.slow)
-                    {
-                        if (Math.Abs(avatar.Joints[JointType.ShoulderLeft].Position.Y - avatar.Joints[JointType.ElbowLeft].Position.Y) > 0.1 & first)
-                        {
-                            HudDrawImage("Slow", 0.25f, 0.25f,
-                                -1f,
-                                0.75f);
-                        }
-                        else
-                        {
-                            HudDrawImage("LikeThis", 0.25f, 0.25f,
-                                -1f,
-                                0.75f);
-
-                            first = false; // stops the Too Slow feedback being displayed again
-                        }
-                    }
-                }
-                else if (!mentor & TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
-                {
-                    HudDrawImage("YourTurn", 0.25f, 0.25f,
-                        -1f,
-                        0.75f);
-
-                    first = true;  //resets the TooSlow feedback 
-                }*/
-            }
 
             // Reset the texture applied to polygons
             GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -1619,7 +1576,7 @@ namespace LecturerTrainer.Model
             }
         }
 
-		private void paint(String imgName, float w, float h, float x = 0f, float y = 0f)
+		private void backgroundDrawImage(String imgName, float w, float h, float x = 0f, float y = 0f)
         {
             try
             {

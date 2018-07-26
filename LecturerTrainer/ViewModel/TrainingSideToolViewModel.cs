@@ -985,20 +985,22 @@ namespace LecturerTrainer.ViewModel
 		/// </summary>
 		public void saveCSVRecord() 
 		{
-			
+			// Creating the folders where the .csv files will be stored
 			string date = DateTime.Now.ToString().Replace(":","_").Replace("/","_");
 
 			string dataPath = Path.Combine(currentPath, "Feedback Data");
 			Directory.CreateDirectory(dataPath);
 
+			// Writing of the HandsJoined file
 			using (StreamWriter file = new StreamWriter(dataPath + @"\HandsJoined_Data_"+ date +"_.csv", true))
 			{	
 				file.WriteLine("Hands Joined,");
 				foreach(KeyValuePair<double, byte> pair in HandsJoined.handsJoinedRecord)
 					file.WriteLine(pair.Key+", "+pair.Value);
 			}
-			HandsJoined.handsJoinedRecord = new Dictionary<double, byte>();
+			HandsJoined.handsJoinedRecord = new Dictionary<double, byte>(); // resetting the list for another replay
 
+			// Writing of the ArmsCrossed file
 			using (StreamWriter file = new StreamWriter(dataPath + @"\ArmsCrossed_Data_"+ date +"_.csv", true))
 			{
 				file.WriteLine("Arms Crossed,");
@@ -1007,6 +1009,7 @@ namespace LecturerTrainer.ViewModel
 			}
 			ArmsCrossed.armsCrossedRecord = new Dictionary<double, byte>();
 
+			// Writing of the Agitation file
 			using (StreamWriter file = new StreamWriter(dataPath + @"\Agitation_Data_"+ date +"_.csv", true))
 			{
 				file.WriteLine("Agitation,");
@@ -1015,6 +1018,7 @@ namespace LecturerTrainer.ViewModel
 			}
 			Agitation.agitationRecord = new Dictionary<double, byte>();
 			
+			// Writing of the SpeechSpeed file
 			if (AudioProvider.speechSpeedRecord.Count > 0)
 			{
 				using (StreamWriter file = new StreamWriter(dataPath + @"\SpeechSpeed_Data_"+ date +"_.csv", true))
@@ -1026,6 +1030,7 @@ namespace LecturerTrainer.ViewModel
 				AudioProvider.speechSpeedRecord = new Dictionary<double, int>();
 			}
 
+			// Writing of the LookingDirection file
 			if (lookingDirection.lookingDirectionRecord.Count > 0)
 			{
 				using (StreamWriter file = new StreamWriter(dataPath + @"\LookingDirection_Data_"+ date +"_.csv", true))
@@ -1034,6 +1039,7 @@ namespace LecturerTrainer.ViewModel
 					foreach(KeyValuePair<double, byte> pair in lookingDirection.lookingDirectionRecord)
 						file.WriteLine(pair.Key+", "+pair.Value);
 				}
+				lookingDirection.lookingDirectionRecord = new Dictionary<double, byte>();
 			}
 			
 		}
