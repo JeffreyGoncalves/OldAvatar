@@ -48,6 +48,9 @@ namespace LecturerTrainer.ViewModel
 			}
 		}
 
+		public OpenTK.Vector4 faceColor = new OpenTK.Vector4(120 / 255f, 120 / 255f, 0/ 255f, 1);
+
+		public static OpenTK.Vector4 BodyColor = new OpenTK.Vector4(13 / 255f, 86 / 255f, 119 / 255f, 1);
 
 		/// <summary>
 		/// The current interest level of the whole audience, which will influence each member's interest level
@@ -100,15 +103,43 @@ namespace LecturerTrainer.ViewModel
 		{ 
 			if (TrackingSideTool.Get().LookRightCheckBox.IsChecked == true)
 			{
-				if(GlobalInterest + interest <= this.thresholds[0]*2) currentFace = "Audience_Bore";
-				else if (GlobalInterest + interest  > this.thresholds[1]*2) currentFace = "Audience_Interest";
-				else currentFace = "Audience_SlightBore";
+				if(GlobalInterest + interest <= this.thresholds[0]*2)
+				{
+					currentFace = "Audience_Bore";
+					//faceColor = new OpenTK.Vector4(180 / 255f, 0 / 255f, 0/ 255f, 1);
+				}
+				else if (GlobalInterest + interest  > this.thresholds[1]*2)
+				{
+					currentFace = "Audience_Interest";
+					//faceColor = new OpenTK.Vector4(0 /255f, 220 /255f, 50 /255f, 1);
+				}
+				else
+				{ 
+					currentFace = "Audience_SlightBore";
+					//faceColor = new OpenTK.Vector4(170 /255f, 130 /255f, 0 /255f, 1);
+				}
+				float totalInterest = (GlobalInterest + interest) /2; 
+				faceColor = new OpenTK.Vector4((1-totalInterest)*200 /255f, totalInterest*200 /255f, totalInterest*80 /255f, 0.5f);
+
 			}
 			else
 			{
-				if(GlobalInterest <= this.thresholds[0]) currentFace = "Audience_Bore";
-				else if (GlobalInterest > this.thresholds[1]) currentFace = "Audience_Interest";
-				else currentFace = "Audience_SlightBore";
+				if(GlobalInterest <= this.thresholds[0])
+				{
+					currentFace = "Audience_Bore";
+					//faceColor = new OpenTK.Vector4(180 /255f, 0 /255f, 0 /255f, 1);
+				}
+				else if (GlobalInterest > this.thresholds[1])
+				{
+					currentFace = "Audience_Interest";
+					//faceColor = new OpenTK.Vector4(0 /255f, 220 /255f, 50 /255f, 1);
+				}
+				else
+				{ 
+					currentFace = "Audience_SlightBore";
+					//faceColor = new OpenTK.Vector4(170 /255f, 130 /255f, 0 /255f, 1);
+				}
+				faceColor = new OpenTK.Vector4((1-GlobalInterest)*200 /255f, GlobalInterest*200 /255f, GlobalInterest*80 /255f, 1);
 			}
 		}
 

@@ -242,6 +242,7 @@ namespace LecturerTrainer.Model
         private System.Drawing.Color backgroundColor = System.Drawing.Color.FromArgb(255, 30, 31, 36);
         private OpenTK.Vector4 mentorBoneColor = new OpenTK.Vector4(0, 0, 1, 1);
         private OpenTK.Vector4 savedBoneColor = new OpenTK.Vector4(1, 0, 0, 1);
+		private OpenTK.Vector4 audienceBodyColor = new OpenTK.Vector4(13 / 255f, 86 / 255f, 119 / 255f, 1);
         /// <summary>
         /// List of the available themes
         /// Added by Baptiste Germond
@@ -1193,10 +1194,18 @@ namespace LecturerTrainer.Model
         /// <param name="evt"></param>
         private void drawAvatar(EventArgs evt)
         {
-			if(GeneralSideTool.Get().AudienceControlCheckBox.IsChecked == true)
+			if(GeneralSideTool.Get().AudienceControlCheckBox.IsChecked.Value)
 			{
-				if (AudienceMember.WholeAudience.Count == 0) initAudience(); 
-				drawAudience();
+				if(GeneralSideTool.Get().twoD.IsChecked.Value)
+				{ 
+					if (AudienceMember.WholeAudience.Count == 0) initAudience(); 
+					drawAudience();	
+				}
+				if(GeneralSideTool.Get().threeD.IsChecked.Value)
+				{
+					if (AudienceMember.WholeAudience.Count == 0) initAudience(); 
+					draw3DAudience();
+				}
 			}
 
             // Test if there is a replay avatar to display
@@ -1249,13 +1258,18 @@ namespace LecturerTrainer.Model
 			for(int i = -9; i <= 9; i= i + 3){
 				new AudienceMember(1, i/10.0f, 0.3f, 0.7f);
 			}
+
+			/*for(float i = -7.5f; i <= 7.5f; i= i + 2.5f){
+				new AudienceMember(2, i/10.0f, 0.3f, 0.7f);
+			}*/
 		}                                                                                                                                                                                                                                                                 
 
 		/// <summary>
 		/// Draws the audience
 		/// </summary>
-		private void drawAudience(){
-			float[] interest = new float[3];
+		private void drawAudience()
+		{
+			
 			GL.Color3(0f, 0f, 0f);
             GL.Normal3(0f, 0f, 1f);
 
@@ -1268,6 +1282,22 @@ namespace LecturerTrainer.Model
 			
 			// Resets the texture applied
 			GL.BindTexture(TextureTarget.Texture2D, 0);
+		}
+		/// <summary>
+		/// It draw the audience, but in three dimensions
+		/// </summary>
+		/// <author> Alban Descottes </author>
+		private void draw3DAudience()
+		{
+			foreach(AudienceMember mem in AudienceMember.WholeAudience)
+			{
+				//head
+				DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f), +5.0f + (mem.rowNumber * 1.0f), 0.1f, mem.faceColor);
+				//body
+				DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
+				DrawCylinder2P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f),
+					mem.horizontalPosition, - 0.9f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
+			}
 		}
 
         /// <summary>
@@ -1441,7 +1471,6 @@ namespace LecturerTrainer.Model
                         }
                         
                     }
-
 					if (fb && AudienceMember.GlobalInterest > 0)
 						AudienceMember.GlobalInterest -= 0.002f;
 					else if (AudienceMember.GlobalInterest < 1)
