@@ -826,7 +826,7 @@ namespace LecturerTrainer.Model
                 {
                     img.initializeOpenGL();
                 }
-                /*Make sure that teh color of the OpenGL is good*/
+                /*Make sure that the color of the OpenGL is good*/
                 modifColorOpenGL(actualTheme.Name);
             }
 
@@ -859,21 +859,17 @@ namespace LecturerTrainer.Model
 
                     GL.PushMatrix();
 
-                    if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity == 0.0f)
+
+                    //Volume detection, the thickness of the line change whether the user speak loud enough or not.
+                    //The speed detection and the falling tone have to be activated at the same time
+                    //Added by Thibaut WITCZAK
+                    if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity < 560.0f)
                     {
                         GL.LineWidth(0.1f);
                     }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity > 0.0f && AudioAnalysis.AudioProvider.currentIntensity < 560.0f)
-                    {
-                        GL.LineWidth(1.0f);
-                    }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 800.0f && AudioAnalysis.AudioProvider.currentIntensity < 900.0f)
+                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity > 800.0f)
                     {
                         GL.LineWidth(5.0f);
-                    }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 900.0f)
-                    {
-                        GL.LineWidth(10.0f);
                     }
                     else GL.LineWidth(2.0f);
 
@@ -882,10 +878,10 @@ namespace LecturerTrainer.Model
                         GL.LineWidth(2.0f);
                     }
 
+
+
                     GL.Begin(PrimitiveType.Lines);
-
-                    
-
+                                        
                     GL.Color4(0.5, 0.5, 0.5, 1.0);                   
                     
 

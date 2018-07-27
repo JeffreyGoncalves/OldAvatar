@@ -1198,6 +1198,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
 
         ///<summary>
         /// Convert intensities per frequency to intensity.
+        /// Added by Thibaut WITCZAK
         /// </summary>
         public void fillIntensity(byte[] buffer, int bytesRecorded)
         {
@@ -1233,6 +1234,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
         ///<summary>
         /// The speechRate function is called every 100ms and calculates the number of syllables
         /// The result is stored in a variable that is initialized every 1 second
+        /// Added by Thibaut WITCZAK
         /// </summary>
         public void speechRate(byte[] buffer, int bytesRecorded)
         {
