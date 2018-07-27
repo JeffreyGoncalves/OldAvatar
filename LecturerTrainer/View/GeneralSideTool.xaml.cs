@@ -23,6 +23,8 @@ namespace LecturerTrainer.View
 	{
         private static GeneralSideTool instance = null;
 
+		private bool twoDimensions = true;
+
 		public GeneralSideTool()
 		{
             GeneralSideToolViewModel gstvm = new GeneralSideToolViewModel();
@@ -42,7 +44,36 @@ namespace LecturerTrainer.View
 
 		private void AudienceControlCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
-			
+			twoD.Opacity = 1f;
+			twoD.IsEnabled = true;
+			threeD.Opacity = 1f;
+			threeD.IsEnabled = true;
+			if(twoDimensions)
+				twoD.IsChecked = true;
+			else
+				threeD.IsChecked = true;
+		}
+
+		private void AudienceControlCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		{
+			if(twoD.IsChecked.Value)
+				twoD.IsChecked = false;
+			else
+				threeD.IsChecked = false;
+			twoD.IsEnabled = false;
+			threeD.IsEnabled = false;
+			twoD.Opacity = 0.5f;
+			threeD.Opacity = 0.5f;
+		}
+
+		private void twoD_Checked(object sender, RoutedEventArgs e)
+		{
+			twoDimensions = true;
+		}
+
+		private void threeD_Checked(object sender, RoutedEventArgs e)
+		{
+			twoDimensions = false;
 		}
 	}
 }

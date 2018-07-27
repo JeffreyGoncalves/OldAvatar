@@ -242,6 +242,7 @@ namespace LecturerTrainer.Model
         private System.Drawing.Color backgroundColor = System.Drawing.Color.FromArgb(255, 30, 31, 36);
         private OpenTK.Vector4 mentorBoneColor = new OpenTK.Vector4(0, 0, 1, 1);
         private OpenTK.Vector4 savedBoneColor = new OpenTK.Vector4(1, 0, 0, 1);
+		private OpenTK.Vector4 audienceBodyColor = new OpenTK.Vector4(13 / 255f, 86 / 255f, 119 / 255f, 1);
         /// <summary>
         /// List of the available themes
         /// Added by Baptiste Germond
@@ -950,6 +951,7 @@ namespace LecturerTrainer.Model
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
+            //Updated by Jeffrey Goncalves
             if (faceT)
             {
                 GL.PushMatrix();
@@ -957,6 +959,7 @@ namespace LecturerTrainer.Model
                     OpenTK.Vector4 faceColor = new OpenTK.Vector4(1.0f, 1.0f, 1.0f, 1.0f); 
                     GL.Normal3(0.0f, 0.0f, 1.0f);
                     GL.LineWidth(3.0f);
+
                     //Entering into the head axis system
                     Vector3 HeadX = EyesAlignment;
                     Vector3 HeadY = headTilt;
@@ -965,12 +968,14 @@ namespace LecturerTrainer.Model
                     HeadX.Normalize();
                     HeadY.Normalize();
                     HeadZ.Normalize();
+
+                    //HeadM is the projection matrix used for the head axis system
                     double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
                     GL.Translate(headCenterPoint);
                     GL.MultMatrix(HeadM);
                     GL.Color4(faceColor);
                    
-
+                    
                     //Drawing of the mouth
                     Gl.glPushMatrix();
                     {
@@ -1189,10 +1194,18 @@ namespace LecturerTrainer.Model
         /// <param name="evt"></param>
         private void drawAvatar(EventArgs evt)
         {
-			if(GeneralSideTool.Get().AudienceControlCheckBox.IsChecked == true)
+			if(GeneralSideTool.Get().AudienceControlCheckBox.IsChecked.Value)
 			{
-				if (AudienceMember.WholeAudience.Count == 0) initAudience(); 
-				drawAudience();
+				if(GeneralSideTool.Get().twoD.IsChecked.Value)
+				{ 
+					if (AudienceMember.WholeAudience.Count == 0) initAudience(); 
+					drawAudience();	
+				}
+				if(GeneralSideTool.Get().threeD.IsChecked.Value)
+				{
+					if (AudienceMember.WholeAudience.Count == 0) initAudience(); 
+					draw3DAudience();
+				}
 			}
 
             // Test if there is a replay avatar to display
@@ -1236,30 +1249,131 @@ namespace LecturerTrainer.Model
             properSpineToHipCenter = distance2Vectors(initialSpine, initialHipCenter);
         }
 
+		/// <summary>
+		/// Initializes every member of the audience
+		/// </summary>
+		/// <author>Oummar Mayaki</author>
 		private void initAudience()
 		{
 			AudienceMember.GlobalInterest = 0.5f;
 			for(int i = -9; i <= 9; i= i + 3){
 				new AudienceMember(1, i/10.0f, 0.3f, 0.7f);
 			}
-		}
 
-		private void drawAudience(){
-			float[] interest = new float[3];
+
+			// The following is for creating another row of seats, but it make the system lag
+			/*for(float i = -5f; i <= 5f; i= i + 2.5f){
+				new AudienceMember(2, i/10.0f, 0.3f, 0.7f);
+			}*/
+		}                                                                                                                                                                                                                                                                 
+
+		/// <summary>
+		/// Draws the audience
+		/// </summary>
+		/// <author>Oummar Mayaki</author>
+		private void drawAudience()
+		{
+			
 			GL.Color3(0f, 0f, 0f);
             GL.Normal3(0f, 0f, 1f);
 
 			foreach(AudienceMember mem in AudienceMember.WholeAudience)
 			{
-				paint(mem.currentFace, 0.1f, 0.1f, mem.horizontalPosition, -0.61f);
-				paint("Audience_Body", 0.1f, 0.1f, mem.horizontalPosition, -0.8f);
-				if(mem.horizontalPosition == 0.9f) interest[0] = mem.Interest;
-				if(mem.horizontalPosition == 0) interest[1] = mem.Interest;
-				if(mem.horizontalPosition == -0.9f) interest[2] = mem.Interest;
+				if (mem.rowNumber == 1){
+					backgroundDrawImage(mem.currentFace, 0.1f, 0.1f, mem.horizontalPosition, -0.61f);
+					backgroundDrawImage("Audience_Body", 0.1f, 0.1f, mem.horizontalPosition, -0.8f);
+				}
+
+				// The following is for drawing the other row of seats, assuming we created them. But it makes the system lag
+				/*else if(mem.rowNumber == 2)
+				{
+					backgroundDrawImage(mem.currentFace, 0.08f, 0.08f, mem.horizontalPosition, -0.43f);
+					backgroundDrawImage("Audience_Body", 0.08f, 0.08f, mem.horizontalPosition, -0.5f);
+				}*/
 			}
-			//System.Diagnostics.Debug.WriteLine("{0} - {1} - {2}", interest[0], interest[1], interest[2]);
 			
+			// Resets the texture applied
 			GL.BindTexture(TextureTarget.Texture2D, 0);
+		}
+		/// <summary>
+		/// It draw the audience, but in three dimensions
+		/// </summary>
+		/// <author> Alban Descottes </author>
+		private void draw3DAudience()
+		{
+			foreach(AudienceMember mem in AudienceMember.WholeAudience)
+			{
+				//head
+				DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f), +5.0f + (mem.rowNumber * 1.0f), 0.1f, mem.faceColor);
+                //eyes left and right
+                DrawSphere1P(mem.horizontalPosition - 0.03f, - 0.7f + (mem.rowNumber * 0.2f) + 0.03f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.01f, new OpenTK.Vector4(1, 1, 1, 1));
+				DrawSphere1P(mem.horizontalPosition + 0.03f, - 0.7f + (mem.rowNumber * 0.2f) + 0.03f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.01f, new OpenTK.Vector4(1, 1, 1, 1));
+
+                //mouth
+                if (!KinectDevice.faceTracking)
+                {
+                    if(AudienceMember.GlobalInterest < mem.thresholdsLow)
+                    {
+                        //sad
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                           mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.06f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.06f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                    else if(AudienceMember.GlobalInterest > mem.thresholdsHight)
+                    {
+                        //happy
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.02f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.02f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                    else
+                    {
+                        //neutral
+                        DrawCylinder2P(mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                }
+                else
+                {
+                    if (AudienceMember.GlobalInterest + mem.Interest < mem.thresholdsLow * 2)
+                    {
+                        //sad
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                           mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.06f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.06f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                    else if (AudienceMember.GlobalInterest  + mem.Interest > mem.thresholdsHight * 2)
+                    {
+                        //happy
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.02f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.02f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                    else
+                    {
+                        //neutral
+                        DrawCylinder2P(mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                }
+
+                //body
+                DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
+				DrawCylinder2P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f),
+					mem.horizontalPosition, - 0.9f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
+			}
 		}
 
         /// <summary>
@@ -1433,7 +1547,6 @@ namespace LecturerTrainer.Model
                         }
                         
                     }
-
 					if (fb && AudienceMember.GlobalInterest > 0)
 						AudienceMember.GlobalInterest -= 0.002f;
 					else if (AudienceMember.GlobalInterest < 1)
@@ -1507,53 +1620,6 @@ namespace LecturerTrainer.Model
 					}
 				}
 			}
-            else // Training mode
-            {
-                /*if (TrainingWithAvatarViewModel.Get().PlayMode & mentor)
-                {
-                    if (Model.BodyAnalysis.WelcomeTraining.goodjob)
-                    {
-                        HudDrawImage("GoodJob", 0.25f, 0.25f,
-                            -1f,
-                            0);
-                    }
-                    else if (Model.BodyAnalysis.WelcomeTraining.elbows)
-                    {
-                        HudDrawImage("Elbows", 0.25f, 0.25f,
-                            -1f,
-                            0.75f);
-
-                        HudDrawImage("Center_Arrow", 0.2f, 0.2f,
-                            avatar.Joints[JointType.ElbowLeft].Position.X,
-                            avatar.Joints[JointType.ElbowLeft].Position.Y + 0.4f);
-                    }
-                    else if (Model.BodyAnalysis.WelcomeTraining.slow)
-                    {
-                        if (Math.Abs(avatar.Joints[JointType.ShoulderLeft].Position.Y - avatar.Joints[JointType.ElbowLeft].Position.Y) > 0.1 & first)
-                        {
-                            HudDrawImage("Slow", 0.25f, 0.25f,
-                                -1f,
-                                0.75f);
-                        }
-                        else
-                        {
-                            HudDrawImage("LikeThis", 0.25f, 0.25f,
-                                -1f,
-                                0.75f);
-
-                            first = false; // stops the Too Slow feedback being displayed again
-                        }
-                    }
-                }
-                else if (!mentor & TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
-                {
-                    HudDrawImage("YourTurn", 0.25f, 0.25f,
-                        -1f,
-                        0.75f);
-
-                    first = true;  //resets the TooSlow feedback 
-                }*/
-            }
 
             // Reset the texture applied to polygons
             GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -1617,7 +1683,7 @@ namespace LecturerTrainer.Model
             }
         }
 
-		private void paint(String imgName, float w, float h, float x = 0f, float y = 0f)
+		private void backgroundDrawImage(String imgName, float w, float h, float x = 0f, float y = 0f)
         {
             try
             {
@@ -2260,6 +2326,7 @@ namespace LecturerTrainer.Model
             
         }
 
+        
         /// <summary>
         /// To represent a thigh, we draw a cylinder between the hipEnd and the knee
         /// We then add two cones sharing the same base on the center
@@ -2317,12 +2384,13 @@ namespace LecturerTrainer.Model
             DrawFootSecondVersion(ankle.X, ankle.Y, ankle.Z, footEnd.X, footEnd.Y, footEnd.Z, color, left);
         }
 
+        /// <author> Jeffrey Goncalves </author>
         /// <summary>
         /// Draws a mouth centered at the origin (translations and projections have to be done before) 
         /// and based on its 2 outer corners
         /// </summary>
-        /// <param name="leftOC"></param>
-        /// <param name="rightOC"></param>
+        /// <param name="leftOC"> the left outer corner point of the mouth</param>
+        /// <param name="rightOC"> the right outer corner of the mouth</param>
         private void DrawMouth(Vector3 leftOC,Vector3 rightOC)
         {
             Vector3[] ULPoints = new Vector3[8];

@@ -125,7 +125,7 @@ namespace LecturerTrainer.Model
         /// Index that indicates which part of the above list will be displayed as the sound bar
         /// </summary>
 		public static int wiggleIndex = 0;
-      
+
         #endregion
 
         #region constructor
@@ -300,6 +300,33 @@ namespace LecturerTrainer.Model
         #endregion
 
         #region XmlSkeletonLoading
+
+        /// <summary>
+        /// it returns the number of skeleton in the skd file, it is for the loading Progressbar
+        /// </summary>
+        /// <author> Alban Deescottes </author>
+        public static int LoadNumberSkeleton(String path)
+        {
+            try
+            {
+                using (var reader = new StreamReader(path))
+                {
+                    if (reader.BaseStream.Length > 30)
+                    {
+                        reader.BaseStream.Seek(-30, SeekOrigin.End);
+                    }
+                    string line = reader.ReadLine();
+                    char[] listChar = { '_', '>' };
+                    string[] listString = line.Split(listChar);
+                    return Int32.Parse(listString[1]);
+                }
+            }
+            catch (Exception)
+            {
+                throw new XmlLoadingException("Corrupt file", "Impossible to read the file");
+            }
+        }
+
 
         /// <summary>
         /// Load all the skeletons from a file

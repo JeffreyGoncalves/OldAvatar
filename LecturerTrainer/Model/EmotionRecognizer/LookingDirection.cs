@@ -87,15 +87,23 @@ namespace LecturerTrainer.Model.EmotionRecognizer
         /// </summary>
         public static Dictionary<String,int > dicDirect = null;
 
-
+		/// <summary>
+		/// Lists containing the data used for drawing the charts
+		/// </summary>
         private static List<int> lookCenter;
         private static List<int> lookLeft;
         private static List<int> lookRight;
         private static List<int> lookExtrLeft;
         private static List<int> lookExtrRight;
 
+		/// <summary>
+		/// List that will be used to save the data that will be written in the .csv files
+		/// </summary>
 		public static Dictionary<double, byte> lookingDirectionRecord = new Dictionary<double, byte>();
 
+		/// <summary>
+		/// True if the looking direction feeedback is displayed
+		/// </summary>
 		public static bool feedbackActive = false;
 
         /// <summary>
