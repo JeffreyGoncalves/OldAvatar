@@ -16,6 +16,9 @@ namespace LecturerTrainer.ViewModel
 		/// </summary>
 		private float[] thresholds = new float[2];
 
+        public float thresholdsLow { get { return thresholds[0]; } }
+        public float thresholdsHight { get { return thresholds[1]; } }
+
 		/// <summary>
 		/// AudienceMember's seat row number, 1 being the closest.
 		/// </summary>

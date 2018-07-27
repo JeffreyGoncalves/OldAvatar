@@ -1293,8 +1293,72 @@ namespace LecturerTrainer.Model
 			{
 				//head
 				DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f), +5.0f + (mem.rowNumber * 1.0f), 0.1f, mem.faceColor);
-				//body
-				DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
+                //eyes left and right
+                DrawSphere1P(mem.horizontalPosition - 0.03f, - 0.7f + (mem.rowNumber * 0.2f) + 0.03f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.01f, new OpenTK.Vector4(1, 1, 1, 1));
+				DrawSphere1P(mem.horizontalPosition + 0.03f, - 0.7f + (mem.rowNumber * 0.2f) + 0.03f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.01f, new OpenTK.Vector4(1, 1, 1, 1));
+
+                //mouth
+                if (!KinectDevice.faceTracking)
+                {
+                    if(AudienceMember.GlobalInterest < mem.thresholdsLow)
+                    {
+                        //sad
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                           mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.06f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.06f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                    else if(AudienceMember.GlobalInterest > mem.thresholdsHight)
+                    {
+                        //happy
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.02f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.02f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                    else
+                    {
+                        //neutral
+                        DrawCylinder2P(mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                }
+                else
+                {
+                    if (AudienceMember.GlobalInterest + mem.Interest < mem.thresholdsLow * 2)
+                    {
+                        //sad
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                           mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.06f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.06f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                    else if (AudienceMember.GlobalInterest  + mem.Interest > mem.thresholdsHight * 2)
+                    {
+                        //happy
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition - 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.02f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                        DrawCylinder2P(mem.horizontalPosition + 0.02f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.02f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                    else
+                    {
+                        //neutral
+                        DrawCylinder2P(mem.horizontalPosition - 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f,
+                            mem.horizontalPosition + 0.05f, -0.7f + (mem.rowNumber * 0.2f) - 0.04f, +5.0f + (mem.rowNumber * 1.0f) - 0.1f, 0.005f, new OpenTK.Vector4(1, 1, 1, 1));
+                    }
+                }
+
+                //body
+                DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
 				DrawCylinder2P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f),
 					mem.horizontalPosition, - 0.9f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
 			}
