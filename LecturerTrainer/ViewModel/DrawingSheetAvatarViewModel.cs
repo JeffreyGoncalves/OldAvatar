@@ -971,6 +971,7 @@ namespace LecturerTrainer.Model
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
+            //Updated by Jeffrey Goncalves
             if (faceT)
             {
                 GL.PushMatrix();
@@ -978,6 +979,7 @@ namespace LecturerTrainer.Model
                     OpenTK.Vector4 faceColor = new OpenTK.Vector4(1.0f, 1.0f, 1.0f, 1.0f); 
                     GL.Normal3(0.0f, 0.0f, 1.0f);
                     GL.LineWidth(3.0f);
+
                     //Entering into the head axis system
                     Vector3 HeadX = EyesAlignment;
                     Vector3 HeadY = headTilt;
@@ -986,12 +988,14 @@ namespace LecturerTrainer.Model
                     HeadX.Normalize();
                     HeadY.Normalize();
                     HeadZ.Normalize();
+
+                    //HeadM is the projection matrix used for the head axis system
                     double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
                     GL.Translate(headCenterPoint);
                     GL.MultMatrix(HeadM);
                     GL.Color4(faceColor);
                    
-
+                    
                     //Drawing of the mouth
                     Gl.glPushMatrix();
                     {
@@ -2279,6 +2283,7 @@ namespace LecturerTrainer.Model
             
         }
 
+        
         /// <summary>
         /// To represent a thigh, we draw a cylinder between the hipEnd and the knee
         /// We then add two cones sharing the same base on the center
@@ -2336,12 +2341,13 @@ namespace LecturerTrainer.Model
             DrawFootSecondVersion(ankle.X, ankle.Y, ankle.Z, footEnd.X, footEnd.Y, footEnd.Z, color, left);
         }
 
+        /// <author> Jeffrey Goncalves </author>
         /// <summary>
         /// Draws a mouth centered at the origin (translations and projections have to be done before) 
         /// and based on its 2 outer corners
         /// </summary>
-        /// <param name="leftOC"></param>
-        /// <param name="rightOC"></param>
+        /// <param name="leftOC"> the left outer corner point of the mouth</param>
+        /// <param name="rightOC"> the right outer corner of the mouth</param>
         private void DrawMouth(Vector3 leftOC,Vector3 rightOC)
         {
             Vector3[] ULPoints = new Vector3[8];
