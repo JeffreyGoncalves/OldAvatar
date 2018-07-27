@@ -87,13 +87,24 @@ namespace LecturerTrainer.Model.EmotionRecognizer
         /// </summary>
         public static Dictionary<String,int > dicDirect = null;
 
-
+		/// <summary>
+		/// Lists containing the data used for drawing the charts
+		/// </summary>
         private static List<int> lookCenter;
         private static List<int> lookLeft;
         private static List<int> lookRight;
         private static List<int> lookExtrLeft;
         private static List<int> lookExtrRight;
 
+		/// <summary>
+		/// List that will be used to save the data that will be written in the .csv files
+		/// </summary>
+		public static Dictionary<double, byte> lookingDirectionRecord = new Dictionary<double, byte>();
+
+		/// <summary>
+		/// True if the looking direction feeedback is displayed
+		/// </summary>
+		public static bool feedbackActive = false;
 
         /// <summary>
         /// True if we have to record the movment of the eyes
@@ -128,6 +139,8 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                 }
             }
         }
+
+
 
         /// <summary>
         /// Main method to recognize which view area the user is looking at
@@ -256,32 +269,43 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         {
                             int lessUsed = countInHistorical(RIGHT, LEFT); //We decide which was less used between the two other areas
                             updateFeedback(lessUsed); //We display the feedback to notifie the user that he should look at another area
+							feedbackActive = true;
                         }
                         else if (right && countR > limitHigh)
                         {
                             int lessUsed = countInHistorical(CENTER, LEFT);
                             updateFeedback(lessUsed);
+							feedbackActive = true;
                         }
                         else if (extremRight && countER > limitLow)
                         {
                             int lessUsed = countInHistorical(CENTER, LEFT);
                             updateFeedback(lessUsed);
+							feedbackActive = true;
                         }
                         else if (left && countL > limitHigh)
                         {
                             int lessUsed = countInHistorical(CENTER, RIGHT);
                             updateFeedback(lessUsed);
+							feedbackActive = true;
                         }
                         else if (extremLeft && countEL > limitLow)
                         {
                             int lessUsed = countInHistorical(CENTER, RIGHT);
                             updateFeedback(lessUsed);
+							feedbackActive = true;
                         }
                         else
                         {
                             //Value very different from the others which means that all feedback should be deactivate
                             updateFeedback(-100); 
+							feedbackActive = false;
                         }
+						if (rec)
+						{
+							if (feedbackActive) lookingDirectionRecord.Add(Tools.getStopWatch() / 1000.0, 1);
+							else lookingDirectionRecord.Add(Tools.getStopWatch() / 1000.0, 0);
+						}
                     }
                     catch (System.ArgumentException) { faceDetected = false; }
                 }

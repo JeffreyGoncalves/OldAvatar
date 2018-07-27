@@ -90,7 +90,6 @@ namespace LecturerTrainer.ViewModel
         public static int nbVideos = 1;
 
         private bool _ToggleStreamRecording;
-        private bool _ToggleAvatarVideoRecording;
         private bool _ToggleAudioRecording;
         private bool _ToggleAvatarOpenGLRecording;
 
@@ -384,7 +383,6 @@ namespace LecturerTrainer.ViewModel
             replayModeCommand = new RelayCommand(ChoosePerfToReplay);
 
             // prepare video recorders 
-            ToggleAvatarVideoRecording = false;
             ToggleStreamRecording = false;
             ToggleAudioRecording = false;
             ToggleAvatarOpenGLRecording = true;
@@ -620,17 +618,6 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
-        public bool ToggleAvatarVideoRecording
-        {
-            get { return _ToggleAvatarVideoRecording; }
-
-            set
-            {
-                _ToggleAvatarVideoRecording = value;
-                OnPropertyChanged("ToggleAvatarVideoRecording");
-            }
-        }
-
         public bool ToggleAvatarOpenGLRecording
         {
             get { return _ToggleAvatarOpenGLRecording; }
@@ -815,11 +802,6 @@ namespace LecturerTrainer.ViewModel
 
         }
         
-        private void backgroundAvatarVideoRecording(object sender, Bitmap e)
-        {
-            SavingTools.EnqueueAvatarVideoStream(e);
-        }
-
         private void backgroundAvatarXMLRecording(object sender, Skeleton sk)
         {
             SavingTools.EnqueueXMLSkeleton(sk);
@@ -909,12 +891,6 @@ namespace LecturerTrainer.ViewModel
 				}
 
             }
-            if (_ToggleAvatarVideoRecording)
-            {
-                DrawingSheetAvatarViewModel.Get().IsVideoAvatarRecording = true;
-                DrawingSheetAvatarViewModel.backgroundRecordingEventStream += backgroundAvatarVideoRecording;
-                SavingTools.StartSavingAvatarVideoRecording();
-            }
             if (_ToggleStreamRecording)
             {
                 DrawingSheetStreamViewModel.backgroundDrawEventStream += backgroundStreamVideoRecording;
@@ -938,12 +914,6 @@ namespace LecturerTrainer.ViewModel
             {
                 DrawingSheetStreamViewModel.backgroundDrawEventStream -= backgroundStreamVideoRecording;
                 SavingTools.StreamDispose();
-            }
-            if (_ToggleAvatarVideoRecording)
-            {
-                DrawingSheetAvatarViewModel.Get().IsVideoAvatarRecording = false;
-                DrawingSheetAvatarViewModel.backgroundRecordingEventStream -= backgroundAvatarVideoRecording;
-                SavingTools.AvatarVideoDispose();
             }
             if (_ToggleAvatarOpenGLRecording)
             {
@@ -1007,6 +977,7 @@ namespace LecturerTrainer.ViewModel
             ResViewMod.SaveGraph(SavingTools.pathFolder + '/');
 
 			saveCSVRecord();
+            new MessageBoxPerso("Record complete", "Record sucessful\nThe replay is located in " + SavingTools.pathFolder + '\\').ShowDialog();
         }
 
 		/// <summary>
@@ -1014,18 +985,23 @@ namespace LecturerTrainer.ViewModel
 		/// </summary>
 		public void saveCSVRecord() 
 		{
-			
+			// Creating the folders where the .csv files will be stored
 			string date = DateTime.Now.ToString().Replace(":","_").Replace("/","_");
 
-			using (StreamWriter file = new StreamWriter(currentPath + @"\HandsJoined_Data_"+ date +"_.csv", true))
+			string dataPath = Path.Combine(currentPath, "Feedback Data");
+			Directory.CreateDirectory(dataPath);
+
+			// Writing of the HandsJoined file
+			using (StreamWriter file = new StreamWriter(dataPath + @"\HandsJoined_Data_"+ date +"_.csv", true))
 			{	
 				file.WriteLine("Hands Joined,");
 				foreach(KeyValuePair<double, byte> pair in HandsJoined.handsJoinedRecord)
 					file.WriteLine(pair.Key+", "+pair.Value);
 			}
-			HandsJoined.handsJoinedRecord = new Dictionary<double, byte>();
+			HandsJoined.handsJoinedRecord = new Dictionary<double, byte>(); // resetting the list for another replay
 
-			using (StreamWriter file = new StreamWriter(currentPath + @"\ArmsCrossed_Data_"+ date +"_.csv", true))
+			// Writing of the ArmsCrossed file
+			using (StreamWriter file = new StreamWriter(dataPath + @"\ArmsCrossed_Data_"+ date +"_.csv", true))
 			{
 				file.WriteLine("Arms Crossed,");
 				foreach(KeyValuePair<double, byte> pair in ArmsCrossed.armsCrossedRecord)
@@ -1033,7 +1009,8 @@ namespace LecturerTrainer.ViewModel
 			}
 			ArmsCrossed.armsCrossedRecord = new Dictionary<double, byte>();
 
-			using (StreamWriter file = new StreamWriter(currentPath + @"\Agitation_Data_"+ date +"_.csv", true))
+			// Writing of the Agitation file
+			using (StreamWriter file = new StreamWriter(dataPath + @"\Agitation_Data_"+ date +"_.csv", true))
 			{
 				file.WriteLine("Agitation,");
 				foreach(KeyValuePair<double, byte> pair in Agitation.agitationRecord)
@@ -1041,18 +1018,30 @@ namespace LecturerTrainer.ViewModel
 			}
 			Agitation.agitationRecord = new Dictionary<double, byte>();
 			
+			// Writing of the SpeechSpeed file
 			if (AudioProvider.speechSpeedRecord.Count > 0)
 			{
-				using (StreamWriter file = new StreamWriter(currentPath + @"\SpeechSpeed_Data_"+ date +"_.csv", true))
+				using (StreamWriter file = new StreamWriter(dataPath + @"\SpeechSpeed_Data_"+ date +"_.csv", true))
 				{
-					file.Write("Speech Speed,");
+					file.WriteLine("Speech Speed,");
 					foreach(KeyValuePair<double, int> pair in AudioProvider.speechSpeedRecord)
-					{
 						file.WriteLine(pair.Key+", "+pair.Value);
-					}
 				}
+				AudioProvider.speechSpeedRecord = new Dictionary<double, int>();
 			}
-			AudioProvider.speechSpeedRecord = new Dictionary<double, int>();
+
+			// Writing of the LookingDirection file
+			if (lookingDirection.lookingDirectionRecord.Count > 0)
+			{
+				using (StreamWriter file = new StreamWriter(dataPath + @"\LookingDirection_Data_"+ date +"_.csv", true))
+				{
+					file.WriteLine("Looked too long,");
+					foreach(KeyValuePair<double, byte> pair in lookingDirection.lookingDirectionRecord)
+						file.WriteLine(pair.Key+", "+pair.Value);
+				}
+				lookingDirection.lookingDirectionRecord = new Dictionary<double, byte>();
+			}
+			
 		}
 
         #endregion
@@ -1172,14 +1161,16 @@ namespace LecturerTrainer.ViewModel
             }
 
             System.Windows.Forms.OpenFileDialog fbd = new System.Windows.Forms.OpenFileDialog();
-            fbd.Filter = "Performance File (.avi,.skd)|*.avi;*.skd"; // Filter files by extension
+            fbd.Filter = "Performance File (.avi,.skd)|stream.avi;*.skd"; // Filter files by extension
             fbd.Title = "Select the file of the performance you want to replay";
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 try
-                {
+                { 
+
                     ReplayViewModel.Set(fbd.FileName);
                     replayViewModel = ReplayViewModel.Get();
+
                     replayMode();
                 }
                 catch(XmlLoadingException e)

@@ -39,6 +39,11 @@ namespace LecturerTrainer.ViewModel
 		public String voiceData;
 
         /// <summary>
+        /// the forder path is needed for the export of the avatar video
+        /// </summary>
+        public String folderPath;
+
+        /// <summary>
         /// State of the replay mode
         /// </summary>
         // Indicates if an audio source is detected
@@ -127,8 +132,7 @@ namespace LecturerTrainer.ViewModel
 
         public static bool isReplaying = false;
 
-        private ICommand resultsCommand;
-        private ChoiceResultView resultsPerformance = null;
+        
 
         private static int currentAvatarNumber = 0;
         public static int CurrentAvatarNumber
@@ -168,6 +172,72 @@ namespace LecturerTrainer.ViewModel
 
         #endregion
 
+        #region export and results commands
+        private ICommand resultsCommand;
+        private ChoiceResultView resultsPerformance = null;
+
+        public ICommand ResultsCommand
+        {
+            get
+            {
+                if (this.resultsCommand == null)
+                    this.resultsCommand = new RelayCommand(() => this.displayResults(), () => CanDisplayResults());
+
+                return this.resultsCommand;
+            }
+        }
+        private void displayResults()
+        {
+            resultsPerformance = new ChoiceResultView();
+            ((ChoiceResultViewModel)resultsPerformance.DataContext).enableSomeCheckBox(Path.GetDirectoryName(statisticsPath));
+            ((ChoiceResultViewModel)resultsPerformance.DataContext).isLoad = true;
+            resultsPerformance.Show();
+        }
+
+        private bool CanDisplayResults()
+        {
+            if (statisticsPath != "")
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private ICommand exportAvatarVideoCommand;
+        private ExportAvatarVideoView exportAvatarVideoView = null;
+        public ICommand ExportAvatarVideoCommand
+        {
+            get
+            {
+                if (this.exportAvatarVideoCommand == null)
+                    this.exportAvatarVideoCommand = new RelayCommand(() => this.exportVideoAvatar());
+
+                return this.exportAvatarVideoCommand;
+            }
+        }
+
+        /// <summary>
+        /// Window opened when the user wants to export 
+        /// </summary>
+        /// <author> Alban Descottes </author>
+        private void exportVideoAvatar()
+        {
+            if (!File.Exists(folderPath + "avatar.avi"))
+            {
+                exportAvatarVideoView = new ExportAvatarVideoView();
+                Application curApp = Application.Current;
+                Window mainWindow = curApp.MainWindow;
+                exportAvatarVideoView.Left = mainWindow.Left + (mainWindow.Width - exportAvatarVideoView.ActualWidth) / 2;
+                exportAvatarVideoView.Top = mainWindow.Top + (mainWindow.Height - exportAvatarVideoView.ActualHeight) / 2;
+                exportAvatarVideoView.ShowDialog();
+            }
+            else
+            {
+                new ErrorMessageBox("Export impossible", "The video of the avatar is already exported").ShowDialog();
+            }
+        }
+        #endregion
+
         #region properties
         /// <summary>
         /// Elapsed time from the video starting
@@ -190,16 +260,7 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
-        public ICommand ResultsCommand
-        {
-            get
-            {
-                if (this.resultsCommand == null)
-                    this.resultsCommand = new RelayCommand(() => this.displayResults(), () => CanDisplayResults());
-
-                return this.resultsCommand;
-            }
-        }
+        
         #endregion
 
         #region constructor and get()
@@ -210,6 +271,7 @@ namespace LecturerTrainer.ViewModel
         /// <param name="file"></param>
         private ReplayViewModel(String file)
         {
+
             filePath = file;
             instance = this;
             performanceSoundCommand = new RelayCommand(performanceSound);
@@ -374,7 +436,7 @@ namespace LecturerTrainer.ViewModel
         {
             if(File.Exists(filePath))
             {
-                if (Path.GetFileName(filePath) == "avatar.avi")
+                /*if (Path.GetFileName(filePath) == "avatar.avi")
                 {
                     DrawingSheetView.Get().ShowReplayVideoSheet();
                     filePathVideoAvatar = filePath;
@@ -384,13 +446,13 @@ namespace LecturerTrainer.ViewModel
                     skeletonScrolling = null;
                     tryAddOtherSources("avatar.avi");
                     isReplaying = true;
-                }
-                else if (Path.GetFileName(filePath) == "stream.avi")
+                }*/
+                if (Path.GetFileName(filePath) == "stream.avi")
                 {
+                    folderPath = filePath.Remove(filePath.Length - 10);
                     DrawingSheetView.Get().ShowReplayVideoSheet();
                     filePathVideoStream = filePath;
                     activate(ReplayView.Get().Stream, GeneralSideTool.Get().Stream);
-                    deactivateOther(ReplayView.Get().VideoAvatar, ReplayView.Get().Avatar);
                     DrawingSheetView.Get().ReplayVideo.Source = new Uri(filePathVideoStream, UriKind.Relative);
                     skeletonScrolling = null;
                     DrawingSheetView.Get().CanvasFeedback.Visibility = Visibility.Visible;
@@ -401,17 +463,16 @@ namespace LecturerTrainer.ViewModel
                 {
                     try
                     {
+                        folderPath = filePath.Remove(filePath.Length - 22);
                         skdRead = true;
                         DrawingSheetView.Get().Show3DSheet();
                         filePathAvatar = filePath;
                         activate(ReplayView.Get().Avatar, GeneralSideTool.Get().Avatar);
-                        deactivateOther(ReplayView.Get().Stream, ReplayView.Get().VideoAvatar);
-
 						voiceData = filePath.Replace("avatarSkeletonData.skd", "tonePeakData.xml");
 						if (!File.Exists(voiceData)) voiceData = "";
                         faceData = filePath.Replace("avatarSkeletonData.skd", "faceData.xml");
 						if (!File.Exists(faceData)) faceData = "";
-						skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, voiceData, this, 0);
+						skeletonScrolling = new ReplayAvatar(filePathAvatar, faceData, voiceData, this);
 						tryAddOtherSources("avatarSkeletonData.skd");
                         isReplaying = true;
                     }
@@ -426,24 +487,12 @@ namespace LecturerTrainer.ViewModel
         }
 
         /// <summary>
-        /// Deactivate the useless buttons
-        /// </summary>
-        private void deactivateOther(RadioButton replayViewRadio1, RadioButton replayViewRadio2)
-        {
-            replayViewRadio1.IsEnabled = false;
-            replayViewRadio2.IsEnabled = false;
-            replayViewRadio1.Opacity = 0.5;
-            replayViewRadio2.Opacity = 0.5;
-        }
-
-        /// <summary>
         /// Activate the useful buttons
         /// Added by Baptiste Germond
         /// </summary>
         private void activate(RadioButton replayViewRadio, RadioButton generalSideToolButton)
         {
             replayViewRadio.IsChecked = true;
-            //replayViewRadio.Command.Execute(null);
             generalSideToolButton.IsChecked = true;
             replayViewRadio.IsEnabled = true;
             replayViewRadio.Opacity = 1;
@@ -456,9 +505,9 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         private void AddAudio(String name)
         {
-                DrawingSheetView.Get().ReplayAudio.Source = new Uri(name);
-                audioSource = true;
-                ReplayView.Get().SoundCheckbox.IsEnabled = true;
+            DrawingSheetView.Get().ReplayAudio.Source = new Uri(name);
+            audioSource = true;
+            ReplayView.Get().SoundCheckbox.IsEnabled = true;
         }
 		
         /// <summary>
@@ -478,15 +527,15 @@ namespace LecturerTrainer.ViewModel
                         // the replay needs an instance of ReplayAvatar, so if the first file chose is not the .skd
                         // we have to create one
                         skdRead = true;
-                        skeletonScrolling = new ReplayAvatar(s, this, 0);
+                        skeletonScrolling = new ReplayAvatar(s, this);
                         addOtherVideoSources(ReplayView.Get().Avatar);
                         filePathAvatar = s;
                     }
-                    else if (fileName == "avatar.avi")
+                   /* else if (fileName == "avatar.avi")
                     {
                         addOtherVideoSources(ReplayView.Get().VideoAvatar);
                         filePathVideoAvatar = s;
-                    }
+                    }*/
                     else if (fileName == "stream.avi")
                     {
                         addOtherVideoSources(ReplayView.Get().Stream);
@@ -565,6 +614,13 @@ namespace LecturerTrainer.ViewModel
                 ReplayView.Get().PlayButton.Command.Execute(null);
         }
 
+
+        /// <summary>
+        /// It changes the current avatar after drag the slider during the replay
+        /// it changes also the offset compared to the stopwatch lanched during the replay
+        /// </summary>
+        /// <param name="newTime"></param>
+        /// <remarks>Added by Alban Descottes 2018</remarks>
         public static void changeCurrentAvatar(int newTime)
         {
             var timeDown = 0;
@@ -587,6 +643,7 @@ namespace LecturerTrainer.ViewModel
             return;
         }
 
+        // REMOVE ?
         /// <summary>
         /// Displays the skeleton view
         /// </summary>
@@ -691,7 +748,6 @@ namespace LecturerTrainer.ViewModel
 
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {
-                //Console.Out.WriteLine(" -PLA- " + Tools.getStopWatch() + " -PLA- ");
                 skeletonScrolling.Start();
             }
 
@@ -714,7 +770,6 @@ namespace LecturerTrainer.ViewModel
             played = false;
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {
-                //Console.Out.WriteLine(" -PAU- " + Tools.getStopWatch() + " -PAU- ");
                 skeletonScrolling.Pause();
             }
             if (DrawingSheetView.Get().ReplayVideo.Source != null)
@@ -727,10 +782,7 @@ namespace LecturerTrainer.ViewModel
                 DrawingSheetView.Get().ReplayAudio.Pause();
             }
 
-            //ReplayView.Get().FastButton.IsEnabled = true;
-            //ReplayView.Get().SlowButton.IsEnabled = true;
             ReplayView.Get().PauseButton.IsEnabled = true;
-            //ManageSpeedElements();
         }
 
         /// <summary>
@@ -742,7 +794,6 @@ namespace LecturerTrainer.ViewModel
             played = false;
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {
-                //Console.Out.WriteLine(" -STP- " + Tools.getStopWatch() + " -STP- ");
                 skeletonScrolling.Stop();
             }
             if (DrawingSheetView.Get().ReplayVideo.Source != null)
@@ -759,8 +810,6 @@ namespace LecturerTrainer.ViewModel
             ReplayAvatar.offset = 0;
             ReplayAvatar.realTime = true;
             currentListNumber = 0;
-            //ReplayView.Get().FastButton.IsEnabled = false;
-            //ReplayView.Get().SlowButton.IsEnabled = false;
             ReplayView.Get().PauseButton.IsEnabled = false;
             speedRatioIndex = 2;
             DrawingSheetView.Get().ReplayAudio.SpeedRatio = speedRatios[speedRatioIndex];
@@ -829,7 +878,9 @@ namespace LecturerTrainer.ViewModel
             SideToolsViewModel.Get().enableTrackingAndTrainingTab();
             TrainingSideToolViewModel.Get().recordingMode();
             DrawingSheetAvatarViewModel.Get().normalMode();
-            
+
+            // reactivate the sensors
+            KinectDevice.sensor.SkeletonStream.Enable();
             if (faceTrack)
                 KinectDevice.faceTracking = true;
             TrackingSideToolViewModel.get().SpeedRate = speedRateActive;
@@ -844,22 +895,7 @@ namespace LecturerTrainer.ViewModel
             TrainingSideToolViewModel.Get().ChoosePerfToReplay();
         }
 
-        private void displayResults()
-        {
-            resultsPerformance = new ChoiceResultView();
-            ((ChoiceResultViewModel)resultsPerformance.DataContext).enableSomeCheckBox(Path.GetDirectoryName(statisticsPath));
-            ((ChoiceResultViewModel)resultsPerformance.DataContext).isLoad = true;
-            resultsPerformance.Show();
-        }
-
-        private bool CanDisplayResults()
-        {
-           if (statisticsPath!= "")
-            {
-                return true;
-            }
-            return false;
-        }
+        
         #endregion
 
         #endregion

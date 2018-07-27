@@ -8,7 +8,7 @@
 	mc:Ignorable="d"
 	x:Class="LecturerTrainer.View.GeneralSideTool"
 	x:Name="GeneralSideToolUserControl"
-	d:DesignWidth="300" d:DesignHeight="680">
+	d:DesignWidth="300" d:DesignHeight="812.6">
 	<UserControl.Resources>
 		<Storyboard x:Key="showSlider"/>
 		<sys:Double x:Key="ButtonsWidth">208</sys:Double>
@@ -208,11 +208,29 @@
 						<SolidColorBrush Color="{DynamicResource GeneralBorderColor}"/>
 					</Separator.Background>
 				</Separator>
-				<CheckBox x:Name="AudienceControlCheckBox" Content="Display the virtual audience" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" Checked="AudienceControlCheckBox_Checked">
+				<CheckBox x:Name="AudienceControlCheckBox" Content="Display the virtual audience" Margin="15,10,10,-10" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" 
+						  Checked="AudienceControlCheckBox_Checked" Unchecked="AudienceControlCheckBox_Unchecked">
 					<CheckBox.Foreground>
 						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
 					</CheckBox.Foreground>
 				</CheckBox>
+				<RadioButton GroupName="audienceButtonGroup" x:Name="twoD" Content="2D" Command ="{Binding Select2D}" Margin="34,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" IsEnabled="False" 
+							 Checked="twoD_Checked" Opacity="0.5">
+					<!--<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Checked">
+							<ei:ControlStoryboardAction/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>-->
+					<RadioButton.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</RadioButton.Foreground>
+				</RadioButton>
+				<RadioButton GroupName="audienceButtonGroup" x:Name="threeD" Content="3D" Command="{Binding Select3D}" Margin="34,0,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" IsEnabled="False"
+							 Checked="threeD_Checked" Opacity="0.5">
+					<RadioButton.Foreground>
+						<SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
+					</RadioButton.Foreground>
+				</RadioButton>
 			</StackPanel>
 		</Border>
 	</Grid>

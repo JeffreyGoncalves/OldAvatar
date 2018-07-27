@@ -214,6 +214,8 @@ namespace LecturerTrainer.Model.AudioAnalysis
 
         public static float currentIntensity = 0.0f;
 
+        public static bool detectionActive = false;
+
 		/// <summary>
         /// True if we have to record the speed rate
         /// </summary>
@@ -1162,6 +1164,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             try
             {
                 this._waveIn.DataAvailable -= speechRateCallback;
+                detectionActive = false;
                 timer.Stop();
                 return true;
             }
@@ -1191,7 +1194,6 @@ namespace LecturerTrainer.Model.AudioAnalysis
         {
             new Thread(() => this.fillIntensity(e.Buffer, e.BytesRecorded)).Start();
             new Thread(() => this.speechRate(e.Buffer, e.BytesRecorded)).Start();
-
         }
 
         ///<summary>
@@ -1220,7 +1222,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
             float sum_sqrt = (float)Math.Sqrt(sum);
 
             // Extraction of the peaks
-            if (sum_sqrt < 560.0f)
+            if (sum_sqrt < 500.0f)
             {
                 sum_sqrt = 0.0f;
             }
@@ -1242,7 +1244,9 @@ namespace LecturerTrainer.Model.AudioAnalysis
                 {
                     this.nbSyllables++;
                 }
+                detectionActive = true;
                 currentIntensity = intensityPF[intensityPF.Count - 1];
+                
             }
         }
 
@@ -1263,15 +1267,15 @@ namespace LecturerTrainer.Model.AudioAnalysis
             {
                 level = 0;
             }
-            else if (this.nbSyllables <= 2)
+            else if (this.nbSyllables <= 3)
             {
                 level = 1;
             }
-            else if (this.nbSyllables <= 4)
+            else if (this.nbSyllables <= 5)
             {
                 level = 2;
             }
-            else if (this.nbSyllables <= 6)
+            else if (this.nbSyllables <= 7)
             {
                 level = 3;
             }
