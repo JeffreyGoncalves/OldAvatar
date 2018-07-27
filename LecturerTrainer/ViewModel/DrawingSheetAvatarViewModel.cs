@@ -1252,6 +1252,7 @@ namespace LecturerTrainer.Model
 		/// <summary>
 		/// Initializes every member of the audience
 		/// </summary>
+		/// <author>Oummar Mayaki</author>
 		private void initAudience()
 		{
 			AudienceMember.GlobalInterest = 0.5f;
@@ -1259,7 +1260,9 @@ namespace LecturerTrainer.Model
 				new AudienceMember(1, i/10.0f, 0.3f, 0.7f);
 			}
 
-			/*for(float i = -7.5f; i <= 7.5f; i= i + 2.5f){
+
+			// The following is for creating another row of seats, but it make the system lag
+			/*for(float i = -5f; i <= 5f; i= i + 2.5f){
 				new AudienceMember(2, i/10.0f, 0.3f, 0.7f);
 			}*/
 		}                                                                                                                                                                                                                                                                 
@@ -1267,6 +1270,7 @@ namespace LecturerTrainer.Model
 		/// <summary>
 		/// Draws the audience
 		/// </summary>
+		/// <author>Oummar Mayaki</author>
 		private void drawAudience()
 		{
 			
@@ -1275,9 +1279,17 @@ namespace LecturerTrainer.Model
 
 			foreach(AudienceMember mem in AudienceMember.WholeAudience)
 			{
-				backgroundDrawImage(mem.currentFace, 0.1f, 0.1f, mem.horizontalPosition, -0.61f);
-				backgroundDrawImage("Audience_Body", 0.1f, 0.1f, mem.horizontalPosition, -0.8f);
- 
+				if (mem.rowNumber == 1){
+					backgroundDrawImage(mem.currentFace, 0.1f, 0.1f, mem.horizontalPosition, -0.61f);
+					backgroundDrawImage("Audience_Body", 0.1f, 0.1f, mem.horizontalPosition, -0.8f);
+				}
+
+				// The following is for drawing the other row of seats, assuming we created them. But it makes the system lag
+				/*else if(mem.rowNumber == 2)
+				{
+					backgroundDrawImage(mem.currentFace, 0.08f, 0.08f, mem.horizontalPosition, -0.43f);
+					backgroundDrawImage("Audience_Body", 0.08f, 0.08f, mem.horizontalPosition, -0.5f);
+				}*/
 			}
 			
 			// Resets the texture applied
@@ -1294,8 +1306,8 @@ namespace LecturerTrainer.Model
 				//head
 				DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f), +5.0f + (mem.rowNumber * 1.0f), 0.1f, mem.faceColor);
 				//body
-				DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
-				DrawCylinder2P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f),
+				DrawSphere1P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.18f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
+				DrawCylinder2P(mem.horizontalPosition, - 0.7f + (mem.rowNumber * 0.2f) - 0.18f, +5.0f + (mem.rowNumber * 1.0f),
 					mem.horizontalPosition, - 0.9f + (mem.rowNumber * 0.2f) - 0.2f, +5.0f + (mem.rowNumber * 1.0f), 0.1f, AudienceMember.BodyColor);
 			}
 		}
