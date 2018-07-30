@@ -784,10 +784,10 @@ namespace LecturerTrainer.ViewModel
 
         public void invokStop()
         {
-            ButtonAutomationPeer peer = new ButtonAutomationPeer(TrainingSideTool.Get().StopRecordingButton);
-            IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-            invokeProv.Invoke();
-            Stop();
+                ButtonAutomationPeer peer = new ButtonAutomationPeer(TrainingSideTool.Get().StopRecordingButton);
+                IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                invokeProv.Invoke();
+                Stop();
         }
 
 

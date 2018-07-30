@@ -827,7 +827,7 @@ namespace LecturerTrainer.Model
                 {
                     img.initializeOpenGL();
                 }
-                /*Make sure that teh color of the OpenGL is good*/
+                /*Make sure that the color of the OpenGL is good*/
                 modifColorOpenGL(actualTheme.Name);
             }
 
@@ -860,21 +860,17 @@ namespace LecturerTrainer.Model
 
                     GL.PushMatrix();
 
-                    if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity == 0.0f)
+
+                    //Volume detection, the thickness of the line change whether the user speak loud enough or not.
+                    //The speed detection and the falling tone have to be activated at the same time
+                    //Added by Thibaut WITCZAK
+                    if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity < 560.0f)
                     {
                         GL.LineWidth(0.1f);
                     }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity > 0.0f && AudioAnalysis.AudioProvider.currentIntensity < 560.0f)
-                    {
-                        GL.LineWidth(1.0f);
-                    }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 800.0f && AudioAnalysis.AudioProvider.currentIntensity < 900.0f)
+                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity > 800.0f)
                     {
                         GL.LineWidth(5.0f);
-                    }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 900.0f)
-                    {
-                        GL.LineWidth(10.0f);
                     }
                     else GL.LineWidth(2.0f);
 
@@ -883,10 +879,10 @@ namespace LecturerTrainer.Model
                         GL.LineWidth(2.0f);
                     }
 
+
+
                     GL.Begin(PrimitiveType.Lines);
-
-                    
-
+                                        
                     GL.Color4(0.5, 0.5, 0.5, 1.0);                   
                     
 
@@ -955,6 +951,7 @@ namespace LecturerTrainer.Model
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
+            //Updated by Jeffrey Goncalves
             if (faceT)
             {
                 GL.PushMatrix();
@@ -962,6 +959,7 @@ namespace LecturerTrainer.Model
                     OpenTK.Vector4 faceColor = new OpenTK.Vector4(1.0f, 1.0f, 1.0f, 1.0f); 
                     GL.Normal3(0.0f, 0.0f, 1.0f);
                     GL.LineWidth(3.0f);
+
                     //Entering into the head axis system
                     Vector3 HeadX = EyesAlignment;
                     Vector3 HeadY = headTilt;
@@ -970,12 +968,14 @@ namespace LecturerTrainer.Model
                     HeadX.Normalize();
                     HeadY.Normalize();
                     HeadZ.Normalize();
+
+                    //HeadM is the projection matrix used for the head axis system
                     double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
                     GL.Translate(headCenterPoint);
                     GL.MultMatrix(HeadM);
                     GL.Color4(faceColor);
                    
-
+                    
                     //Drawing of the mouth
                     Gl.glPushMatrix();
                     {
@@ -2330,6 +2330,7 @@ namespace LecturerTrainer.Model
             
         }
 
+        
         /// <summary>
         /// To represent a thigh, we draw a cylinder between the hipEnd and the knee
         /// We then add two cones sharing the same base on the center
@@ -2387,12 +2388,13 @@ namespace LecturerTrainer.Model
             DrawFootSecondVersion(ankle.X, ankle.Y, ankle.Z, footEnd.X, footEnd.Y, footEnd.Z, color, left);
         }
 
+        /// <author> Jeffrey Goncalves </author>
         /// <summary>
         /// Draws a mouth centered at the origin (translations and projections have to be done before) 
         /// and based on its 2 outer corners
         /// </summary>
-        /// <param name="leftOC"></param>
-        /// <param name="rightOC"></param>
+        /// <param name="leftOC"> the left outer corner point of the mouth</param>
+        /// <param name="rightOC"> the right outer corner of the mouth</param>
         private void DrawMouth(Vector3 leftOC,Vector3 rightOC)
         {
             Vector3[] ULPoints = new Vector3[8];
