@@ -52,12 +52,6 @@
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </TextBlock.Foreground>
                 </TextBlock>
-                <TextBlock x:Name="SpeedLabel" Height="19.5" Margin="8.456,45,150.378,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="{DynamicResource GeneralFontSize}" FontFamily="{DynamicResource GeneralFontFamily}" HorizontalAlignment="Center" Width="89.166" TextAlignment="Center" Text="Speed : 0">
-                    <TextBlock.Foreground>
-                        <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
-                    </TextBlock.Foreground>
-                </TextBlock>
-
                 <Label x:Name="ReplayLabel1" Content="Replay" HorizontalAlignment="Left" VerticalAlignment="Top" Width="234" Height="{DynamicResource GeneralFieldHeight}" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralTitleFontSize}" Margin="10,5,0,0" Padding="0">
                     <Label.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
