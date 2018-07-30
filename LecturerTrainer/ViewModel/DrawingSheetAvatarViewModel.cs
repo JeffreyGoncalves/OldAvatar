@@ -1260,7 +1260,6 @@ namespace LecturerTrainer.Model
 				new AudienceMember(1, i/10.0f, 0.3f, 0.7f);
 			}
 
-
 			// The following is for creating another row of seats, but it make the system lag
 			/*for(float i = -5f; i <= 5f; i= i + 2.5f){
 				new AudienceMember(2, i/10.0f, 0.3f, 0.7f);
@@ -1448,7 +1447,7 @@ namespace LecturerTrainer.Model
         /// Draws the HUD with feedback images.
         /// </summary>
         /// <param name="avatar">Skeleton of the avatar to give feedback to</param>
-        /// <author>Vincent Fabioux</author>
+        /// <author>Vincent Fabioux, heavily changed by Oummar Mayaki</author>
         private void HudDrawFeedback(Skeleton avatar)
         {
             // Initialize parameters for image rendering
@@ -1462,7 +1461,6 @@ namespace LecturerTrainer.Model
 
             //Test for 3D feedback by ASu 25 March 2016 ad modified by F Bechu June 2016
             /*The second part of the if (after the ||) is used to display the feedbacks when replaying an avatar, it's the same for all the feedbacks below*/
-            /*OpenGL feedback of the hands crossed*/           
             
             if(!isTraining)
 			{
@@ -1504,7 +1502,6 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the look at the center
                         if (Model.EmotionRecognizer.lookingDirection.feedC && diplayFaceFeedback && displayLookDirFeedback)
                         {
-							fb = true;
                             HudDrawImage("Center_Arrow", 0.2f, 0.2f,
                                 headX,
                                 headY + 0.5f);
@@ -1513,7 +1510,6 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the look at the left
                         if(Model.EmotionRecognizer.lookingDirection.feedL && diplayFaceFeedback && displayLookDirFeedback)
                         {
-							fb = true;
                             HudDrawImage("Left_Arrow", 0.2f, 0.2f,
                                 headX - 0.5f,
                                 headY);
@@ -1522,7 +1518,6 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the look at the right
                         if(Model.EmotionRecognizer.lookingDirection.feedR && diplayFaceFeedback && displayLookDirFeedback)
                         {
-							fb = true;
                             HudDrawImage("Right_Arrow", 0.2f, 0.2f,
                                 headX + 0.5f,
                                 headY);
@@ -1531,7 +1526,6 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the happy emotion
                         if(Model.EmotionRecognizer.EmotionRecognition.happy && diplayFaceFeedback && displayEmotionFeedback)
                         {
-							fb = true;
                             HudDrawImage("Happy", 0.2f, 0.2f,
                                 0.75f,
                                 0.5f);
@@ -1540,13 +1534,14 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the surprised emotion
                         if(Model.EmotionRecognizer.EmotionRecognition.surprised && diplayFaceFeedback && displayEmotionFeedback)
                         {
-							fb = true;
                             HudDrawImage("Surprised", 0.2f, 0.2f,
                                 0.75f,
                                 0.5f);
                         }
                         
                     }
+
+					// Updating the interest level of the virtual audience
 					if (fb && AudienceMember.GlobalInterest > 0)
 						AudienceMember.GlobalInterest -= 0.002f;
 					else if (AudienceMember.GlobalInterest < 1)
@@ -1683,6 +1678,15 @@ namespace LecturerTrainer.Model
             }
         }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="imgName"></param>
+		/// <param name="w"></param>
+		/// <param name="h"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <author> Oummar Mayaki, heavily inspired by the work of Vincent Fabioux </author>
 		private void backgroundDrawImage(String imgName, float w, float h, float x = 0f, float y = 0f)
         {
             try

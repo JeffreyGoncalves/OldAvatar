@@ -9,6 +9,10 @@ using LecturerTrainer.View;
 
 namespace LecturerTrainer.ViewModel
 {
+
+	/// <summary>
+	/// Class for the Audience. The Audience's behaviour with recording and replaying has not been handled yet.
+	/// </summary>
 	class AudienceMember
 	{
 		/// <summary>
