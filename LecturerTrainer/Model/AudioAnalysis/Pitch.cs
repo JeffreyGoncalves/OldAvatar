@@ -334,8 +334,9 @@ namespace LecturerTrainer.Model.AudioAnalysis
             volume *= 10;
             volume = Convert.ToInt32(volume);
 
+			//wiggle = the WIGGLE_SIZE(= 170) last elenents from pitchList
             if (pitchList.Count > WIGGLE_SIZE)
-				for (i = 0; i < WIGGLE_SIZE; i++) wiggle[i] = pitchList[pitchList.Count - (WIGGLE_SIZE+1) + i]; //wiggle = the WIGGLE_SIZE(= 170) last elenents from pitchList
+				for (i = 0; i < WIGGLE_SIZE; i++) wiggle[i] = pitchList[pitchList.Count - (WIGGLE_SIZE+1) + i]; 
 			
 			int newValues = pitchList.Count - oldPitchListSize;
 			oldPitchListSize = pitchList.Count;

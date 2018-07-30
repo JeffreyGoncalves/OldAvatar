@@ -654,6 +654,7 @@ namespace LecturerTrainer.Model
 		/// <summary>
         /// Draws the sound bar
         /// </summary>
+		/// <author> Oummar Mayaki, heavily inspired by the work of Baptiste Germond and Alistair Sutherland </author>
 		public static void drawWiggle()
 		{
 			float  xw, xw1, yw, yw1;

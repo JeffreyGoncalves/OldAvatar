@@ -832,7 +832,7 @@ namespace LecturerTrainer.Model
                 {
                     img.initializeOpenGL();
                 }
-                /*Make sure that teh color of the OpenGL is good*/
+                /*Make sure that the color of the OpenGL is good*/
                 modifColorOpenGL(actualTheme.Name);
             }
 
@@ -865,21 +865,17 @@ namespace LecturerTrainer.Model
 
                     GL.PushMatrix();
 
-                    if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity == 0.0f)
+
+                    //Volume detection, the thickness of the line change whether the user speak loud enough or not.
+                    //The speed detection and the falling tone have to be activated at the same time
+                    //Added by Thibaut WITCZAK
+                    if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity < 560.0f)
                     {
                         GL.LineWidth(0.1f);
                     }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity > 0.0f && AudioAnalysis.AudioProvider.currentIntensity < 560.0f)
-                    {
-                        GL.LineWidth(1.0f);
-                    }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 800.0f && AudioAnalysis.AudioProvider.currentIntensity < 900.0f)
+                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity > 800.0f)
                     {
                         GL.LineWidth(5.0f);
-                    }
-                    else if (AudioAnalysis.AudioProvider.detectionActive && AudioAnalysis.AudioProvider.currentIntensity >= 900.0f)
-                    {
-                        GL.LineWidth(10.0f);
                     }
                     else GL.LineWidth(2.0f);
 
@@ -888,10 +884,10 @@ namespace LecturerTrainer.Model
                         GL.LineWidth(2.0f);
                     }
 
+
+
                     GL.Begin(PrimitiveType.Lines);
-
-                    
-
+                                        
                     GL.Color4(0.5, 0.5, 0.5, 1.0);                   
                     
 
@@ -960,6 +956,7 @@ namespace LecturerTrainer.Model
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
 
+            //Updated by Jeffrey Goncalves
             if (faceT)
             {
                 GL.PushMatrix();
@@ -967,6 +964,7 @@ namespace LecturerTrainer.Model
                     OpenTK.Vector4 faceColor = new OpenTK.Vector4(1.0f, 1.0f, 1.0f, 1.0f); 
                     GL.Normal3(0.0f, 0.0f, 1.0f);
                     GL.LineWidth(3.0f);
+
                     //Entering into the head axis system
                     Vector3 HeadX = EyesAlignment;
                     Vector3 HeadY = headTilt;
@@ -975,12 +973,14 @@ namespace LecturerTrainer.Model
                     HeadX.Normalize();
                     HeadY.Normalize();
                     HeadZ.Normalize();
+
+                    //HeadM is the projection matrix used for the head axis system
                     double[] HeadM = new double[16] { HeadX.X, HeadX.Y, HeadX.Z, 0, HeadY.X, HeadY.Y, HeadY.Z, 0, HeadZ.X, HeadZ.Y, HeadZ.Z, 0, 0, 0, 0, 1 };
                     GL.Translate(headCenterPoint);
                     GL.MultMatrix(HeadM);
                     GL.Color4(faceColor);
                    
-
+                    
                     //Drawing of the mouth
                     Gl.glPushMatrix();
                     {
@@ -1259,6 +1259,7 @@ namespace LecturerTrainer.Model
 		/// <summary>
 		/// Initializes every member of the audience
 		/// </summary>
+		/// <author>Oummar Mayaki</author>
 		private void initAudience()
 		{
 			AudienceMember.GlobalInterest = 0.5f;
@@ -1266,7 +1267,8 @@ namespace LecturerTrainer.Model
 				new AudienceMember(1, i/10.0f, 0.3f, 0.7f);
 			}
 
-			/*for(float i = -7.5f; i <= 7.5f; i= i + 2.5f){
+			// The following is for creating another row of seats, but it make the system lag
+			/*for(float i = -5f; i <= 5f; i= i + 2.5f){
 				new AudienceMember(2, i/10.0f, 0.3f, 0.7f);
 			}*/
 		}                                                                                                                                                                                                                                                                 
@@ -1274,6 +1276,7 @@ namespace LecturerTrainer.Model
 		/// <summary>
 		/// Draws the audience
 		/// </summary>
+		/// <author>Oummar Mayaki</author>
 		private void drawAudience()
 		{
 			
@@ -1282,9 +1285,17 @@ namespace LecturerTrainer.Model
 
 			foreach(AudienceMember mem in AudienceMember.WholeAudience)
 			{
-				backgroundDrawImage(mem.currentFace, 0.1f, 0.1f, mem.horizontalPosition, -0.61f);
-				backgroundDrawImage("Audience_Body", 0.1f, 0.1f, mem.horizontalPosition, -0.8f);
- 
+				if (mem.rowNumber == 1){
+					backgroundDrawImage(mem.currentFace, 0.1f, 0.1f, mem.horizontalPosition, -0.61f);
+					backgroundDrawImage("Audience_Body", 0.1f, 0.1f, mem.horizontalPosition, -0.8f);
+				}
+
+				// The following is for drawing the other row of seats, assuming we created them. But it makes the system lag
+				/*else if(mem.rowNumber == 2)
+				{
+					backgroundDrawImage(mem.currentFace, 0.08f, 0.08f, mem.horizontalPosition, -0.43f);
+					backgroundDrawImage("Audience_Body", 0.08f, 0.08f, mem.horizontalPosition, -0.5f);
+				}*/
 			}
 			
 			// Resets the texture applied
@@ -1447,7 +1458,7 @@ namespace LecturerTrainer.Model
         /// Draws the HUD with feedback images.
         /// </summary>
         /// <param name="avatar">Skeleton of the avatar to give feedback to</param>
-        /// <author>Vincent Fabioux</author>
+        /// <author>Vincent Fabioux, heavily changed by Oummar Mayaki</author>
         private void HudDrawFeedback(Skeleton avatar)
         {
             // Initialize parameters for image rendering
@@ -1461,7 +1472,6 @@ namespace LecturerTrainer.Model
 
             //Test for 3D feedback by ASu 25 March 2016 ad modified by F Bechu June 2016
             /*The second part of the if (after the ||) is used to display the feedbacks when replaying an avatar, it's the same for all the feedbacks below*/
-            /*OpenGL feedback of the hands crossed*/           
             
             if(!isTraining)
 			{
@@ -1503,7 +1513,6 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the look at the center
                         if (Model.EmotionRecognizer.lookingDirection.feedC && diplayFaceFeedback && displayLookDirFeedback)
                         {
-							fb = true;
                             HudDrawImage("Center_Arrow", 0.2f, 0.2f,
                                 headX,
                                 headY + 0.5f);
@@ -1512,7 +1521,6 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the look at the left
                         if(Model.EmotionRecognizer.lookingDirection.feedL && diplayFaceFeedback && displayLookDirFeedback)
                         {
-							fb = true;
                             HudDrawImage("Left_Arrow", 0.2f, 0.2f,
                                 headX - 0.5f,
                                 headY);
@@ -1521,7 +1529,6 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the look at the right
                         if(Model.EmotionRecognizer.lookingDirection.feedR && diplayFaceFeedback && displayLookDirFeedback)
                         {
-							fb = true;
                             HudDrawImage("Right_Arrow", 0.2f, 0.2f,
                                 headX + 0.5f,
                                 headY);
@@ -1530,7 +1537,6 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the happy emotion
                         if(Model.EmotionRecognizer.EmotionRecognition.happy && diplayFaceFeedback && displayEmotionFeedback)
                         {
-							fb = true;
                             HudDrawImage("Happy", 0.2f, 0.2f,
                                 0.75f,
                                 0.5f);
@@ -1539,13 +1545,14 @@ namespace LecturerTrainer.Model
                         //OpenGL feedback of the surprised emotion
                         if(Model.EmotionRecognizer.EmotionRecognition.surprised && diplayFaceFeedback && displayEmotionFeedback)
                         {
-							fb = true;
                             HudDrawImage("Surprised", 0.2f, 0.2f,
                                 0.75f,
                                 0.5f);
                         }
                         
                     }
+
+					// Updating the interest level of the virtual audience
 					if (fb && AudienceMember.GlobalInterest > 0)
 						AudienceMember.GlobalInterest -= 0.002f;
 					else if (AudienceMember.GlobalInterest < 1)
@@ -1682,6 +1689,15 @@ namespace LecturerTrainer.Model
             }
         }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="imgName"></param>
+		/// <param name="w"></param>
+		/// <param name="h"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <author> Oummar Mayaki, heavily inspired by the work of Vincent Fabioux </author>
 		private void backgroundDrawImage(String imgName, float w, float h, float x = 0f, float y = 0f)
         {
             try
@@ -2325,6 +2341,7 @@ namespace LecturerTrainer.Model
             
         }
 
+        
         /// <summary>
         /// To represent a thigh, we draw a cylinder between the hipEnd and the knee
         /// We then add two cones sharing the same base on the center
@@ -2382,12 +2399,13 @@ namespace LecturerTrainer.Model
             DrawFootSecondVersion(ankle.X, ankle.Y, ankle.Z, footEnd.X, footEnd.Y, footEnd.Z, color, left);
         }
 
+        /// <author> Jeffrey Goncalves </author>
         /// <summary>
         /// Draws a mouth centered at the origin (translations and projections have to be done before) 
         /// and based on its 2 outer corners
         /// </summary>
-        /// <param name="leftOC"></param>
-        /// <param name="rightOC"></param>
+        /// <param name="leftOC"> the left outer corner point of the mouth</param>
+        /// <param name="rightOC"> the right outer corner of the mouth</param>
         private void DrawMouth(Vector3 leftOC,Vector3 rightOC)
         {
             Vector3[] ULPoints = new Vector3[8];
