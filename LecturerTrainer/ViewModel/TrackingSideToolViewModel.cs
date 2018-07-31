@@ -105,8 +105,6 @@ namespace LecturerTrainer.ViewModel
         private void displayFeedbackChoice()
         {
             choiceFeedback = new ChoiceFeedbackView();
-            //((ChoiceResultViewModel)choiceFeedback.DataContext).enableSomeCheckBox(Path.GetDirectoryName(statisticsPath));
-            //((ChoiceResultViewModel)choiceFeedback.DataContext).isLoad = true;
             choiceFeedback.ShowDialog();
         }
 

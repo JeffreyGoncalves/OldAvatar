@@ -44,9 +44,16 @@ namespace LecturerTrainer.ViewModel
         private ObservableCollection<String> elevationList;
 
         /// <summary>
+        /// List of row number possible for the audience
+        /// </summary>
+        private ObservableCollection<String> numberRows;
+
+        /// <summary>
         /// selected elevation index in the list
         /// </summary>
         private int selectedElevationNumber = 0;
+
+        private int selectedNumberRows = 1;
 
         /// <summary>
         /// Is the elevation menu visible.
@@ -75,6 +82,10 @@ namespace LecturerTrainer.ViewModel
             elevationList.Add("80%");
             elevationList.Add("90%");
             elevationList.Add("100%");
+
+            numberRows = new ObservableCollection<string>();
+            numberRows.Add("1");
+            numberRows.Add("2");
         }
 
         #endregion
@@ -140,6 +151,15 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+
+        public ObservableCollection<String> NumberRows
+        {
+            get
+            {
+                return numberRows;
+            }
+        }
+
         /// <summary>
         /// Selected microphone index in the list
         /// </summary>
@@ -178,6 +198,17 @@ namespace LecturerTrainer.ViewModel
                     KinectDevice.changeKinectElevation(kinectElevation);
                 }
                 OnPropertyChanged("SelectedElevation");
+            }
+        }
+
+        public int SelectedNumberRows
+        {
+            set
+            {
+                selectedNumberRows = value;
+                AudienceMember.WholeAudience.Clear();
+                DrawingSheetAvatarViewModel.Get().initAudience(selectedNumberRows + 1);
+                //OnPropertyChanged("SelectedNumberRows");
             }
         }
 

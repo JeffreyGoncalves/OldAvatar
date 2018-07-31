@@ -195,17 +195,17 @@
                     </Separator.Background>
                 </Separator>
                 
-                <CheckBox x:Name="FeedbackCheckBox" Content="Hide all feedbacks" Checked="CheckBoxF_Checked" Unchecked="CheckBoxF_Unchecked" Command="{Binding DisplayFeedback}" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
+                <CheckBox x:Name="FeedbackCheckBox" Content="Hide all feedbacks" Checked="CheckBoxF_Checked" Unchecked="CheckBoxF_Unchecked" Margin="15,10,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
                     <CheckBox.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </CheckBox.Foreground>
                 </CheckBox>
-                <CheckBox x:Name="FeedbackBodyCheckBox" Content="Hide body feedbacks" Checked="CheckBoxFB_Checked" Unchecked="CheckBoxFB_Unchecked" Command="{Binding DisplayFeedback}" Margin="25,0,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
+                <CheckBox x:Name="FeedbackBodyCheckBox" Content="Hide body feedbacks" Checked="CheckBoxFB_Checked" Unchecked="CheckBoxFB_Unchecked" Margin="25,0,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
                     <CheckBox.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </CheckBox.Foreground>
                 </CheckBox>
-                <CheckBox x:Name="FeedbackFaceCheckBox" Content="Hide face feedbacks" Checked="CheckBoxFF_Checked" Unchecked="CheckBoxFF_Unchecked" Command="{Binding DisplayFeedback}" Margin="25,0,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
+                <CheckBox x:Name="FeedbackFaceCheckBox" Content="Hide face feedbacks" Checked="CheckBoxFF_Checked" Unchecked="CheckBoxFF_Unchecked" Margin="25,0,10,0" VerticalAlignment="Top" FontFamily="{DynamicResource GeneralFontFamily}" Height="{DynamicResource GeneralFieldHeight}" FontSize="{DynamicResource GeneralFontSize}" >
                     <CheckBox.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </CheckBox.Foreground>

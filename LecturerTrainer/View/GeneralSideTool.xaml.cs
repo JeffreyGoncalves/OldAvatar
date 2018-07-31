@@ -52,6 +52,8 @@ namespace LecturerTrainer.View
 				twoD.IsChecked = true;
 			else
 				threeD.IsChecked = true;
+            GridNumberRows.Opacity = 1f;
+            GridNumberRows.IsEnabled = true;
 		}
 
 		private void AudienceControlCheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -62,8 +64,10 @@ namespace LecturerTrainer.View
 				threeD.IsChecked = false;
 			twoD.IsEnabled = false;
 			threeD.IsEnabled = false;
+            GridNumberRows.IsEnabled = false;
 			twoD.Opacity = 0.5f;
 			threeD.Opacity = 0.5f;
+            GridNumberRows.Opacity = 0.5f;
 		}
 
 		private void twoD_Checked(object sender, RoutedEventArgs e)

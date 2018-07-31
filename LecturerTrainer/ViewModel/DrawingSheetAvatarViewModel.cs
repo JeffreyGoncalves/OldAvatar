@@ -110,10 +110,6 @@ namespace LecturerTrainer.Model
         /// <author> Amirali Ghazi</author>
         public bool IsOpenGLRecording { get; set; }
 
-        // for the grabscreenshot method
-        private bool firstScreenshot = true;
-        private Bitmap oldBmp;
-
         public bool diplayFeedback = true;
         public bool diplayBodyFeedback = true;
         public bool diplayFaceFeedback = true;
@@ -1203,12 +1199,12 @@ namespace LecturerTrainer.Model
 			{
 				if(GeneralSideTool.Get().twoD.IsChecked.Value)
 				{ 
-					if (AudienceMember.WholeAudience.Count == 0) initAudience(); 
+					if (AudienceMember.WholeAudience.Count == 0) initAudience(1); 
 					drawAudience();	
 				}
 				if(GeneralSideTool.Get().threeD.IsChecked.Value)
 				{
-					if (AudienceMember.WholeAudience.Count == 0) initAudience(); 
+					if (AudienceMember.WholeAudience.Count == 0) initAudience(1); 
 					draw3DAudience();
 				}
 			}
@@ -1260,17 +1256,19 @@ namespace LecturerTrainer.Model
 		/// Initializes every member of the audience
 		/// </summary>
 		/// <author>Oummar Mayaki</author>
-		private void initAudience()
+		public void initAudience(int numberRows)
 		{
 			AudienceMember.GlobalInterest = 0.5f;
 			for(int i = -9; i <= 9; i= i + 3){
 				new AudienceMember(1, i/10.0f, 0.3f, 0.7f);
 			}
-
-			// The following is for creating another row of seats, but it make the system lag
-			/*for(float i = -5f; i <= 5f; i= i + 2.5f){
-				new AudienceMember(2, i/10.0f, 0.3f, 0.7f);
-			}*/
+            if(numberRows > 1)
+            {
+			    // The following is for creating another row of seats, but it make the system lag
+			    for(float i = -7.5f; i <= 7.5f; i= i + 2.5f){
+				    new AudienceMember(2, i/10.0f, 0.3f, 0.7f);
+			    }
+            }
 		}                                                                                                                                                                                                                                                                 
 
 		/// <summary>
@@ -1291,11 +1289,11 @@ namespace LecturerTrainer.Model
 				}
 
 				// The following is for drawing the other row of seats, assuming we created them. But it makes the system lag
-				/*else if(mem.rowNumber == 2)
+				else if(mem.rowNumber == 2)
 				{
 					backgroundDrawImage(mem.currentFace, 0.08f, 0.08f, mem.horizontalPosition, -0.43f);
 					backgroundDrawImage("Audience_Body", 0.08f, 0.08f, mem.horizontalPosition, -0.5f);
-				}*/
+				}
 			}
 			
 			// Resets the texture applied

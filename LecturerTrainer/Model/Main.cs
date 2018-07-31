@@ -61,7 +61,7 @@ namespace LecturerTrainer.Model
             }
             catch (Exception)
             {
-                new ErrorMessageBox("KinectError", "Kinect no plug").ShowDialog();
+                new ErrorMessageBox("KinectError", "No Kinect plugged-in").ShowDialog();
                 System.Environment.Exit(0);
                 
             }
