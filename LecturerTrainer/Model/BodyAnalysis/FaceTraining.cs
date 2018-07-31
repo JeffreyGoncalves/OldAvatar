@@ -1,4 +1,6 @@
-﻿using LecturerTrainer.ViewModel;
+﻿using LecturerTrainer.Model.AudioAnalysis;
+using LecturerTrainer.View;
+using LecturerTrainer.ViewModel;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit.FaceTracking;
 using System;
@@ -14,9 +16,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
         public event EventHandler GestureRecognized;
         
         private const int NB_FRAME_MAX = 460;
+        private const float AUDIO_LOUDNESS = 530f;
 
         private static bool right;
         private static bool left;
+        private static bool start;
         private static int frame;
 
         private static bool verbose = false;
@@ -53,6 +57,11 @@ namespace LecturerTrainer.Model.BodyAnalysis
 
         public void Update(Skeleton sk)
         {
+            if(!AudioProvider.detectionActive)
+            {
+                TrackingSideTool.Get().SpeedRateDetectionCheckBox.IsChecked = true;
+            }
+
             _up = false;
             _complete = false;
             _lookingDir = false;
@@ -62,11 +71,18 @@ namespace LecturerTrainer.Model.BodyAnalysis
             if(frame > NB_FRAME_MAX)
             {
                 frame = 0;
+                start = false;
                 right = false;
                 left = false;
                 _up = true;
 
+                DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                 GestureRecognized?.Invoke(this, new EventArgs());
+            }
+
+            if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted && !start)
+            {
+                DrawingSheetAvatarViewModel.displayCustomText = "Look at the direction of your raised arm then speak";
             }
 
             try
@@ -91,31 +107,33 @@ namespace LecturerTrainer.Model.BodyAnalysis
                     Console.WriteLine("left: " + left);
                 }
 
-                if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted)
-                {
-                    DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Look towards the raised arm";
-                }
-
                 if (Math.Abs(handRight.X - elbowRight.X) > 0.05 && handRight.Y > shoulder.Y)
                 {
-                    if(rightEye.Z - leftEye.Z < -0.015)
+                    if (rightEye.Z - leftEye.Z < -0.015)
                     {
-                        right = true;
-
-                        if (left)
+                        if (AudioProvider.currentIntensity > AUDIO_LOUDNESS)
                         {
-                            frame = 0;
-                            right = false;
-                            left = false;
-                            _complete = true;
+                            start = true;
+                            right = true;
+                            DrawingSheetAvatarViewModel.displayCustomText = "Do the same with the other arm";
 
-                            DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
-                            GestureRecognized?.Invoke(this, new EventArgs());
+                            if (left)
+                            {
+                                frame = 0;
+                                start = false;
+                                right = false;
+                                left = false;
+                                _complete = true;
+
+                                DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
+                                GestureRecognized?.Invoke(this, new EventArgs());
+                            }
                         }
                     }
-                    else if(!right)
+                    else if (!right)
                     {
                         frame = 0;
+                        start = false;
                         right = false;
                         left = false;
                         _lookingDir = true;
@@ -127,24 +145,31 @@ namespace LecturerTrainer.Model.BodyAnalysis
 
                 if (Math.Abs(handLeft.X - elbowLeft.X) > 0.05 && handLeft.Y > shoulder.Y)
                 {
-                    if(rightEye.Z - leftEye.Z > 0.015)
+                    if (rightEye.Z - leftEye.Z > 0.015)
                     {
-                        left = true;
-
-                        if (right)
+                        if (AudioProvider.currentIntensity > AUDIO_LOUDNESS)
                         {
-                            frame = 0;
-                            right = false;
-                            left = false;
-                            _complete = true;
+                            start = true;
+                            left = true;
+                            DrawingSheetAvatarViewModel.displayCustomText = "Do the same with the other arm";
 
-                            DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
-                            GestureRecognized?.Invoke(this, new EventArgs());
+                            if (right)
+                            {
+                                frame = 0;
+                                start = false;
+                                right = false;
+                                left = false;
+                                _complete = true;
+
+                                DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
+                                GestureRecognized?.Invoke(this, new EventArgs());
+                            }
                         }
                     }
-                    else if(!left)
+                    else if (!left)
                     {
                         frame = 0;
+                        start = false;
                         right = false;
                         left = false;
                         _lookingDir = true;
