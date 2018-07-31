@@ -427,13 +427,29 @@ namespace LecturerTrainer.ViewModel
             string curItem = ((VideosList)TrainingWithAvatarView.Get().VideosList.SelectedItem).Name;
             bool complete = ((HandTraining)sender).Complete;
             bool slow = ((HandTraining)sender).Slow;
+            int count = ((HandTraining)sender).Count;
 
-            if(complete)
+            /*test audio
+            switch (count)
+            {
+                case 1:
+                    TrainingWithAvatarViewModel.Get().PlayWAVFile("One.wav");
+                    break;
+                case 2:
+                    TrainingWithAvatarViewModel.Get().PlayWAVFile("Two.wav");
+                    break;
+                case 3:
+                    TrainingWithAvatarViewModel.Get().PlayWAVFile("Three.wav");
+                    break;
+            }
+            */
+
+            if (complete)
             {
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Good_Job.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;
             }
-            else if(slow)
+            else if (slow)
             {
                 string newPathFile = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), curItem + "_Too_Slow.skd");
                 TrainingWithAvatarViewModel.Get().PathFile = newPathFile;

@@ -16,13 +16,12 @@ namespace LecturerTrainer.Model.BodyAnalysis
 
         private static double distance;
         private static int frames;
-        private static int count;
 
         private static bool start;
         private static bool up;
         private static bool down;
 
-        bool _complete;
+        private bool _complete;
 
         public bool Complete
         {
@@ -32,7 +31,17 @@ namespace LecturerTrainer.Model.BodyAnalysis
             }
         }
 
-        bool _slow;
+        private int _count;
+
+        public int Count
+        {
+            get
+            {
+                return _count;
+            }
+        }
+
+        private bool _slow;
 
         public bool Slow
         {
@@ -49,37 +58,27 @@ namespace LecturerTrainer.Model.BodyAnalysis
 
             distance = Geometry.distanceSquare(new Point3D(sk.Joints[JointType.HandLeft].Position), new Point3D(sk.Joints[JointType.HandRight].Position));
 
-            if(distance < 0.01 && !start)
+            if (distance < 0.01 && !start)
             {
                 start = true;
                 down = true;
             }
 
-            switch(count)
+            if (TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted && _count == 0)
             {
-                case 1:
-                    DrawingSheetAvatarViewModel.displayCustomText = "One";
-                    break;
-                case 2:
-                    DrawingSheetAvatarViewModel.displayCustomText = "Two";
-                    break;
-                case 3:
-                    DrawingSheetAvatarViewModel.displayCustomText = "Three";
-                    break;
-            }
-
-            if(TrainingWithAvatarViewModel.Get().SkeletonList != null && TrainingWithAvatarViewModel.canBeInterrupted && count == 0)
-            {
-                DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Clap three times";
+                DrawingSheetAvatarViewModel.displayCustomText = "Your turn ! Clap " + NB_APPLAUSE.ToString() + " times";
             }
 
             if (start)
             {
-                if(count == NB_APPLAUSE)
+                if (_count != 0)
+                    DrawingSheetAvatarViewModel.displayCustomText = _count.ToString();
+
+                if (_count == NB_APPLAUSE)
                 {
                     DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     frames = 0;
-                    count = 0;
+                    _count = 0;
                     start = false;
                     down = false;
                     up = false;
@@ -92,9 +91,9 @@ namespace LecturerTrainer.Model.BodyAnalysis
                 {
                     frames = 0;
 
-                    if(down)
+                    if (down)
                     {
-                        if(distance > 0.05)
+                        if (distance > 0.05)
                         {
                             up = true;
                             down = false;
@@ -108,13 +107,15 @@ namespace LecturerTrainer.Model.BodyAnalysis
                             GestureRecognized?.Invoke(this, new EventArgs());
                         }*/
                     }
-                    else if(up)
+                    else if (up)
                     {
-                        if(distance < 0.01)
+                        if (distance < 0.01)
                         {
                             down = true;
                             up = false;
-                            count++;
+                            _count++;
+
+                            GestureRecognized?.Invoke(this, new EventArgs());
                         }
                         /*else
                         {
