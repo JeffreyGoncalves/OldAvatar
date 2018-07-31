@@ -60,6 +60,12 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         private bool elevationVisible = false;
 
+        /// <summary>
+        /// true when the user actives the audience
+        /// it's useful when the user replay a performance and the audience is activated
+        /// </summary>
+        public static bool audienceOn = false;
+
         #endregion
 
         #region constructor 

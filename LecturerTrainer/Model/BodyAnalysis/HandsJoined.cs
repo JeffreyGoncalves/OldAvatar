@@ -168,8 +168,6 @@ namespace LecturerTrainer.Model
             // else it adds the hands joined counter first and this about the duration after
             else
             {
-                foreach (int i in handsjoinedCounter)
-                    Console.WriteLine(" -- " + i);
                 list.Add(chart1);
                 var chart2 = new CartesianGraph();
                 chart2.title = "Hands joined duration";

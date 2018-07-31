@@ -94,11 +94,6 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         private Queue<ServerFeedback> feedbacksQueue;
 
-        /// <summary>
-        /// Queue saved to replay the performance many times
-        /// </summary>
-        private Queue<ServerFeedback> savedFeedbacksQueue;
-
         public static List<List<String>> listlistString;
 
         public List<String> currentFeedbackList;
@@ -347,8 +342,6 @@ namespace LecturerTrainer.ViewModel
         /// And it returns a list of feedbacks of the same size of the list of skeleton
         /// </summary>
         /// <author>Alban Descottes 2018</author>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
         public List<List<String>> FeedbacksInList(String fileName)
         {
             var listFeedback = new List<List<String>>();
@@ -414,8 +407,6 @@ namespace LecturerTrainer.ViewModel
         /// this method is used in the ReplayAvatar class in the DispatcherTimer 
         /// </summary>
         /// <author>Alban Descottes 2018</author>
-        /// <param name="sender"></param>
-        /// <param name="evt"></param>
         public void nextFeedbackList(object sender, EventArgs evt)
         {
             if(ReplayAvatar.CurrentSkeletonNumber < listlistString.Count)
@@ -436,17 +427,6 @@ namespace LecturerTrainer.ViewModel
         {
             if(File.Exists(filePath))
             {
-                /*if (Path.GetFileName(filePath) == "avatar.avi")
-                {
-                    DrawingSheetView.Get().ShowReplayVideoSheet();
-                    filePathVideoAvatar = filePath;
-                    activate(ReplayView.Get().VideoAvatar, GeneralSideTool.Get().Avatar);
-                    deactivateOther(ReplayView.Get().Stream, ReplayView.Get().Avatar);
-                    DrawingSheetView.Get().ReplayVideo.Source = new Uri(filePathVideoAvatar, UriKind.Relative);
-                    skeletonScrolling = null;
-                    tryAddOtherSources("avatar.avi");
-                    isReplaying = true;
-                }*/
                 if (Path.GetFileName(filePath) == "stream.avi")
                 {
                     folderPath = filePath.Remove(filePath.Length - 10);
@@ -531,11 +511,6 @@ namespace LecturerTrainer.ViewModel
                         addOtherVideoSources(ReplayView.Get().Avatar);
                         filePathAvatar = s;
                     }
-                   /* else if (fileName == "avatar.avi")
-                    {
-                        addOtherVideoSources(ReplayView.Get().VideoAvatar);
-                        filePathVideoAvatar = s;
-                    }*/
                     else if (fileName == "stream.avi")
                     {
                         addOtherVideoSources(ReplayView.Get().Stream);
@@ -818,8 +793,6 @@ namespace LecturerTrainer.ViewModel
   
             // Icons cleaning and initialization of the feedback queue thanks to the save
             IconViewModel.get().clearAll();
-            if (savedFeedbacksQueue != null)
-                feedbacksQueue = new Queue<ServerFeedback>(savedFeedbacksQueue);
             if (filePath != null)
                 DrawingSheetView.Get().ReplayVideo.Source = new Uri(filePath, UriKind.Relative);
         }
@@ -884,6 +857,13 @@ namespace LecturerTrainer.ViewModel
             if (faceTrack)
                 KinectDevice.faceTracking = true;
             TrackingSideToolViewModel.get().SpeedRate = speedRateActive;
+            
+            // reactivate the audience
+            if (TrainingSideToolViewModel.audienceOn)
+            {
+                TrainingSideToolViewModel.audienceOn = false;
+                GeneralSideTool.Get().AudienceControlCheckBox.IsChecked = true;
+            }
             
         }
 

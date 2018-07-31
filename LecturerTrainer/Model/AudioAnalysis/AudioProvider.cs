@@ -221,6 +221,11 @@ namespace LecturerTrainer.Model.AudioAnalysis
         /// </summary>
         private static bool rec = false;
 
+        /// <summary>
+        /// The list is for the chart
+        /// </summary>
+        public static List<int> speedRate = null;
+
         #endregion
 
         #region Accesors
@@ -482,6 +487,8 @@ namespace LecturerTrainer.Model.AudioAnalysis
             dicWpm = new Dictionary<int, double>();
             syllablesInTime = new Dictionary<int, double>();
             levelOfSpeech = new Dictionary<int, double>();
+            speedRate = new List<int>();
+
         }
 
 
@@ -1261,6 +1268,7 @@ namespace LecturerTrainer.Model.AudioAnalysis
 
 			if(rec)
 			{
+                speedRate.Add(this.nbSyllables);
 				speechSpeedRecord.Add(Tools.getStopWatch() / 1000.0, this.nbSyllables);
 			}
 
@@ -1569,51 +1577,24 @@ namespace LecturerTrainer.Model.AudioAnalysis
 
         #region statistics Methods
         /// <summary>
-        /// function to obtain the count of the arms crossed
+        /// it returns the graph with the speedrate
         /// </summary>
-        /// <returns>the graph</returns>
-        public static List<IGraph> getVoicetatistics()
+        /// <author> Alban Descottes </author>
+        public static List<IGraph> getVoiceStatistics()
         {
             List<IGraph> list = new List<IGraph>();
-
-            var chart = new CartesianGraph();
-            chart.title = "Speech rate (in syllables per second)";
-            chart.subTitle = Tools.ChooseTheCorrectUnitTime();
-            var chart2 = new CartesianGraph();
-            chart2.title = "Speech rate (Level Of Speaking per second)";
-            chart2.subTitle = Tools.ChooseTheCorrectUnitTime();
-            /*
-            Dictionary<int, double> dictemp = new Dictionary<int, double>();
-            int max = dicWpm.Count;
-
-            dictemp = dictemp.Concat(dicWpm).ToDictionary(s => s.Key, s => s.Value);
-
-            for(int i=0;i<max-1;i++)
+            var chart1 = new CartesianGraph();
+            chart1.title = "Voice syllable counter";
+            chart1.subTitle = Tools.ChooseTheCorrectUnitTime();
+            Console.WriteLine("-- " + speedRate.Count);
+            if (!Tools.createChartForVoice(chart1, new LineSeries(), "Voice syllable counter", speedRate, false))
             {
-                dictemp.Add(dicWpm.ElementAt(i).Key + refreshTimer/2, (dicWpm.ElementAt(i ).Value + dicWpm.ElementAt(i+1).Value) /2);
+                list.Add(Tools.createEmptyGraph("No syllable"));
             }
-            var items = from pair in dictemp orderby pair.Key ascending select pair;
-            Dictionary<int, double> dicSort = new Dictionary<int, double>();
-            foreach (KeyValuePair<int, double> pair in items)
+            else
             {
-                dicSort.Add(pair.Key, pair.Value);
+                list.Add(chart1);
             }
-
-            if (!Tools.addKeyValuePairSeriesToCharts(chart, new LineSeries(), "Words / minute", dicSort, "", false))
-                list.Add(Tools.createEmptyGraph("No estimate of words per minute"));
-            else
-                list.Add(chart);*/
-
-            if (!Tools.addKeyValuePairSeriesToCharts(chart, new LineSeries(), "Syllables per Second", syllablesInTime, "", false))
-                list.Add(Tools.createEmptyGraph("No estimate of syllables per second"));
-            else
-                list.Add(chart);
-
-            if (!Tools.addKeyValuePairSeriesToCharts(chart2, new LineSeries(), "Level Of Speaking per Second", levelOfSpeech, "", false))
-                list.Add(Tools.createEmptyGraph("No estimate of level of speaking per second"));
-            else
-                list.Add(chart2);
-
             return list;
         }
 

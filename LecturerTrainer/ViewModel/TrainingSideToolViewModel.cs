@@ -123,6 +123,11 @@ namespace LecturerTrainer.ViewModel
 		/// The path where the current recording will be stored
 		/// </summary>
 		private string currentPath;
+
+        /// <summary>
+        /// it's useful for reactivate the audience after a replay
+        /// </summary>
+        public static bool audienceOn = false;
         #endregion
 
         #region poolFieldsBindings
@@ -972,7 +977,9 @@ namespace LecturerTrainer.ViewModel
            
             if (TrackingSideToolViewModel.get().SpeedRate)
             {
-                ResViewMod.getVoiceStatistics(AudioProvider.getVoicetatistics());
+                List<IGraph> listGraphVoice = new List<IGraph>();
+                listGraphVoice.AddRange(AudioProvider.getVoiceStatistics());
+                ResViewMod.getVoiceStatistics(listGraphVoice);
             }
             ResViewMod.SaveGraph(SavingTools.pathFolder + '/');
 
@@ -1166,8 +1173,14 @@ namespace LecturerTrainer.ViewModel
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 try
-                { 
-
+                {
+                    // saves the value of the audience when display a record
+                    // and it unchecks the audience 
+                    if (GeneralSideTool.Get().AudienceControlCheckBox.IsChecked.Value)
+                    {
+                        audienceOn = GeneralSideToolViewModel.audienceOn;
+                        GeneralSideTool.Get().AudienceControlCheckBox.IsChecked = false;
+                    }
                     ReplayViewModel.Set(fbd.FileName);
                     replayViewModel = ReplayViewModel.Get();
 

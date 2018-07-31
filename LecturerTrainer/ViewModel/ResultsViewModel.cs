@@ -276,7 +276,7 @@ namespace LecturerTrainer.ViewModel
             {
                 foreach (IGraph chart in listVoice)
                 {
-                    if (chart.title.ToLower().Contains("words per minute") && ValueCheckBoxChoice[11])
+                    if (chart.title.ToLower().Contains("syllable") && ValueCheckBoxChoice[11])
                     {
                         if (chart.GetType() == typeof(GraphEmpty))
                             ItemsEmpty.Add(chart);

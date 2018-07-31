@@ -44,6 +44,7 @@ namespace LecturerTrainer.View
 
 		private void AudienceControlCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
+            GeneralSideToolViewModel.audienceOn = true;
 			twoD.Opacity = 1f;
 			twoD.IsEnabled = true;
 			threeD.Opacity = 1f;
@@ -58,7 +59,8 @@ namespace LecturerTrainer.View
 
 		private void AudienceControlCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if(twoD.IsChecked.Value)
+            GeneralSideToolViewModel.audienceOn = false;
+            if (twoD.IsChecked.Value)
 				twoD.IsChecked = false;
 			else
 				threeD.IsChecked = false;
