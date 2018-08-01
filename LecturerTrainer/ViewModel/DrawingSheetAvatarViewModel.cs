@@ -110,10 +110,12 @@ namespace LecturerTrainer.Model
         /// <author> Amirali Ghazi</author>
         public bool IsOpenGLRecording { get; set; }
 
+        /// <summary>
+        /// it's used for the customization of the feedbacks 
+        /// </summary>
         public bool diplayFeedback = true;
         public bool diplayBodyFeedback = true;
         public bool diplayFaceFeedback = true;
-
         public bool displayAgitationFeedback = true;
         public bool displayHandsJoinedFeedback = true;
         public bool displayArmsCrossedFeedback = true;
@@ -184,7 +186,7 @@ namespace LecturerTrainer.Model
         private readonly float legRadius = 0.07f;
 
         /// <summary>
-        /// Avatar initial position.
+        /// Avatar initial position Modified by Alban Descottes
         /// </summary>
         private readonly Vector3 initialHead = new Vector3(0, 0.7f, 2.229455f);
         private readonly Vector3 initialShoulderCenter = new Vector3(0, 0.55f, 2.229455f);

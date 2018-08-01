@@ -17,6 +17,9 @@ using System.Windows.Shapes;
 
 namespace LecturerTrainer.View
 {
+    /// <summary>
+    /// Author Alban Descottes
+    /// </summary>
     public partial class ChoiceFeedbackView : Window
     {
 

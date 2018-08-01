@@ -83,8 +83,6 @@ namespace LecturerTrainer.Model
             }
         }
 
-        // Face
-
         /// <summary>
         /// Directory containing face tracking elements
         /// </summary>

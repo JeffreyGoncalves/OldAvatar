@@ -112,17 +112,16 @@ namespace LecturerTrainer.Model
                 // if the user records himself, it adds in the two lists the time (rounded to one tenth of a second)
                 if (rec)
                 {
-                    //Console.WriteLine("add rec");
                     if (!handsjoined.Contains((int)(Tools.getStopWatch() / 100 )))
                     {
                         handsjoined.Add((int)(Tools.getStopWatch() / 100 ));
                     }
                 }
+                // this code is for the counter, so it adds the value only if the hands are not already joined
                 if (rec)
                 {
                     if (!handsjoinedCounter.Contains((int)(Tools.getStopWatch() / 100)) && !handsJoined)
                     {
-                        Console.WriteLine("add counter");
                         handsjoinedCounter.Add((int)(Tools.getStopWatch() / 100));
                     }
                     handsJoined = true;  
