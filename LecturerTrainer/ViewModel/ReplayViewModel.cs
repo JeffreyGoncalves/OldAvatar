@@ -341,7 +341,7 @@ namespace LecturerTrainer.ViewModel
         /// This method needs the feedback.txt file input
         /// And it returns a list of feedbacks of the same size of the list of skeleton
         /// </summary>
-        /// <author>Alban Descottes 2018</author>
+        /// <author> Alban Descottes 2018 </author>
         public List<List<String>> FeedbacksInList(String fileName)
         {
             var listFeedback = new List<List<String>>();
@@ -406,7 +406,7 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// this method is used in the ReplayAvatar class in the DispatcherTimer 
         /// </summary>
-        /// <author>Alban Descottes 2018</author>
+        /// <author> Alban Descottes 2018 </author>
         public void nextFeedbackList(object sender, EventArgs evt)
         {
             if(ReplayAvatar.CurrentSkeletonNumber < listlistString.Count)
@@ -594,8 +594,7 @@ namespace LecturerTrainer.ViewModel
         /// It changes the current avatar after drag the slider during the replay
         /// it changes also the offset compared to the stopwatch lanched during the replay
         /// </summary>
-        /// <param name="newTime"></param>
-        /// <remarks>Added by Alban Descottes 2018</remarks>
+        /// <author > Alban Descottes 2018 </author>
         public static void changeCurrentAvatar(int newTime)
         {
             var timeDown = 0;

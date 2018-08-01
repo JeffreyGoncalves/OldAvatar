@@ -208,7 +208,7 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// Add charts of the list passed as parameters to the Arms Motion part
         /// </summary>
-        /// <param name="grArmsMot"></param>
+        /// <author> Alban Descottes </author>
         public void getArmsMotion(List<IGraph> grArmsMot)
         {
             ObservableCollection<IGraph> ItemsEmpty = new ObservableCollection<IGraph>();
@@ -269,6 +269,7 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// Add charts of the list passed as parameters to the Voice part
         /// </summary>
+        /// <author> Alban Descottes </author>
         public void getVoiceStatistics(List<IGraph> listVoice)
         {
             ObservableCollection<IGraph> ItemsEmpty = new ObservableCollection<IGraph>();
