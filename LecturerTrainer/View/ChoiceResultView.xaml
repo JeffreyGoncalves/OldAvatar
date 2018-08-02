@@ -130,7 +130,7 @@
                 </CheckBox.Foreground>
             </CheckBox>
             <WrapPanel Margin=" 20,5,0,0"  x:Name="wrpPanelAudio">
-                <CheckBox x:Name="chkWpm" Content="Words per minute" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" IsEnabled="False">
+                <CheckBox x:Name="chkNumberSyllables" Content="Number of syllables per second" FontFamily="{DynamicResource GeneralFontFamily}" FontSize="{DynamicResource GeneralFontSize}" Height="20" Width="110" VerticalAlignment="Center" Margin="10,0,0,5" IsEnabled="False">
                     <CheckBox.Foreground>
                         <SolidColorBrush Color="{DynamicResource GeneralTextColor}"/>
                     </CheckBox.Foreground>

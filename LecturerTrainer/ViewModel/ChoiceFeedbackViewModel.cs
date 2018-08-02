@@ -9,6 +9,9 @@ using System.Windows.Input;
 
 namespace LecturerTrainer.ViewModel
 {
+    /// <summary>
+    /// Added by Alban Descottes
+    /// </summary>
     class ChoiceFeedbackViewModel
     {
 
@@ -19,6 +22,10 @@ namespace LecturerTrainer.ViewModel
             choiceFeedbackView = ChoiceFeedbackView.Get();
         }
 
+        #region command ok and cancel
+        /// <summary>
+        /// ICommand for the ok button
+        /// </summary>
         private ICommand okCustomizeFeedback;
         public ICommand OKCustomizeFeedback
         {
@@ -31,6 +38,9 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+        /// <summary>
+        /// ICommand for the cancel Button
+        /// </summary>
         private ICommand cancelCustomiseFeedback;
         public ICommand CancelCustomizeFeedback
         {
@@ -43,6 +53,9 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+        /// <summary>
+        /// if the user press ok
+        /// </summary>
         private void ChangeFeedbacks()
         {
             DrawingSheetAvatarViewModel.Get().displayAgitationFeedback = choiceFeedbackView.AgitationChoiceFeedback.IsChecked.Value;
@@ -56,9 +69,13 @@ namespace LecturerTrainer.ViewModel
             choiceFeedbackView.Close();
         }
 
+        /// <summary>
+        /// if the user press cancel
+        /// </summary>
         public void LaunchCancel()
         {
             choiceFeedbackView.Close();
         }
+        #endregion
     }
 }

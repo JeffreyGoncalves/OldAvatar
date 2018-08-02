@@ -110,10 +110,12 @@ namespace LecturerTrainer.Model
         /// <author> Amirali Ghazi</author>
         public bool IsOpenGLRecording { get; set; }
 
+        /// <summary>
+        /// it's used for the customization of the feedbacks 
+        /// </summary>
         public bool diplayFeedback = true;
         public bool diplayBodyFeedback = true;
         public bool diplayFaceFeedback = true;
-
         public bool displayAgitationFeedback = true;
         public bool displayHandsJoinedFeedback = true;
         public bool displayArmsCrossedFeedback = true;
@@ -184,7 +186,7 @@ namespace LecturerTrainer.Model
         private readonly float legRadius = 0.07f;
 
         /// <summary>
-        /// Avatar initial position.
+        /// Avatar initial position Modified by Alban Descottes
         /// </summary>
         private readonly Vector3 initialHead = new Vector3(0, 0.7f, 2.229455f);
         private readonly Vector3 initialShoulderCenter = new Vector3(0, 0.55f, 2.229455f);
@@ -909,7 +911,7 @@ namespace LecturerTrainer.Model
 
             //Added by Baptiste Germond
             //OpenGL of the Trainer watch
-            if (TrainerStopwatchViewModel.Get().getTrainerWatchVisibility() == Visibility.Visible)
+           /* if (TrainerStopwatchViewModel.Get().getTrainerWatchVisibility() == Visibility.Visible)
             {
                 System.Windows.Media.Color color = TrainerStopwatchViewModel.Get().getTrainerWatchColor().Color;
 
@@ -934,7 +936,7 @@ namespace LecturerTrainer.Model
                 }
                 GL.End();
                 GL.PopMatrix();
-            }
+            }*/
 
             HudDrawFeedback(avatar);
 
@@ -2055,15 +2057,6 @@ namespace LecturerTrainer.Model
 
             // Drawing of the top joint
             drawJoint(joint0, point0);
-            // Alban's idea
-            /*
-            if (joint0.JointType == JointType.ShoulderCenter && joint1.JointType == JointType.Spine)
-            {
-                Console.Out.WriteLine("-- " + joint0.JointType.ToString() + " -- " + joint1.JointType.ToString());
-                Console.Out.WriteLine(Math.Sqrt((point0.X - point1.X) * (point0.X - point1.X) +
-                    (point0.Y - point1.Y) * (point0.Y - point1.Y) +
-                    (point0.Z - point1.Z) * (point0.Z - point1.Z)) + "\n--");
-            }*/
             if (IsBoneDrawable(joint0, joint1))
             {
                 // We assume all drawn bones are inferred unless BOTH joints are tracked
@@ -2196,9 +2189,6 @@ namespace LecturerTrainer.Model
         /// Draws a solid cylinder between the neck base and the center of the head
         /// and a solid sphere which the center is placed in the "headCenter" joint
         /// </summary>
-        /// <param name="shoulderCenter"></param>
-        /// <param name="headCenter"></param>
-        /// <param name="color"></param>
         private void DrawHead(Vector3 headCenter, Vector3 shoulderCenter, OpenTK.Vector4 color)
         {
             DrawCylinder2P(shoulderCenter.X, shoulderCenter.Y, shoulderCenter.Z,
@@ -2209,15 +2199,11 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// The shoulder is represented by a large cone
+        /// The shoulder is represented by a sphere and a cylinder
         /// </summary>
-        /// <param name="shoulderCenter"></param>
-        /// <param name="spine"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes </author>
         private void DrawShoulder(Vector3 shoulderCenter, Vector3 shoulderEnd, OpenTK.Vector4 color)
         {
-            // Calculation of the point vertically alligned with shoulderCenter and
-            // horizontally alligned with the shoulderEnd point
             DrawSphere1P(shoulderEnd.X, shoulderEnd.Y, shoulderEnd.Z, shoulderRadius, color);
             DrawCylinderWithTwoRadius(shoulderEnd.X, shoulderEnd.Y, shoulderEnd.Z,
                        shoulderCenter.X, shoulderCenter.Y, shoulderCenter.Z, shoulderRadius, shoulderRadius - 0.03f, color);
@@ -2226,9 +2212,7 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// the arm is composed of three cylinders to look like more human
         /// </summary>
-        /// <param name="shoulderEnd"></param>
-        /// <param name="elbow"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes </author>
         private void DrawArm(Vector3 shoulderEnd, Vector3 elbow, OpenTK.Vector4 color)
         {
             Vector3 centerup = new Vector3(shoulderEnd.X + (elbow.X - shoulderEnd.X) * 0.3f,
@@ -2248,9 +2232,7 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// The forearm is represented by two cylinders
         /// </summary>
-        /// <param name="elbow"></param>
-        /// <param name="wrist"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes </author> 
         private void DrawForeArm(Vector3 elbow, Vector3 wrist, OpenTK.Vector4 color)
         {
             Vector3 center = new Vector3(elbow.X + (wrist.X - elbow.X) * 0.2f,
@@ -2262,28 +2244,21 @@ namespace LecturerTrainer.Model
                        wrist.Z, armRadius , armRadius - 0.02f, color);
         }
 
-       /// <summary>
-       /// The function calls another function with coordinates of the wrist and the hand
-       /// </summary>
-       /// <param name="wrist"></param>
-       /// <param name="handEnd"></param>
-       /// <param name="color"></param>
-       /// <param name="left"></param>
+        /// <summary>
+        /// The function calls another function with coordinates of the wrist and the hand
+        /// </summary>
+        /// <author> Alban Descottes </author>
         private void DrawHand(Vector3 wrist, Vector3 handEnd, OpenTK.Vector4 color, bool left)
         {
             DrawHandOpenGL(wrist.X, wrist.Y, wrist.Z, handEnd.X, handEnd.Y, handEnd.Z, color, left);                       
         }
 
         /// <summary>
-        /// The torso is designed like a kind of sandglass. With two cones opposed and a cylinder in the center 
-        /// and a cone on the top. Here is the function drawing the upper part and the cylinder.
+        /// it draws the upper torso with four cylinder
         /// </summary>
-        /// <param name="ShoulderCenter"></param>
-        /// <param name="spine"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes </author>
         private void DrawUpperTorso(Vector3 shoulderCenter, Vector3 spine, OpenTK.Vector4 color)
         {
-            // Extremity point of the top cone
             float rate = 0.15f;
             Vector3 coneBasePoint = new Vector3(shoulderCenter.X + (spine.X - shoulderCenter.X) * rate,
                                                 shoulderCenter.Y + (spine.Y - shoulderCenter.Y) * rate,
@@ -2291,10 +2266,8 @@ namespace LecturerTrainer.Model
             Vector3 cylinderPoint = new Vector3(shoulderCenter.X + (spine.X - shoulderCenter.X) * 0.5f,
                                                shoulderCenter.Y + (spine.Y - shoulderCenter.Y) * 0.5f,
                                                shoulderCenter.Z + (spine.Z - shoulderCenter.Z) * 0.5f);
-            // Drawing of the cone on the top
             DrawCylinderWithTwoRadius(coneBasePoint.X, coneBasePoint.Y , coneBasePoint.Z, shoulderCenter.X,
                        shoulderCenter.Y , shoulderCenter.Z, upperTorsoRadius, upperTorsoRadius - 0.1f, color);
-
             DrawCylinderWithTwoRadius(coneBasePoint.X, coneBasePoint.Y, coneBasePoint.Z, cylinderPoint.X,
                     cylinderPoint.Y, cylinderPoint.Z, upperTorsoRadius, upperTorsoRadius - 0.01f, color);
             DrawCylinderWithTwoRadius(cylinderPoint.X, cylinderPoint.Y, cylinderPoint.Z,
@@ -2305,59 +2278,44 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Function drawing the lower part of the torso.
+        /// it draws the lower torso with just one cylinder
         /// </summary>
-        /// <param name="spine"></param>
-        /// <param name="hipCenter"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes </author>
         private void DrawLowerTorso(Vector3 spine, Vector3 hipCenter, OpenTK.Vector4 color)
         {
-            float cylinderRadius = 0.8f * lowerTorsoRadius;
-
-            // Extremity point of the main cone
             float rate = 1.2f;
             Vector3 coneExtr = new Vector3(hipCenter.X + (hipCenter.X - spine.X ) * rate,
                                            hipCenter.Y + (hipCenter.Y - spine.Y ) * rate,
                                            hipCenter.Z + (hipCenter.Z - spine.Z ) * rate);
-            // Drawing of the cylinder
             DrawCylinderWithTwoRadius(coneExtr.X, coneExtr.Y, coneExtr.Z,
                            spine.X, spine.Y, spine.Z, lowerTorsoRadius - 0.005f, lowerTorsoRadius - 0.03f, color);
         }
 
         /// <summary>
-        /// A composition of a sphere and a cylinder draws the hip
+        /// it draws the hip with a sphere and a cylinder
         /// </summary>
-        /// <param name="hipCenter"></param>
-        /// <param name="hipEnd"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes </author>
         private void DrawHip(Vector3 hipCenter, Vector3 hipEnd, OpenTK.Vector4 color)
         {
-            
             DrawCylinder2P(hipCenter.X, hipCenter.Y, hipCenter.Z,
                            hipEnd.X, hipEnd.Y, hipEnd.Z, hipRadius, color);
             DrawSphere1P(hipEnd.X, hipEnd.Y, hipEnd.Z, hipRadius - 0.005f, color);
             
         }
 
-        
+
         /// <summary>
-        /// To represent a thigh, we draw a cylinder between the hipEnd and the knee
-        /// We then add two cones sharing the same base on the center
+        /// it draws the thigh with three cylinders
         /// </summary>
-        /// <param name="hipEnd"></param>
-        /// <param name="knee"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes </author>
         private void DrawThigh(Vector3 hipEnd, Vector3 knee, OpenTK.Vector4 color)
         {
-
             Vector3 centerUp = new Vector3(hipEnd.X + (knee.X - hipEnd.X) * 0.15f,
                                          hipEnd.Y + (knee.Y - hipEnd.Y) * 0.15f,
                                          hipEnd.Z + (knee.Z - hipEnd.Z) * 0.15f);
-            // Point situated on the center of the thigh
             Vector3 centerdown = new Vector3(hipEnd.X + (knee.X - hipEnd.X) * 0.6f,
                                          hipEnd.Y + (knee.Y - hipEnd.Y) * 0.6f,
                                          hipEnd.Z + (knee.Z - hipEnd.Z) * 0.6f);
-            // Drawing of the two cones
             DrawCylinderWithTwoRadius(centerUp.X, centerUp.Y, centerUp.Z, hipEnd.X, hipEnd.Y,
                        hipEnd.Z, legRadius + 0.008f, legRadius , color);
             DrawCylinderWithTwoRadius(centerdown.X, centerdown.Y, centerdown.Z, centerUp.X, centerUp.Y,
@@ -2368,18 +2326,14 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Draws the bottom part of a leg with two cones sharing the same base
+        /// it draws the leg with three cylinders
         /// </summary>
-        /// <param name="knee"></param>
-        /// <param name="ankle"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes </author>
         private void DrawLeg(Vector3 knee, Vector3 ankle, OpenTK.Vector4 color)
         {
-            // Point situated on the center of the thigh
             Vector3 center = new Vector3(knee.X + (ankle.X - knee.X) * 0.2f,
                                          knee.Y + (ankle.Y - knee.Y) * 0.2f,
                                          knee.Z + (ankle.Z - knee.Z) * 0.2f);
-            // Drawing of the two cones
             DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, knee.X, knee.Y,
                        knee.Z, legRadius - 0.01f , legRadius - 0.02f , color);
             DrawCylinderWithTwoRadius(center.X, center.Y, center.Z, ankle.X, ankle.Y,
@@ -2387,14 +2341,12 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// Draws a foot with a simple cylinder
+        /// it draws the foot with another method
         /// </summary>
-        /// <param name="ankle"></param>
-        /// <param name="footEnd"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes </author>
         private void DrawFoot(Vector3 ankle, Vector3 footEnd, OpenTK.Vector4 color, bool left)
         {
-            DrawFootSecondVersion(ankle.X, ankle.Y, ankle.Z, footEnd.X, footEnd.Y, footEnd.Z, color, left);
+            DrawFootOpenGL(ankle.X, ankle.Y, ankle.Z, footEnd.X, footEnd.Y, footEnd.Z, color, left);
         }
 
         /// <author> Jeffrey Goncalves </author>
@@ -3044,17 +2996,9 @@ namespace LecturerTrainer.Model
             GL.PopMatrix();
         }
         /// <summary>
-        /// <author> Alban Descottes</author>
+        /// it just calls an OpenGL method
         /// </summary>
-        /// <param name="X1"></param>
-        /// <param name="Y1"></param>
-        /// <param name="Z1"></param>
-        /// <param name="X2"></param>
-        /// <param name="Y2"></param>
-        /// <param name="Z2"></param>
-        /// <param name="radius1"></param>
-        /// <param name="radius2"></param>
-        /// <param name="color"></param>
+        /// <author> Alban Descottes</author>
         void DrawCylinderWithTwoRadius(float X1, float Y1, float Z1, float X2, float Y2, float Z2, float radius1, float radius2, OpenTK.Vector4 color)
         {
             // Reversed Z axis give a better visibility
@@ -3090,8 +3034,8 @@ namespace LecturerTrainer.Model
 
         /// <summary>
         /// Better shape of the hands
-        /// <author>Alban Descottes</author>
         /// </summary>
+        /// <author> Alban Descottes </author>
         void DrawHandOpenGL(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color, bool left)
         {
             Z1 = -Z1;
@@ -3246,17 +3190,10 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
-        /// 
+        /// it draws the foot, it's an ugly version because we never see the feet
         /// </summary>
-        /// <param name="X1"></param>
-        /// <param name="Y1"></param>
-        /// <param name="Z1"></param>
-        /// <param name="X2"></param>
-        /// <param name="Y2"></param>
-        /// <param name="Z2"></param>
-        /// <param name="color"></param>
-        /// <param name="left"></param>
-        private void DrawFootSecondVersion(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color, bool left)
+        /// <author> Alban Descottes </author>
+        private void DrawFootOpenGL(float X1, float Y1, float Z1, float X2, float Y2, float Z2, OpenTK.Vector4 color, bool left)
         {
             Z1 = -Z1;
             Z2 = -Z2;
@@ -3267,10 +3204,7 @@ namespace LecturerTrainer.Model
             if (vZ == 0)
                 vZ = 0.0001f;
 
-            // Size of the vector separating the two points
             double v = Math.Sqrt(vX * vX + vY * vY + vZ * vZ);
-
-            // Angle between the vector and Z axis
             double aX = 57.2957795 * Math.Acos(vZ / v);
             if (vZ < 0.0)
                 aX = -aX;
@@ -3278,7 +3212,6 @@ namespace LecturerTrainer.Model
             float rY = vX * vZ;
             GL.PushMatrix();
             {
-                //draw the cylinder body
                 GL.Translate(X1, Y1, Z1);
                 GL.Rotate(aX, rX, rY, 0.0);
                 GL.Color4(color);
@@ -3398,11 +3331,6 @@ namespace LecturerTrainer.Model
         /// <summary>
         /// Draws a solid sphere centered in (X, Y, Z)
         /// </summary>
-        /// <param name="X"></param>
-        /// <param name="Y"></param>
-        /// <param name="Z"></param>
-        /// <param name="radius"></param>
-        /// <param name="color"></param>
         void DrawSphere1P(float X, float Y, float Z, float radius, OpenTK.Vector4 color)
         {
             // Reversed Z axis give a better visibility

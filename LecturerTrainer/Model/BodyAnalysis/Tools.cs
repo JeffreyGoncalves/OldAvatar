@@ -358,6 +358,37 @@ namespace LecturerTrainer.Model
         }
 
         /// <summary>
+        /// It creates the chart for the number of syllable
+        /// it needs a specific method because the value is different each second
+        /// </summary>
+        /// <author> Alban Descottes </author>
+        public static bool createChartForVoice(IGraph chart, Series series, string seriesName, List<int> list, bool addEmpty)
+        {
+            series.Title = seriesName;
+
+            if (!addEmpty && list.Count <= 0)
+                return false;
+            Console.WriteLine("1");
+            List<string> listLabel = new List<string>();
+            series.Values = new ChartValues<double>();
+
+            Console.WriteLine("2");
+            for (int i = 0; i < list.Count; i++)
+            {
+            Console.WriteLine("i");
+                listLabel.Add((i+1)+ " sec");
+                series.Values.Add((double)list[i]);
+            }
+
+            Console.WriteLine("3");
+            chart.listSeries.Add(series);
+            chart.Labels = listLabel;
+            chart.XTitle = "Time";
+            Console.WriteLine("4");
+            return true;
+        }
+
+        /// <summary>
         /// Method to create a serie with the type of "series", with data included in "list" and add the serie in "chart"
         /// </summary>
         /// <typeparam name="U"></typeparam>

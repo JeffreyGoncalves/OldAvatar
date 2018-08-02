@@ -130,12 +130,6 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                     lookRight = new List<int>();
                     lookExtrLeft = new List<int>();
                     lookExtrRight = new List<int>();
-                    /*dicDirect = new Dictionary<String, int>();
-                    dicDirect.Add("Extrem Left", 0);
-                    dicDirect.Add("Left", 0);
-                    dicDirect.Add("Center", 0);
-                    dicDirect.Add("Right", 0);
-                    dicDirect.Add("Extrem Right", 0);*/
                 }
             }
         }
@@ -166,7 +160,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the center area
                         if (rightEye.Z - leftEye.Z >= -0.015 && rightEye.Z - leftEye.Z <= 0.015)
                         {
-                            //Console.Out.WriteLine("CCCCCCCCCCCCCCCCCCCC");
+                            // add look center
                             if (rec)
                             {
                                 if (!lookCenter.Contains((int)(Tools.getStopWatch() / 100)))
@@ -188,7 +182,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the right area
                         else if (rightEye.Z - leftEye.Z >= -0.057 && rightEye.Z - leftEye.Z < -0.015)
                         {
-                           // Console.Out.WriteLine("RRRRRRRRRRRRRRRRRR");
+                            // add look rigth
                             if (rec)
                             {
                                 if (!lookRight.Contains((int)(Tools.getStopWatch() / 100)))
@@ -207,6 +201,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the extrem right area
                         else if (rightEye.Z - leftEye.Z < -0.057)
                         {
+                            // add look ExtrRight
                             if (rec)
                             {
                                 if (!lookExtrRight.Contains((int)(Tools.getStopWatch() / 100)))
@@ -225,7 +220,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                         //Test if the user is looking at the left area
                         else if (rightEye.Z - leftEye.Z > 0.015 && rightEye.Z - leftEye.Z <= 0.057)
                         {
-                            //Console.Out.WriteLine("LLLLLLLLLLLLLLLLL");
+                            // add look left
                             if (rec)
                             {
                                 if (!lookLeft.Contains((int)(Tools.getStopWatch() / 100)))
@@ -241,9 +236,9 @@ namespace LecturerTrainer.Model.EmotionRecognizer
                             countL++;
 							direction = LEFT;
                         }
-                        //Test if the user is looking at the extrem left area
                         else if (rightEye.Z - leftEye.Z > 0.057)
                         {
+                            // add look ExtrLeft
                             if (rec)
                             {
                                 if (!lookExtrLeft.Contains((int)(Tools.getStopWatch() / 100)))
@@ -474,6 +469,10 @@ namespace LecturerTrainer.Model.EmotionRecognizer
             }
         }
 
+        /// <summary>
+        /// it creates the uniaue chart with all the values in line series
+        /// </summary>
+        /// <author> Alban Descottes </author>
         public static List<IGraph> getLookingStatistics()
         {
             List<IGraph> list = new List<IGraph>();
@@ -488,6 +487,7 @@ namespace LecturerTrainer.Model.EmotionRecognizer
             bool cl = Tools.addSeriesToCharts(graph, new LineSeries(), "Central look", lookCenter, "Total central look: ", false);
             bool rl = Tools.addSeriesToCharts(graph, new LineSeries(), "right look", lookRight, "Total right look: ", false);
             bool xrl = Tools.addSeriesToCharts(graph, new LineSeries(), "Extreme right look", lookExtrRight, "Total extreme right look: ", false);
+            // if there is at least one graph it will add the chart else an empty chart
             if ( xll || ll || cl || rl || xrl)
                 list.Add(graph);
             else

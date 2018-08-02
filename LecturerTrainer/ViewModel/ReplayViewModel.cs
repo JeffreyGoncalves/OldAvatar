@@ -65,23 +65,22 @@ namespace LecturerTrainer.ViewModel
             }
         }
 
+        /// <summary>
+        /// those int are used for the offset created with the slider
+        /// </summary>
         public static int timeEnd;
-
         public static int localOffset = 0;
-
         public static int initTime = 0;
 
+        /// <summary>
+        /// it's for raising a exception if the skd file is not read
+        /// </summary>
         private static bool skdRead = false;
-        public static bool SkRead
-        {
-            get
-            {
-                return skdRead;
-            }
-        }
 
+        /// <summary>
+        /// when the user selects a replay, the program keeps in memory if the facetracking and the speedrate are activated 
+        /// </summary>
         private bool faceTrack = KinectDevice.faceTracking;
-
         public bool speedRateActive;
 
         /// <summary>
@@ -90,63 +89,31 @@ namespace LecturerTrainer.ViewModel
         private String elapsedTime = "00:00:00";
 
         /// <summary>
-        /// Queue containing all the feedbacks
+        /// This list is as long as the list of skeletons
+        /// each List<String> contains all the feedbacks raised during the corresponding avatar
         /// </summary>
-        private Queue<ServerFeedback> feedbacksQueue;
+        public static List<List<String>> ListFeedbacks;
 
         /// <summary>
-        /// Queue saved to replay the performance many times
+        /// it's the current list corresponding of the current avatar displayed for the replay
         /// </summary>
-        private Queue<ServerFeedback> savedFeedbacksQueue;
-
-        public static List<List<String>> listlistString;
-
         public List<String> currentFeedbackList;
-        public int currentListNumber = 0;
 
         /// <summary>
-        /// Static array storing the different speed ratios allowed
-        /// And below, the index selected
+        /// it's for reset the replay when the user press stop or if the replay ends
         /// </summary>
-        private static double[] speedRatios = { 0.25, 0.5, 1, 1.5, 2 };
-        private int speedRatioIndex = 2;
+        public int currentListNumber = 0;
 
         /// <summary>
         /// Number of frame to display per seconds in a normal speed
         /// </summary>
         public static double normalSpeed = 30;
 
-        private double timeRecord = 0;
-
-        public double TimeRecord
-        {
-            get
-            {
-                return timeRecord;
-            }
-            set
-            {
-                timeRecord = value;
-            }
-        }
-
+        /// <summary>
+        /// true if it's replating
+        /// </summary>
         public static bool isReplaying = false;
 
-        
-
-        private static int currentAvatarNumber = 0;
-        public static int CurrentAvatarNumber
-        {
-            get
-            {
-                return currentAvatarNumber;
-            }
-            set
-            {
-                currentAvatarNumber = value;
-            }
-        }
-        
         #endregion
 
         #region commands
@@ -284,7 +251,6 @@ namespace LecturerTrainer.ViewModel
             quitCommand = new RelayCommand(quit);
             otherReplayCommand = new RelayCommand(otherReplay);
             Tools.initStopWatch();
-            timeRecord = 0;
     
             DrawingSheetView.Get().ReplayVideo.MediaEnded += videoEnded;
 
@@ -338,17 +304,15 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         private void initialiseFeedbacksQueue(string fileName)
         {
-            listlistString = FeedbacksInList(fileName);
-            currentFeedbackList = listlistString.ElementAt(currentListNumber);
+            ListFeedbacks = FeedbacksInList(fileName);
+            currentFeedbackList = ListFeedbacks.ElementAt(currentListNumber);
         }
 
         /// <summary>
         /// This method needs the feedback.txt file input
         /// And it returns a list of feedbacks of the same size of the list of skeleton
         /// </summary>
-        /// <author>Alban Descottes 2018</author>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
+        /// <author> Alban Descottes 2018 </author>
         public List<List<String>> FeedbacksInList(String fileName)
         {
             var listFeedback = new List<List<String>>();
@@ -413,14 +377,12 @@ namespace LecturerTrainer.ViewModel
         /// <summary>
         /// this method is used in the ReplayAvatar class in the DispatcherTimer 
         /// </summary>
-        /// <author>Alban Descottes 2018</author>
-        /// <param name="sender"></param>
-        /// <param name="evt"></param>
+        /// <author> Alban Descottes 2018 </author>
         public void nextFeedbackList(object sender, EventArgs evt)
         {
-            if(ReplayAvatar.CurrentSkeletonNumber < listlistString.Count)
+            if(ReplayAvatar.CurrentSkeletonNumber < ListFeedbacks.Count)
             {
-                currentFeedbackList = listlistString.ElementAt(ReplayAvatar.CurrentSkeletonNumber);
+                currentFeedbackList = ListFeedbacks.ElementAt(ReplayAvatar.CurrentSkeletonNumber);
             }
         }
 
@@ -436,17 +398,6 @@ namespace LecturerTrainer.ViewModel
         {
             if(File.Exists(filePath))
             {
-                /*if (Path.GetFileName(filePath) == "avatar.avi")
-                {
-                    DrawingSheetView.Get().ShowReplayVideoSheet();
-                    filePathVideoAvatar = filePath;
-                    activate(ReplayView.Get().VideoAvatar, GeneralSideTool.Get().Avatar);
-                    deactivateOther(ReplayView.Get().Stream, ReplayView.Get().Avatar);
-                    DrawingSheetView.Get().ReplayVideo.Source = new Uri(filePathVideoAvatar, UriKind.Relative);
-                    skeletonScrolling = null;
-                    tryAddOtherSources("avatar.avi");
-                    isReplaying = true;
-                }*/
                 if (Path.GetFileName(filePath) == "stream.avi")
                 {
                     folderPath = filePath.Remove(filePath.Length - 10);
@@ -531,11 +482,6 @@ namespace LecturerTrainer.ViewModel
                         addOtherVideoSources(ReplayView.Get().Avatar);
                         filePathAvatar = s;
                     }
-                   /* else if (fileName == "avatar.avi")
-                    {
-                        addOtherVideoSources(ReplayView.Get().VideoAvatar);
-                        filePathVideoAvatar = s;
-                    }*/
                     else if (fileName == "stream.avi")
                     {
                         addOtherVideoSources(ReplayView.Get().Stream);
@@ -619,8 +565,7 @@ namespace LecturerTrainer.ViewModel
         /// It changes the current avatar after drag the slider during the replay
         /// it changes also the offset compared to the stopwatch lanched during the replay
         /// </summary>
-        /// <param name="newTime"></param>
-        /// <remarks>Added by Alban Descottes 2018</remarks>
+        /// <author > Alban Descottes 2018 </author>
         public static void changeCurrentAvatar(int newTime)
         {
             var timeDown = 0;
@@ -790,7 +735,6 @@ namespace LecturerTrainer.ViewModel
         /// </summary>
         public void Stop()
         {
-            timeRecord = 0;
             played = false;
             if (ReplayView.Get().Avatar.IsEnabled && skeletonScrolling != null)
             {
@@ -811,15 +755,9 @@ namespace LecturerTrainer.ViewModel
             ReplayAvatar.realTime = true;
             currentListNumber = 0;
             ReplayView.Get().PauseButton.IsEnabled = false;
-            speedRatioIndex = 2;
-            DrawingSheetView.Get().ReplayAudio.SpeedRatio = speedRatios[speedRatioIndex];
-            DrawingSheetView.Get().ReplayVideo.SpeedRatio = speedRatios[speedRatioIndex];
-            
   
             // Icons cleaning and initialization of the feedback queue thanks to the save
             IconViewModel.get().clearAll();
-            if (savedFeedbacksQueue != null)
-                feedbacksQueue = new Queue<ServerFeedback>(savedFeedbacksQueue);
             if (filePath != null)
                 DrawingSheetView.Get().ReplayVideo.Source = new Uri(filePath, UriKind.Relative);
         }
@@ -884,6 +822,13 @@ namespace LecturerTrainer.ViewModel
             if (faceTrack)
                 KinectDevice.faceTracking = true;
             TrackingSideToolViewModel.get().SpeedRate = speedRateActive;
+            
+            // reactivate the audience
+            if (TrainingSideToolViewModel.audienceOn)
+            {
+                TrainingSideToolViewModel.audienceOn = false;
+                GeneralSideTool.Get().AudienceControlCheckBox.IsChecked = true;
+            }
             
         }
 

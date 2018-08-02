@@ -137,7 +137,7 @@ namespace LecturerTrainer.ViewModel
                 lbool.Add(choiceResultView.chkArmsCrossed.IsChecked.HasValue && choiceResultView.chkArmsCrossed.IsChecked.Value);
                 lbool.Add(choiceResultView.chkEmotion.IsChecked.HasValue && choiceResultView.chkEmotion.IsChecked.Value);
                 lbool.Add(choiceResultView.chkLookDirec.IsChecked.HasValue && choiceResultView.chkLookDirec.IsChecked.Value);
-                lbool.Add(choiceResultView.chkWpm.IsChecked.HasValue && choiceResultView.chkWpm.IsChecked.Value);
+                lbool.Add(choiceResultView.chkNumberSyllables.IsChecked.HasValue && choiceResultView.chkNumberSyllables.IsChecked.Value);
                 var results = new ResultsView(lbool);
                 if (isLoad) //if the windowis called after a user click on the "Open charts analysis"
                 {
@@ -176,7 +176,11 @@ namespace LecturerTrainer.ViewModel
                         ((ResultsViewModel)results.DataContext).getFaceStatistics(listGraphFace);
                     }
                     if (TrackingSideToolViewModel.get().SpeedRate)
-                        ((ResultsViewModel)results.DataContext).getVoiceStatistics(AudioProvider.getVoicetatistics());
+                    {
+                        List<IGraph> listGraphVoice = new List<IGraph>();
+                        listGraphVoice.AddRange(AudioProvider.getVoiceStatistics());
+                        ((ResultsViewModel)results.DataContext).getVoiceStatistics(listGraphVoice);
+                    }
                 }
                 ((ResultsViewModel)results.DataContext).addResultsPartToView();
                 results.Show();
@@ -244,7 +248,7 @@ namespace LecturerTrainer.ViewModel
             if(TrackingSideToolViewModel.get().SpeedRate)
             {
                 choiceResultView.chkAudio.IsEnabled = true;
-                choiceResultView.chkWpm.IsEnabled = true;
+                choiceResultView.chkNumberSyllables.IsEnabled = true;
             }
         }
 
@@ -419,11 +423,10 @@ namespace LecturerTrainer.ViewModel
                     face = true;
                     choiceResultView.chkLookDirec.IsEnabled = true;
                 }
-                // TODO
-                else if (word.ToLower().Contains("speech") && word.ToLower().Contains("rate"))
+                else if (word.ToLower().Contains("syllable") )
                 {
                     audio = true;
-                    choiceResultView.chkWpm.IsEnabled = true;
+                    choiceResultView.chkNumberSyllables.IsEnabled = true;
                 }
                 
             }
@@ -465,7 +468,7 @@ namespace LecturerTrainer.ViewModel
             choiceResultView.chkLookDirec.IsEnabled = value;
 
             choiceResultView.chkAudio.IsEnabled = value;
-            choiceResultView.chkWpm.IsEnabled = value;
+            choiceResultView.chkNumberSyllables.IsEnabled = value;
         }
 
         public void ValueOfComboBoxChanged(string newValue)

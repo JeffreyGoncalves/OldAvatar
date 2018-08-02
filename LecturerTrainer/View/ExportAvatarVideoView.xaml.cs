@@ -26,9 +26,14 @@ namespace LecturerTrainer.View
     /// <author> Alban Descottes 2018 </author>
     public partial class ExportAvatarVideoView : Window
     {
-
+        /// <summary>
+        /// the writer for the avatar video 
+        /// </summary>
         private static VideoFileWriter avatarVideoStreamWriter;
 
+        /// <summary>
+        /// it's for scale the progressbar
+        /// </summary>
         private int lengthSkeletonList;
 
         public ExportAvatarVideoView()
@@ -76,7 +81,7 @@ namespace LecturerTrainer.View
                     ReplayAvatar.SkeletonList[e.ProgressPercentage].Item3.colorPointsList,
                     ReplayAvatar.SkeletonList[e.ProgressPercentage].Item3.faceTriangles);
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = ReplayAvatar.SkeletonList[e.ProgressPercentage].Item2;
-                ReplayViewModel.Get().currentFeedbackList = ReplayViewModel.listlistString[e.ProgressPercentage];
+                ReplayViewModel.Get().currentFeedbackList = ReplayViewModel.ListFeedbacks[e.ProgressPercentage];
                 DrawingSheetAvatarViewModel.Get().draw(this, new EventArgs());
                 avatarVideoStreamWriter.WriteVideoFrame(DrawingSheetAvatarViewModel.Get().GrabScreenshot());
                 avatarVideoStreamWriter.WriteVideoFrame(DrawingSheetAvatarViewModel.Get().GrabScreenshot());
@@ -86,7 +91,7 @@ namespace LecturerTrainer.View
             {
                 // it changes the current skeleton to draw, next it draws, grabs a screenshot and writes on the video
                 DrawingSheetAvatarViewModel.Get().skToDrawInReplay = ReplayAvatar.SkeletonList[e.ProgressPercentage].Item2;
-                ReplayViewModel.Get().currentFeedbackList = ReplayViewModel.listlistString[e.ProgressPercentage];
+                ReplayViewModel.Get().currentFeedbackList = ReplayViewModel.ListFeedbacks[e.ProgressPercentage];
                 DrawingSheetAvatarViewModel.Get().draw(this, new EventArgs());
                 avatarVideoStreamWriter.WriteVideoFrame(DrawingSheetAvatarViewModel.Get().GrabScreenshot());
             }
