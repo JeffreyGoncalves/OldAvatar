@@ -282,7 +282,6 @@ namespace LecturerTrainer.ViewModel
         void FaceTrackingDisable_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             TrackingSideTool.Get().ActivateFaceTrackingCheckBox.IsChecked = true;
-            //KinectDevice.faceTracking = true;
             initializeVideosMap();
         }
 
@@ -399,6 +398,27 @@ namespace LecturerTrainer.ViewModel
             faceNumber = 0;
         }
 
+        #region audio
+
+        /// <summary>
+        /// </summary>
+        /// <param name="path"></param>
+        public void PlayWAVFile(String path)
+        {
+            if (path.Contains(".wav"))
+            {
+                String str = Path.Combine(Path.GetDirectoryName(TrainingWithAvatarViewModel.Get().PathFile), path);
+                if (File.Exists(str))
+                {
+                    playerAudio.Stop();
+                    playerAudio.SoundLocation = str;
+                    playerAudio.Play();
+                }
+            }
+        }
+
+        #endregion
+
         //When the waving gesture is recognized, we determine what file should be played to respond to the user
         public static void Gesture_GestureRecognized(object sender, EventArgs e)
         {
@@ -429,11 +449,12 @@ namespace LecturerTrainer.ViewModel
             bool slow = ((HandTraining)sender).Slow;
             int count = ((HandTraining)sender).Count;
 
-            /*test audio
+            //test audio
+            /*
             switch (count)
             {
                 case 1:
-                    TrainingWithAvatarViewModel.Get().PlayWAVFile("One.wav");
+                    TrainingWithAvatarViewModel.Get().PlayWAVFile("intro.wav");
                     break;
                 case 2:
                     TrainingWithAvatarViewModel.Get().PlayWAVFile("Two.wav");

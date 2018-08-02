@@ -76,13 +76,14 @@ namespace LecturerTrainer.Model.BodyAnalysis
 
                 if (_count == NB_APPLAUSE)
                 {
-                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     frames = 0;
                     _count = 0;
                     start = false;
                     down = false;
                     up = false;
                     _complete = true;
+
+                    DrawingSheetAvatarViewModel.displayCustomText = String.Empty;
                     GestureRecognized?.Invoke(this, new EventArgs());
                 }
 
@@ -114,7 +115,7 @@ namespace LecturerTrainer.Model.BodyAnalysis
                             down = true;
                             up = false;
                             _count++;
-
+                            
                             GestureRecognized?.Invoke(this, new EventArgs());
                         }
                         /*else
